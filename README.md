@@ -1,8 +1,5 @@
-<<<<<<< Updated upstream
-# battledrills
-=======
-# Project Title
 
+# Battle Drills
 Battledrills is a project made for the USMC. Its purpose is to provide an easily followed workflow for marines when a "drill" is occurring, or in cases where marines run practice "drills". It also provides metrics on battledrills.
 
 ## Getting Started
@@ -37,4 +34,3 @@ What things you need to install the software and how to install them
 * Rafael Reyes
 * Dustin Pham
 * Christopher Alsheikh
->>>>>>> Stashed changes
