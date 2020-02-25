@@ -1,0 +1,94 @@
+@import "~CSS/index";
+
+.all-completed {
+	opacity: 0.8;
+	filter: invert(0.9);
+}
+
+.draggable-tasks {
+	background-color: $blue-grey-800;
+}
+
+.action-items-container {
+	border: 0.125em solid $grey-900;
+	box-shadow: 0 0 0.625em rgba($black, 0.75);
+	word-wrap: break-word;
+	word-break: break-word;
+	position: absolute;
+	/* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+	pointer-events: none;
+	-webkit-user-select: none;
+	box-sizing: border-box;
+	z-index: 2;
+	text-align: left;
+	.action-items {
+		@include body-3;
+		color: $white;
+		background: $blue-grey-500;
+		cursor: pointer;
+		margin: 0;
+		padding: 0.5em;
+		list-style: none;
+
+		.task-flex-container {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+		}
+
+		.action-item {
+			padding: 0.5em;
+			pointer-events: auto;
+
+			.task-description {
+				margin-right: auto;
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+
+			.task-option-icon-flex-container {
+				display: flex;
+				flex-direction: column;
+
+				.task-option-icon {
+					margin-left: auto;
+					visibility: hidden;
+				}
+				.filler-div {
+					height: 100%;
+				}
+			}
+		}
+
+		.task-icon {
+			padding: 0 0.25em 0 0;
+			margin: 0;
+			vertical-align: bottom;
+		}
+
+		.queued {
+			color: $white;
+			border: 2px dotted $white;
+			padding: 0.5em 0.4em;
+		}
+
+		.selected {
+			color: $white;
+			position: relative;
+			-webkit-transition: border 1s linear, box-shadow 1s linear;
+			-moz-transition: border 1s linear, box-shadow 1s linear;
+			transition: border 1s linear, box-shadow 1s linear;
+			animation: glow 1.5s infinite alternate;
+		}
+
+		@keyframes glow {
+			to {
+				border-color: #ffffff inset;
+				-webkit-box-shadow: 0 0 1em #ffffff inset;
+				-moz-box-shadow: 0 0 1em #ffffff inset;
+				box-shadow: 0 0 1em #ffffff inset;
+			}
+		}
+	}
+}

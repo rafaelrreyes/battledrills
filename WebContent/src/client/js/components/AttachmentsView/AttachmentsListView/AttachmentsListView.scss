@@ -1,0 +1,54 @@
+@import "~CSS/index";
+
+.attachments-list-view {
+    width: 100%;
+    text-align: left;
+    max-height: 10em;
+    margin-bottom: .25em;
+    
+    .attachments {
+        @include body-2;
+        list-style: none;
+        padding: .5em;
+        margin: 0;
+        max-height: 10em;
+        overflow-y: auto;
+        background-color: $blue-grey-800;
+
+        .attachment {
+            padding: .25em;
+            display: flex;
+            justify-content: space-between;
+
+            .attachment-flex {
+                display: flex;
+                align-items: center;
+
+                .attachment-label {
+                    margin-left: .5em;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                }
+            }
+
+            .attachment-buttons {
+                cursor: pointer;
+                i {
+
+                    &:hover {
+                        color: $cyan-800;
+                    }
+                }
+            }
+
+            &:hover {
+                color: $cyan-800;
+                .attachment-icon {
+                    color: $cyan-800;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,238 @@
+{
+	"type": "attack_on_firm_base",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 660,
+			"y": 25
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 660,
+					"y": 85
+				},
+				"tasks_coordinates": {
+					"x": 860,
+					"y": 20
+				},
+				"tasks": [
+					{
+						"description": "Stand to QRF"
+					},
+					{
+						"description": "Notify RCT SWO when details are available"
+					},
+					{
+						"description": "Unit Commander gets full accountability of all Marines"
+					}
+				],
+				"children": [
+					{
+						"title": "XO",
+						"self_coordinates": {
+							"x": 70,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 5,
+							"y": 195
+						},
+						"tasks": [
+							{
+								"description": "Receive report from S-1"
+							},
+							{
+								"description": "Report to CO"
+							}
+						]
+					},
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 225,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 170,
+							"y": 195
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support w/ RCT S-2 WO"
+							},
+							{
+								"description": "Reposition ISR"
+							},
+							{
+								"description": "Assess Threat"
+							}
+						]
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 285,
+							"y": 420
+						},
+						"tasks_coordinates": {
+							"x": 228,
+							"y": 492
+						},
+						"tasks": [
+							{
+								"description": "Contact guard for CASREP, POI, Crater Analysis & BDA"
+							},
+							{
+								"description": "Evaluate need to pass control"
+							}
+						],
+						"children": [
+							{
+								"title": "IO",
+								"self_coordinates": {
+									"x": 100,
+									"y": 475
+								},
+								"tasks_coordinates": {
+									"x": 35,
+									"y": 535
+								},
+								"tasks": [
+									{
+										"description": "Ensure Combat Correspondent documents attack"
+									},
+									{
+										"description": "Produce IO FRAGO"
+									}
+								]
+							}
+						]
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 425,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 375,
+							"y": 185
+						},
+						"tasks": [
+							{
+								"description": "Coordinate Air Spt as required"
+							},
+							{
+								"description": "Assess ability to provide continuous CAS"
+							},
+							{
+								"description": "Monitor A/C mvmt"
+							},
+							{
+								"description": "Coordinate w/ BAS for CASEVAC"
+							}
+						]
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 570,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 550,
+							"y": 185
+						},
+						"tasks": [
+							{
+								"description": "CBR \"Snowstorm\" SHELREP notifies FSC w/ Counterfire info/ cue radars to observe follow on incoming"
+							},
+							{
+								"description": "FSC approves, denies or sources observer"
+							},
+							{
+								"description": "Coordinate w/ AirO to clear air space for CASEVAC/CAS"
+							}
+						]
+					},
+					{
+						"title": "LOC",
+						"self_coordinates": {
+							"x": 742,
+							"y": 146
+						},
+						"tasks_coordinates": {},
+						"children": [
+							{
+								"title": "S-1",
+								"self_coordinates": {
+									"x": 742,
+									"y": 290
+								},
+								"tasks_coordinates": {
+									"x": 728,
+									"y": 345
+								},
+								"tasks": [
+									{
+										"description": "Submit PCR's for 3/2 casualties"
+									},
+									{
+										"description": "Accountability report by unit/section"
+									},
+									{
+										"description": "Report to XO"
+									}
+								]
+							},
+							{
+								"title": "S-4",
+								"self_coordinates": {
+									"x": 960,
+									"y": 290
+								},
+								"tasks_coordinates": {
+									"x": 893,
+									"y": 345
+								},
+								"tasks": [
+									{
+										"description": "I.D. combat loss equipment"
+									},
+									{
+										"description": "Notify RCT of required support"
+									},
+									{
+										"description": "Redirect mvmt, if required"
+									}
+								]
+							},
+							{
+								"title": "BAS",
+								"self_coordinates": {
+									"x": 1065,
+									"y": 275
+								},
+								"tasks_coordinates": {
+									"x": 1060,
+									"y": 345
+								},
+								"tasks": [
+									{
+										"description": "Coordinate w/ AirO & oversee CASEVAC"
+									},
+									{
+										"description": "Notify Chaplain of casualties"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

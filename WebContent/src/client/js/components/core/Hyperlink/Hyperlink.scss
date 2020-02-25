@@ -1,0 +1,5 @@
+@import "~CSS/index";
+
+.active-hyperlink {
+	color: $white; // this just overwrites NavLink's active class
+}

@@ -1,0 +1,28 @@
+@import "~CSS/index";
+
+.file-dropzone {
+    height: 200px;
+    width: 200px;
+    background-color: $blue-grey-300;
+    border: 3px dashed $blue-grey-600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .file-input {
+        display: none;
+    }
+
+    .icon {
+        font-size: 3em;
+    }
+
+    .file-dropzone-label {
+        @include body-3;
+    }
+}
+
+.highlight {
+    background-color: $blue-grey-100;
+}

@@ -1,0 +1,172 @@
+@import "~CSS/index";
+
+$button-text-color: $white;
+$button-text-color-disabled: $grey-800;
+$button-text-color-active: $grey-900;
+
+$button-background-color: $cyan-800;
+$button-background-color-active: $cyan-300;
+$button-background-color-disabled: $grey-500;
+$button-grey-background-color: $grey-700;
+
+$button-border-width: 0.125em;
+$button-border-color-hover: $border-color-hover;
+$button-border-color-focus: $border-color-focus;
+
+$button-shadow-color-hover: $shadow-color-default;
+$button-shadow-color-active: $shadow-color-default;
+$button-shadow-color-focus: $shadow-color-default;
+
+$button-shadow-width-hover: $shadow-width-hover;
+$button-shadow-width-focus: $shadow-width-hover;
+$button-shadow-width-active: $shadow-width-active;
+
+$button-height: 2em;
+$button-width-fill: 100%;
+$button-width-lg: 14.75em;
+$button-width-md: 11.25em;
+$button-width-sm: 7em;
+$button-width-xs: 5.25em;
+$button-width-xxs: 3.5em;
+
+button::-moz-focus-inner {
+	border: 0;
+}
+
+%button-template {
+	color: $white;
+	background-color: $button-background-color;
+	text-align: center;
+	height: $button-height;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	&:hover:enabled {
+		box-shadow: 0 0 $button-shadow-width-hover $button-shadow-color-hover;
+		cursor: pointer;
+	}
+	&:focus:enabled {
+		box-shadow: 0 0 5 $button-shadow-width-focus $button-shadow-color-focus;
+		cursor: pointer;
+	}
+	&:active:enabled {
+		color: $button-text-color-active;
+		background-color: $button-background-color-active;
+		box-shadow: 0 0 10 $button-shadow-width-active $button-shadow-color-active;
+		cursor: pointer;
+	}
+	&:disabled {
+		color: $button-text-color-disabled;
+		background-color: $button-background-color-disabled;
+	}
+}
+
+%button-template-grey {
+	&:hover:enabled {
+		border: solid 0.0625em $grey-500;
+	}
+	&:focus:enabled {
+		border: solid 0.0625em $grey-500;
+	}
+	&:active:enabled {
+		background-color: $grey-600;
+	}
+}
+
+button.c2pc-button {
+	&-fill {
+		@extend %button-template;
+		width: $button-width-fill;
+	}
+	&-lg {
+		@extend %button-template;
+		width: $button-width-lg;
+	}
+	&-md {
+		@extend %button-template;
+		width: $button-width-md;
+	}
+	&-sm {
+		@extend %button-template;
+		width: $button-width-sm;
+	}
+	&-xs {
+		@extend %button-template;
+		width: $button-width-xs;
+	}
+	&-xxs {
+		@extend %button-template;
+		width: $button-width-xxs;
+	}
+}
+
+button.c2pc-button-grey {
+	&-lg {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-fill;
+	}
+	&-lg {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-lg;
+	}
+	&-md {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-md;
+	}
+	&-sm {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-sm;
+	}
+	&-xs {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-xs;
+	}
+	&-xxs {
+		@extend %button-template;
+		@extend %button-template-grey;
+		background-color: $button-grey-background-color;
+		width: $button-width-xxs;
+	}
+}
+
+button.label {
+	&-left {
+		@extend %button-template;
+		justify-content: left;
+	}
+	&-right {
+		@extend %button-template;
+		justify-content: right;
+	}
+	&-center {
+		@extend %button-template;
+		justify-content: center;
+	}
+}
+
+button.label-size {
+	&-sm {
+		@include body-2;
+	}
+	&-md {
+		@include body-3;
+	}
+	&-lg {
+		@include body-4;
+	}
+}

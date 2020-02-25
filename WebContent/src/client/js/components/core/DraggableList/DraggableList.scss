@@ -1,0 +1,59 @@
+@import "~CSS/index";
+
+.draggable-list {
+	align-self: stretch;
+	overflow: auto;
+}
+
+.draggable-ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.draggable-li-wrapper {
+	@include body-3;
+	background-color: $cyan-900;
+	color: $white;
+	border-radius: 0.5em;
+	.drag-icon {
+		float: left;
+		padding: 0.5em 0.325em 0.5em 0.5em;
+		border-right: 0.125em solid $white-opaque;
+		&:hover {
+			cursor: grab;
+			cursor: -webkit-grab;
+		}
+		&:active {
+			cursor: grabbing;
+			cursor: -webkit-grabbing;
+		}
+	}
+	.draggable-li {
+		padding: 0.5em;
+		margin: 0 0 0.5em 0;
+		border-radius: 0.5em;
+
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		&:hover,
+		&:active,
+		&:focus {
+			cursor: pointer;
+		}
+		.li-text-div {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: $cyan-800;
+	}
+}
+
+.selected-list-item {
+	background-color: $cyan-800;
+}

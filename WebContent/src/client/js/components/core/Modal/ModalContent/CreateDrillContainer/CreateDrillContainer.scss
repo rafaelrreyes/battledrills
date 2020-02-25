@@ -1,0 +1,31 @@
+@import "~CSS/index";
+
+.create-list-container {
+	display: flex;
+	flex-direction: column;
+	width: 23em;
+
+	.drill-type-dropdown {
+		margin: 0 0 0.5em 0;
+	}
+
+	.drill-name-container {
+		margin: 0 0 0.5em 0;
+	}
+
+	.drill-location-container {
+		display: flex;
+		flex-direction: row;
+		margin: 0 0 0.5em 0;
+		.latitude-input {
+			margin: 0 0.5em 0 0;
+		}
+	}
+}
+
+ul.bullet-list {
+	list-style: inside;
+	padding-top: 0;
+	margin-top: 0;
+	padding-left: 0;
+}

@@ -1,0 +1,149 @@
+@import "~CSS/index";
+
+$dropdown-text-color: $black;
+$dropdown-text-color-disabled: $grey-800;
+$dropdown-text-color-active: $grey-900;
+
+$dropdown-background-color: $grey-900;
+$dropdown-background-color-active: $cyan-300;
+$dropdown-background-color-disabled: $grey-500;
+$dropdown-grey-background-color: $grey-700;
+
+$dropdown-border-width: 0.125em;
+$dropdown-border-color-hover: $border-color-hover;
+$dropdown-border-color-focus: $border-color-focus;
+$dropdown-border-color-error: $border-color-error;
+
+$dropdown-shadow-color-hover: $shadow-color-default;
+$dropdown-shadow-color-active: $shadow-color-default;
+$dropdown-shadow-color-focus: $shadow-color-default;
+
+$dropdown-shadow-width-hover: $shadow-width-hover;
+$dropdown-shadow-width-focus: $shadow-width-active;
+
+$dropdown-height: 2em;
+$dropdown-width-fill: 100%;
+$dropdown-width-lg: 14.75em;
+$dropdown-width-md: 11.25em;
+$dropdown-width-sm: 7em;
+$dropdown-width-xs: 5.25em;
+$dropdown-width-xxs: 3.5em;
+
+select::-moz-focus-inner {
+	border: 0;
+}
+
+select option[value=""] {
+	color: $grey-500;
+}
+
+%dropdown-template {
+	color: $white;
+	background-color: $dropdown-background-color;
+	text-align: left;
+	height: $dropdown-height;
+	border: solid $dropdown-border-width $dropdown-border-color-hover;
+	padding: 0 0.25em;
+	@include body-3;
+	&:hover:enabled,
+	&:focus:enabled {
+		box-shadow: 0 0 $dropdown-shadow-width-hover $dropdown-shadow-color-hover;
+	}
+	&:disabled {
+		color: $dropdown-text-color-disabled;
+		background-color: $dropdown-background-color-disabled;
+	}
+}
+
+select.c2pc-dropdown {
+	&-fill {
+		@extend %dropdown-template;
+		width: $dropdown-width-fill;
+	}
+	&-lg {
+		@extend %dropdown-template;
+		width: $dropdown-width-lg;
+	}
+	&-md {
+		@extend %dropdown-template;
+		width: $dropdown-width-md;
+	}
+	&-sm {
+		@extend %dropdown-template;
+		width: $dropdown-width-sm;
+	}
+	&-xs {
+		@extend %dropdown-template;
+		width: $dropdown-width-xs;
+	}
+	&-xxs {
+		@extend %dropdown-template;
+		width: $dropdown-width-xxs;
+	}
+}
+
+select.c2pc-dropdown-grey {
+	&-fill {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-fill;
+	}
+	&-lg {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-lg;
+	}
+	&-md {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-md;
+	}
+	&-sm {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-sm;
+	}
+	&-xs {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-xs;
+	}
+	&-xxs {
+		@extend %dropdown-template;
+		background-color: $dropdown-grey-background-color;
+		width: $dropdown-width-xxs;
+	}
+}
+
+select.c2pc-dropdown-error {
+	&-fill {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-fill;
+	}
+	&-lg {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-lg;
+	}
+	&-md {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-md;
+	}
+	&-sm {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-sm;
+	}
+	&-xs {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-xs;
+	}
+	&-xxs {
+		@extend %dropdown-template;
+		border: solid $dropdown-border-width $dropdown-border-color-error;
+		width: $dropdown-width-xxs;
+	}
+}

@@ -1,0 +1,45 @@
+@import "~CSS/index";
+
+.tasks-reports-statistics {
+	padding: 1em;
+	text-align: left;
+	@include body-4;
+	display: flex;
+	justify-content: space-between;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	.tasks-reports-statistics-user {
+		@include heading-5;
+	}
+
+	.tasks-reports-total {
+		display: flex;
+		flex-flow: row;
+		justify-content: space-between;
+		list-style: none;
+		margin: 0;
+
+		.tasks-reports-total-item {
+			.tasks-reports-item-label {
+				vertical-align: middle;
+				padding-left: 0.5em;
+				padding-right: 0.5em;
+			}
+		}
+	}
+
+	@media screen and (max-width: 585px) {
+		.tasks-reports-total {
+			display: none;
+		}
+	}
+
+	.badge {
+		background-color: $cyan-800;
+		padding: 0 0.5em;
+		margin: 0 0.25em;
+		line-height: 1.5em;
+	}
+}

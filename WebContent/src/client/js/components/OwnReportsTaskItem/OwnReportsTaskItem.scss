@@ -1,0 +1,57 @@
+@import "~CSS/index";
+
+.task-report-item {
+	padding: 1em;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	// height: 5em;
+	box-sizing: border-box;
+	cursor: pointer;
+	background-color: $cyan-900;
+	@include heading-3;
+	flex: 1 0 auto;
+	color: $white;
+	margin: 0.5em 0 0 0;
+	display: flex;
+	position: relative;
+
+	&:hover {
+		background: $cyan-700;
+	}
+
+	.task-report-status {
+		padding: 0.5em 0.5em 0.5em 0;
+	}
+
+	.task-report-description {
+		text-align: left;
+		padding: 0.5em 0 0 0.5em;
+	}
+}
+
+.active-task-report-item:before,
+.active-task-report-item:after {
+	position: absolute;
+	content: "";
+	top: 0%;
+	left: 0%;
+	height: 100%;
+	width: 100%;
+	box-shadow: 0 0 1em $white inset;
+	animation: glow-grow 1.5s ease-out infinite;
+}
+
+.active-task-report-item:after {
+	animation-delay: 1s;
+}
+
+@keyframes glow-grow {
+	0% {
+		opacity: 0;
+	}
+	80% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}

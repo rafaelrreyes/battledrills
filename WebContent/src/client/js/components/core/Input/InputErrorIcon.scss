@@ -1,0 +1,9 @@
+@import "~CSS/index";
+
+.input-error-icon {
+	padding: 0 0.25em 0 0;
+	flex: 1 9 auto;
+	margin-left: -0.125em;
+	color: $red-700 !important;
+	cursor: default;
+}

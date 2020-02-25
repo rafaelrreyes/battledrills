@@ -1,0 +1,132 @@
+{
+	"type": "assassination_of_iraqi_government_official",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 525,
+			"y": 25
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 525,
+					"y": 85
+				},
+				"tasks_coordinates": {
+					"x": 669,
+					"y": 57
+				},
+				"tasks": [
+					{
+						"description": "Stand to QRF"
+					},
+					{
+						"description": "Notify RCT SWO"
+					}
+				],
+				"children": [
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 70,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 12,
+							"y": 175
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support with RCT S-2 WO"
+							},
+							{
+								"description": "Post recent Enemy activity in area of concern/TTP\"s"
+							},
+							{
+								"description": "Assess threat"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 245,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 187,
+							"y": 175
+						},
+						"tasks": [
+							{
+								"description": "W/O to QRF and to nearest unit to site"
+							},
+							{
+								"description": "Notify units based on local reaction to event"
+							},
+							{
+								"description": "Notify adjacent units"
+							},
+							{
+								"description": "Contact local ISF or police"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-4",
+						"self_coordinates": {
+							"x": 420,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 363,
+							"y": 175
+						},
+						"tasks": [
+							{
+								"description": "Redirect movement, if required"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "IO",
+						"self_coordinates": {
+							"x": 605,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 540,
+							"y": 200
+						},
+						"tasks": [
+							{
+								"description": "Inform Governor & City Emergency Officials"
+							},
+							{
+								"description": "Coordinate with CA & CMOC to prevent fratricide during ISF react"
+							},
+							{
+								"description": "Draft IO message to address public concerns"
+							},
+							{
+								"description": "Draft PSA with facts on assassination"
+							},
+							{
+								"description": "Draft talking points for units"
+							},
+							{
+								"description": "Coordinate with RCT PAO"
+							}
+						],
+						"children": []
+					}
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,49 @@
+@import "~CSS/index";
+
+.progress-bar {
+	width: 100%;
+	margin: 0 auto;
+	background-color: transparent;
+	padding: 0.25em;
+	box-sizing: border-box;
+	position: relative;
+	display: flex;
+	flex-grow: 1;
+
+	.progress-bar-filler-container {
+		width: 100%;
+		margin: 0 auto;
+		height: 2em;
+		background-color: $blue-grey-500;
+		box-sizing: border-box;
+		position: relative;
+		box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+		cursor: pointer;
+
+		.progress-bar-filler {
+			height: 100%;
+			background-color: $cyan-600;
+			border-radius: inherit;
+			display: flex;
+			align-content: center;
+			align-items: center;
+			justify-content: right;
+			box-sizing: border-box;
+			padding-right: 0.25em;
+		}
+
+		.progress-bar-filler-percentage {
+			display: flex;
+			align-items: center;
+			align-content: center;
+			height: 100%;
+			margin-top: -2.2em;
+			color: $white;
+			padding: 0.25em;
+		}
+
+		.percentage-label {
+			@include heading-7;
+		}
+	}
+}

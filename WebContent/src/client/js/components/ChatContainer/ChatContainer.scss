@@ -1,0 +1,166 @@
+@import "~CSS/index";
+
+.chat-container {
+	background-color: $grey-900;
+	@include body-3;
+
+	.chat-button {
+		position: absolute;
+		bottom: 0;
+		right: 10%;
+		background-color: $cyan-900;
+		padding: 0.5em;
+		box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+		cursor: pointer;
+		z-index: 99999;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.contacts-view {
+		background-color: $blue-grey-900;
+		box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+		bottom: 0;
+		right: 0;
+		position: absolute;
+		margin: 0 1em 0 0;
+		padding: 1em;
+		width: 15%;
+		z-index: 1500;
+
+		.contacts-list-header-container {
+			@include heading-5;
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			position: relative;
+			.contacts-view-minimize-button {
+				cursor: pointer;
+				position: absolute;
+				right: 0;
+				&:hover {
+					color: $cyan-700;
+				}
+			}
+		}
+
+		.contacts-list-search-input {
+			display: flex;
+			justify-content: space-around;
+		}
+	}
+
+	.contacts-list {
+		list-style: none;
+		height: 25em;
+		overflow-y: scroll;
+		margin: 0.5em 0;
+		padding: 0;
+
+		.contact-item {
+			padding: 0.5em;
+			margin: 0.25em 0.25em 0.25em 0;
+			background-color: $cyan-900;
+			cursor: pointer;
+
+			&:hover,
+			&:focus {
+				background-color: $cyan-800;
+			}
+
+			&:first-child {
+				margin-top: 0;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.open-chats-view {
+		display: flex;
+		position: absolute;
+		bottom: 0;
+		right: 18%;
+		z-index: 1500;
+
+		.open-chats-spill-over {
+			cursor: pointer;
+			position: absolute;
+			bottom: 0;
+
+			.open-chats-spill-over-button {
+			}
+
+			.open-chats-spill-over-dropdown {
+				@include body-3;
+				background: $blue-grey-800;
+				box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+				border: none;
+				list-style: none;
+				position: absolute;
+				bottom: 3.5em;
+				left: -3.5em;
+				padding: 0;
+				margin: 0;
+
+				.open-chats-spill-over-dropdown-item {
+					padding: 1em;
+
+					&:hover {
+						background: $cyan-900;
+					}
+				}
+			}
+		}
+	}
+
+	.open-chat-active-view {
+		background-color: $grey-900;
+		width: 25em;
+		bottom: 0;
+		position: absolute;
+
+		.open-chat-active-header {
+			@include heading-4;
+			padding: 1em;
+			display: flex;
+			justify-content: space-between;
+
+			.open-chat-active-close-button {
+				cursor: pointer;
+			}
+		}
+
+		.open-chat-active-messages {
+			list-style: none;
+			@include body-3;
+			padding: 1.5em;
+			margin: 0;
+			height: 20em;
+			overflow-y: scroll;
+
+			.open-chat-active-message-header {
+				display: flex;
+				justify-content: space-between;
+			}
+
+			.open-chat-active-message-item {
+				@include body-4;
+				color: $white;
+				background-color: $blue-grey-800;
+				border-radius: 1em;
+				padding: 1em;
+				margin-bottom: 1em;
+			}
+
+			.open-chat-active-message-string {
+				text-align: left;
+				padding: 1em 0 0 0;
+			}
+		}
+	}
+}

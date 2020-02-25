@@ -1,0 +1,30 @@
+@import "~CSS/index";
+
+.data-spinner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.disabled-icon {
+	opacity: 0.25;
+}
+
+.drill-data-icon-hover {
+	&:hover,
+	&:focus {
+		opacity: 0.5;
+	}
+}
+
+.overflow-data {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.attachments-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

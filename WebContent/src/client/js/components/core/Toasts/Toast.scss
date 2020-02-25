@@ -1,0 +1,84 @@
+@import "~CSS/index";
+
+@keyframes cssAnimation {
+	to {
+		width: 0;
+		height: 0;
+		overflow: hidden;
+	}
+}
+@-webkit-keyframes cssAnimation {
+	to {
+		width: 0;
+		height: 0;
+		visibility: hidden;
+	}
+}
+
+.toast {
+	@include body-3;
+	color: $white;
+	font-weight: 800;
+	padding: 1.5em;
+	margin: 0.5em;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.toast-message-container {
+		display: flex;
+		align-items: center;
+	}
+
+	.toast-icon {
+		margin-right: 1em;
+		color: $cyan-700;
+	}
+
+	.toast-actions {
+		display: flex;
+		align-items: center;
+
+		.toast-link-view {
+			margin: 0 1em;
+		}
+
+		.toast-close-button {
+			cursor: pointer;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+	}
+}
+
+.generic {
+	background: $blue-grey-700;
+}
+
+.success {
+	background: green;
+}
+
+.error {
+	background: red;
+}
+
+.example-enter {
+	opacity: 0;
+}
+
+.example-enter-active {
+	opacity: 1;
+	transition: opacity 5000ms ease-in;
+}
+
+.example-exit {
+	opacity: 1;
+}
+
+.example-exit-active {
+	opacity: 0;
+	transition: opacity 500ms ease-in;
+}

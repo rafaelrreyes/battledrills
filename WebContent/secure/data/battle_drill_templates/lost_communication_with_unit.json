@@ -1,0 +1,134 @@
+{
+	"type": "lost_communication_with_unit",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 635,
+			"y": 20
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 635,
+					"y": 75
+				},
+				"tasks_coordinates": {
+					"x": 865,
+					"y": 39
+				},
+				"tasks": [
+					{
+						"description": "Notify RCT SWO after 2 hours"
+					},
+					{
+						"description": "Stand to QRF"
+					}
+				],
+				"children": [
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 70,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 13,
+							"y": 225
+						},
+						"tasks": [
+							{
+								"description": "Assist in determining location of unit by repositioning ISR"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 260,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 203,
+							"y": 225
+						},
+						"tasks": [
+							{
+								"description": "Determine unit location"
+							},
+							{
+								"description": "Contact nearest unit to site to attempt comm"
+							},
+							{
+								"description": "W/O to QRF"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 450,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 400,
+							"y": 225
+						},
+						"tasks": [
+							{
+								"description": "Coordinate air support (airborne relay)"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-6",
+						"self_coordinates": {
+							"x": 645,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 588,
+							"y": 225
+						},
+						"tasks": [
+							{
+								"description": "Investigate problem"
+							},
+							{
+								"description": "Coordinate for radio relay"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-4",
+						"self_coordinates": {
+							"x": 782,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 764,
+							"y": 225
+						},
+						"tasks": [
+							{
+								"description": "Redirect movement, if required"
+							},
+							{
+								"description": "Direct convoys to attempt comm relay"
+							},
+							{
+								"description": "Attempt to link up area convoy with unit that lost comm (physically if relay fails)"
+							}
+						],
+						"children": []
+					}
+				]
+			}
+		]
+	}
+}

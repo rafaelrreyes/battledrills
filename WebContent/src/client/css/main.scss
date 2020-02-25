@@ -1,0 +1,147 @@
+@import "./fonts";
+@import "./index";
+
+html {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	height: 100%;
+	font-size: 16px;
+}
+
+input,
+select,
+textarea {
+	-ms-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.main-body-container {
+	background-color: $blue-grey-900;
+	top: 3.5em;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	position: absolute;
+}
+
+.no-button {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+
+	&:disabled {
+		opacity: 0.25;
+	}
+}
+
+.card {
+	background-color: $blue-grey-800;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	padding: 2em;
+	width: 25%;
+	height: 80%;
+	position: relative;
+}
+
+%card-title {
+	@include heading-4;
+	background-color: $blue-grey-900;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	padding: 0.5em 0;
+	width: 100%;
+	color: $white;
+}
+
+%card-content {
+	@include body-3;
+	background-color: $blue-grey-900;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	padding: 1em 0;
+	width: 100%;
+	color: $white;
+}
+
+.card-title {
+	@extend %card-title;
+	margin-bottom: 1em;
+}
+
+.card-content {
+	@extend %card-content;
+	margin-bottom: 1em;
+}
+
+.alt-card-title {
+	@extend %card-title;
+	margin-bottom: 0.5em;
+}
+
+.alt-card-content {
+	@extend %card-content;
+	margin-bottom: 0.5em;
+}
+
+@mixin card-flex {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+}
+
+.main-card-1 {
+	order: 1;
+	@include card-flex;
+}
+
+.main-card-2 {
+	order: 2;
+	@include card-flex;
+}
+
+.main-card-3 {
+	order: 3;
+	@include card-flex;
+}
+
+// classes used for text key/data in cards
+.data-flex-container {
+	display: flex;
+	flex-direction: column;
+
+	.data-info {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 0.25em;
+	}
+
+	.data-info-final {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.data-key {
+		margin: 0 auto 0 1em;
+		padding-right: 1em;
+	}
+	.data-value {
+		margin: 0 1em 0 auto;
+		// max-width: 16em;
+	}
+	.data-icon {
+		margin: 0 1em 0 auto;
+		cursor: pointer;
+	}
+}

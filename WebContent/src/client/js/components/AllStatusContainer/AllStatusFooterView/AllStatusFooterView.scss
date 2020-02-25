@@ -1,0 +1,70 @@
+@import "~CSS/index";
+
+$button-text-color-disabled: $grey-500;
+
+.all-status-footer-view {
+	@include body-3;
+	display: flex;
+	align-items: center;
+	padding-left: 2em;
+	padding-top: 0.5em;
+	background-color: $blue-grey-900;
+
+	.all-status-pager-buttons {
+		background-color: $blue-grey-800;
+		margin-right: 2em;
+		display: flex;
+		-webkit-user-select: none; /* Safari */
+		-moz-user-select: none; /* Firefox */
+		-ms-user-select: none; /* IE10+/Edge */
+		user-select: none; /* Standard */
+
+		.all-status-pager-left {
+			cursor: pointer;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+
+		.all-status-pager-right {
+			cursor: pointer;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+
+		.all-status-pager-number {
+			display: flex;
+			align-items: center;
+			margin-left: 0.5em;
+			margin-right: 0.5em;
+			cursor: pointer;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+
+		.all-status-pager-number-active {
+			color: $cyan-700;
+		}
+
+		.enabled {
+			pointer-events: auto;
+		}
+
+		.disabled {
+			pointer-events: none;
+			color: $button-text-color-disabled;
+			cursor: none;
+		}
+	}
+}
+
+@media screen and (max-width: 250px) {
+	.all-status-footer-view {
+		display: none;
+	}
+}

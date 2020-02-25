@@ -1,0 +1,36 @@
+@import "~CSS/index";
+
+.header-menu-item {
+	@include heading-5;
+	text-decoration: none;
+	background-color: $blue-grey-800;
+	color: $white;
+	padding: 0.5em 0.125em 0.5em 0.5em;
+
+	&:focus,
+	&:visited,
+	&:link,
+	&:active {
+		text-decoration: none;
+	}
+
+	&:hover {
+		background: $cyan-700;
+		color: $white;
+		cursor: pointer;
+	}
+}
+
+.header-menu-item.active-link {
+	background-color: $grey-100;
+	color: $black;
+}
+
+.selected-link {
+	background: $cyan-700;
+	color: $white;
+}
+
+.active-link-icon {
+	color: $black !important;
+}

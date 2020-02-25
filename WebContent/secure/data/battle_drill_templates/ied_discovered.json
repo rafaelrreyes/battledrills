@@ -1,0 +1,197 @@
+{
+	"id": "1234",
+	"type": "ied_discovered",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 625,
+			"y": 20
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 625,
+					"y": 75
+				},
+				"tasks_coordinates": {
+					"x": 760,
+					"y": 25
+				},
+				"tasks": [
+					{
+						"taskId": "ied_1",
+						"description": "Notify RCT SWO and pass UXO/IED report"
+					}
+				],
+				"children": [
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 150,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 170,
+							"y": 285
+						},
+						"tasks": [
+							{
+								"taskId": "ied_2",
+								"description": "Request EOD"
+							},
+							{
+								"taskId": "ied_3",
+								"description": "W/O to nearest unit to site"
+							},
+							{
+								"taskId": "ied_4",
+								"description": "Notify adjacent/supporting units"
+							},
+							{
+								"taskId": "ied_5",
+								"description": "Monitor mission and assess need for reinforcements"
+							}
+						],
+						"children": [
+							{
+								"title": "IO",
+								"self_coordinates": {
+									"x": 70,
+									"y": 225
+								},
+								"tasks_coordinates": {
+									"x": 5,
+									"y": 285
+								},
+								"tasks": [
+									{
+										"taskId": "ied_6",
+										"description": "PA-press release if civilians injured"
+									},
+									{
+										"taskId": "ied_7",
+										"description": "Ensure Combat Correspondent document site"
+									},
+									{
+										"taskId": "ied_8",
+										"description": "EW-coord EMS localized suppression"
+									}
+								],
+								"children": []
+							}
+						]
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 385,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 335,
+							"y": 245
+						},
+						"tasks": [
+							{
+								"taskId": "ied_9",
+								"description": "Monitor A/C movement/employment"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 560,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 500,
+							"y": 245
+						},
+						"tasks": [
+							{
+								"taskId": "ied_10",
+								"description": "Plot location and develop pattern analysis"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 715,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 665,
+							"y": 245
+						},
+						"tasks": [
+							{
+								"taskId": "ied_11",
+								"description": "Coordinate FS with nearest unit"
+							},
+							{
+								"taskId": "ied_12",
+								"description": "Build FSCMs (ACA/RFA)"
+							},
+							{
+								"taskId": "ied_13",
+								"description": "Pass aimpoint to Btry"
+							},
+							{
+								"taskId": "ied_14",
+								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "LOC",
+						"self_coordinates": {
+							"x": 885,
+							"y": 175
+						},
+						"tasks_coordinates": {},
+						"tasks": [],
+						"children": [
+							{
+								"title": "S-4",
+								"self_coordinates": {
+									"x": 885,
+									"y": 230
+								},
+								"tasks_coordinates": {
+									"x": 830,
+									"y": 295
+								},
+								"tasks": [
+									{
+										"taskId": "ied_15",
+										"description": "Redirect movement, if required"
+									},
+									{
+										"taskId": "ied_16",
+										"description": "Ensure convoy remains with IED until relieved"
+									},
+									{
+										"taskId": "ied_17",
+										"description": "Gather info from convoy or relaying station (IED Report)"
+									},
+									{
+										"taskId": "ied_18",
+										"description": "Coordinate with RCT for required support"
+									}
+								],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

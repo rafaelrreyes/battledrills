@@ -1,0 +1,38 @@
+@import "~CSS/index";
+
+.toast-status-label {
+	margin-left: 0.5em;
+}
+
+.in-progress {
+	color: $in-progress-color;
+}
+
+.blocked {
+	color: $blocked-color;
+}
+
+.completed {
+	color: $completed-color;
+}
+
+.view-hyperlink {
+	color: $white;
+	margin-right: 0.5em;
+	text-decoration: none;
+	background-color: $blue-grey-800;
+	padding: 0.125em 0.5em;
+	vertical-align: middle;
+
+	&:focus,
+	&:visited,
+	&:link,
+	&:active {
+		text-decoration: none;
+	}
+
+	&:hover {
+		background: $cyan-700;
+		color: $white;
+	}
+}

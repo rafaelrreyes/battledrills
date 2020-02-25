@@ -1,0 +1,17 @@
+@import "~CSS/index";
+
+.pending-icon {
+	color: $white !important;
+}
+
+.in-progress-icon {
+	color: $in-progress-color !important;
+}
+
+.blocked-icon {
+	color: $blocked-color !important;
+}
+
+.completed-icon {
+	color: $completed-color !important;
+}

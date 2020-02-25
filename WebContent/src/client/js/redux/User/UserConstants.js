@@ -1,0 +1,6 @@
+export const UserConstants = {
+	SET_USER: "SET_USER",
+	SET_USERNAME: "SET_USERNAME",
+	SET_ROLE: "SET_ROLE",
+	SET_SESSION_ID: "SET_SESSION_ID"
+};

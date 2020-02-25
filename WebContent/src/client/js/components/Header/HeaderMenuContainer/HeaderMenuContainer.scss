@@ -1,0 +1,62 @@
+@import "~CSS/index";
+
+.menu {
+	color: $white;
+	order: 10;
+	margin: auto 1em auto auto;
+	display: flex;
+
+	.menu-content {
+		right: 1em;
+	}
+
+	.menu-user-button {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		cursor: pointer;
+
+		.user-label {
+			@include heading-4;
+		}
+
+		&:hover > .menu-icon {
+			color: $cyan-700;
+		}
+
+		&:hover > .user-label {
+			color: $cyan-700;
+		}
+	}
+
+	.toggled {
+		color: $cyan-700;
+	}
+
+	.menu-notification-container {
+		position: relative;
+
+		.menu-notification-counter {
+			@include heading-2;
+			background-color: $red-700;
+			border-radius: 50em;
+			position: absolute;
+			top: -0.25em;
+			right: 0;
+			padding: 0.1em;
+		}
+	}
+}
+
+.menu-icon {
+	color: $white;
+	display: flex !important;
+	cursor: pointer;
+
+	&:hover {
+		color: $cyan-700;
+	}
+}

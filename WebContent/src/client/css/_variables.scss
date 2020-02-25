@@ -1,0 +1,28 @@
+@import "palette";
+
+//---------Universal------------
+
+$border-width-default: 0.125em;
+$bodyFontSize: 1em;
+$body-color: $white;
+$body-font: "Roboto";
+
+$text-color-default: $white;
+$text-color-disabled: $grey-800;
+$text-color-active: $grey-900;
+
+$shadow-color-default: rgba($white, 0.35);
+$shadow-width-hover: 0.3125em;
+$shadow-width-active: 0.625em;
+
+$border-color-hover: $cyan-300;
+$border-color-focus: $border-color-hover;
+$border-color-error: $red-600;
+
+$background-color-default: $grey-900;
+$background-color-lighter: $grey-600;
+$background-color-disabled: $grey-500;
+
+$in-progress-color: $yellow-700;
+$blocked-color: $red-700;
+$completed-color: $green-400;

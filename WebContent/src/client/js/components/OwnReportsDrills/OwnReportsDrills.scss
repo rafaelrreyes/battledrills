@@ -1,0 +1,84 @@
+@import "~CSS/index";
+
+.drill-report-item {
+	background-color: $blue-grey-800;
+	padding: 0.5em;
+	margin-bottom: 0.5em;
+	display: flex;
+	flex-flow: column;
+	margin-right: 0.5em;
+
+	.drill-report-item-no-tasks-label {
+		@include heading-3;
+		margin-top: 0.5em;
+	}
+
+	.drill-report-column {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		flex: 1 auto;
+	}
+}
+
+@media screen and (min-width: 500px) {
+	.drill-report-item {
+		flex: 1 0 95%;
+	}
+}
+
+@media screen and (min-width: 800px) {
+	.drill-report-item {
+		flex: 1 0 95%;
+	}
+}
+
+@media screen and (min-width: 1300px) {
+	.drill-report-item {
+		flex: 0 0 47%;
+	}
+}
+
+@media screen and (min-width: 1400px) {
+	.drill-report-item {
+		flex: 0 0 31%;
+	}
+}
+
+.drill-report-header {
+	display: flex;
+	justify-content: space-between;
+	background-color: $blue-grey-900;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+
+	.drill-report-title {
+		@include heading-4;
+		font-weight: 700;
+		color: #fff;
+		text-align: center;
+		flex-grow: 1;
+		line-height: 2em;
+		padding: 1em;
+		width: 10em;
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.drill-report-counters {
+		@include body-4;
+		padding: 1em;
+		line-height: 2em;
+
+		.drill-report-counter {
+			color: $green-800;
+		}
+	}
+
+	.drill-report-close-btn {
+		cursor: pointer;
+		padding: 1em;
+	}
+}

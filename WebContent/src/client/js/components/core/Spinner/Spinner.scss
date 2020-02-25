@@ -1,0 +1,180 @@
+@import "~CSS/index";
+
+$spinner-size-extra-extra-small: 1em;
+$spinner-size-extra-small: 2em;
+$spinner-size-small: 3em;
+$spinner-size-medium: 4em;
+$spinner-size-large: 5em;
+$spinner-size-extra-large: 6em;
+
+$transform-origin-extra-extra-small: 0.5em;
+$transform-origin-extra-small: 1em;
+$transform-origin-small: 1.5em;
+$transform-origin-medium: 2em;
+$transform-origin-large: 2.5em;
+$transform-origin-extra-large: 3em;
+
+$div-top-left-extra-extra-small: 0.1em;
+$div-top-left-extra-small: 1.5625em;
+$div-top-left-small: 2.34375em;
+$div-top-left-medium: 3.125em;
+$div-top-left-large: 3.90625em;
+$div-top-left-extra-large: 4.6875em;
+
+$div-height-width-extra-extra-small: 0.1em;
+$div-height-width-extra-small: 0.1875em;
+$div-height-width-small: 0.28125em;
+$div-height-width-medium: 0.375em;
+$div-height-width-large: 0.46875em;
+$div-height-width-extra-large: 0.5625em;
+
+%spinner-template {
+	display: inline-block;
+	position: relative;
+}
+
+%div-after-template {
+	content: " ";
+	display: block;
+	position: absolute;
+	border-radius: 50%;
+	background: $cyan-500;
+	margin: 0;
+}
+
+.spinner {
+	&-xes {
+		@extend %spinner-template;
+		width: $spinner-size-extra-extra-small;
+		height: $spinner-size-extra-extra-small;
+	}
+	&-xs {
+		@extend %spinner-template;
+		width: $spinner-size-extra-small;
+		height: $spinner-size-extra-small;
+	}
+	&-sm {
+		@extend %spinner-template;
+		width: $spinner-size-small;
+		height: $spinner-size-small;
+	}
+	&-md {
+		@extend %spinner-template;
+		width: $spinner-size-medium;
+		height: $spinner-size-medium;
+	}
+	&-lg {
+		@extend %spinner-template;
+		width: $spinner-size-large;
+		height: $spinner-size-large;
+	}
+	&-xl {
+		@extend %spinner-template;
+		width: $spinner-size-extra-large;
+		height: $spinner-size-extra-large;
+	}
+}
+
+// ^ is for classes beginning with "spin-div"
+// $ is for classes ending in "xes"
+[class^="spin-div"][class$="xes"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-extra-extra-small $transform-origin-extra-extra-small;
+}
+[class^="spin-div"][class$="xs"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-extra-small $transform-origin-extra-small;
+}
+[class^="spin-div"][class$="sm"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-small $transform-origin-small;
+}
+[class^="spin-div"][class$="md"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-medium $transform-origin-medium;
+}
+[class^="spin-div"][class$="lg"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-large $transform-origin-large;
+}
+[class^="spin-div"][class$="xl"] {
+	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	transform-origin: $transform-origin-extra-large $transform-origin-extra-large;
+}
+
+[class^="spin-div"][class$="xes"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-extra-extra-small;
+	height: $div-height-width-extra-extra-small;
+	top: $div-top-left-extra-extra-small;
+	left: $div-top-left-extra-extra-small;
+}
+[class^="spin-div"][class$="xs"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-extra-small;
+	height: $div-height-width-extra-small;
+	top: $div-top-left-extra-small;
+	left: $div-top-left-extra-small;
+}
+[class^="spin-div"][class$="sm"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-small;
+	height: $div-height-width-small;
+	top: $div-top-left-small;
+	left: $div-top-left-small;
+}
+[class^="spin-div"][class$="md"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-medium;
+	height: $div-height-width-medium;
+	top: $div-top-left-medium;
+	left: $div-top-left-medium;
+}
+[class^="spin-div"][class$="lg"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-large;
+	height: $div-height-width-large;
+	top: $div-top-left-large;
+	left: $div-top-left-large;
+}
+[class^="spin-div"][class$="xl"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-extra-large;
+	height: $div-height-width-extra-large;
+	top: $div-top-left-extra-large;
+	left: $div-top-left-extra-large;
+}
+
+#spin-div1 {
+	animation-delay: -0.036s;
+}
+#spin-div2 {
+	animation-delay: -0.072s;
+}
+#spin-div3 {
+	animation-delay: -0.108s;
+}
+#spin-div4 {
+	animation-delay: -0.144s;
+}
+#spin-div5 {
+	animation-delay: -0.18s;
+}
+#spin-div6 {
+	animation-delay: -0.216s;
+}
+#spin-div7 {
+	animation-delay: -0.252s;
+}
+#spin-div8 {
+	animation-delay: -0.288s;
+}
+
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

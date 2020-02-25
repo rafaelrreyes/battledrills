@@ -1,0 +1,36 @@
+@import "~CSS/index";
+
+.diagram-view-container {
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+
+	.tab-flex-box {
+		display: flex;
+		flex-flow: row;
+		//justify-content: space-evenly;
+		//overflow: scroll;
+		min-height: 3em;
+	}
+
+	.task-priority-flex-box {
+		min-height: 6em;
+	}
+
+	.diagram-detailed-flex-box {
+		display: flex;
+		flex-flow: row;
+		min-height: 0;
+	}
+
+	.detailed-view-side-bar-button {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		background-color: $blue-grey-800;
+
+		&:hover {
+			background-color: $cyan-900;
+		}
+	}
+}

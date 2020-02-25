@@ -1,0 +1,116 @@
+@import "palette";
+
+$font-family: "Roboto";
+
+$font-size-1: 0.5em;
+$font-size-2: 0.75em;
+$font-size-3: 0.875em;
+$font-size-4: 1em;
+$font-size-5: 1.125em;
+$font-size-6: 1.25em;
+$font-size-7: 1.5em;
+
+$font-weight-normal: 400;
+$font-weight-bold: 700;
+
+%text-format {
+	font-family: $font-family;
+	color: $white;
+	&:disabled {
+		color: $light-text-disabled;
+	}
+}
+
+/*
+    **************************************
+    Heading fonts (same as body but bold)
+    **************************************
+*/
+@mixin heading-1 {
+	@extend %text-format;
+	font-size: $font-size-1;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-2 {
+	@extend %text-format;
+	font-size: $font-size-2;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-3 {
+	@extend %text-format;
+	font-size: $font-size-3;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-4 {
+	@extend %text-format;
+	font-size: $font-size-4;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-5 {
+	@extend %text-format;
+	font-size: $font-size-5;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-6 {
+	@extend %text-format;
+	font-size: $font-size-6;
+	font-weight: $font-weight-bold;
+}
+
+@mixin heading-7 {
+	@extend %text-format;
+	font-size: $font-size-7;
+	font-weight: $font-weight-bold;
+}
+
+/*
+    **************************************
+    Body fonts (not bold)
+    **************************************
+*/
+@mixin body-1 {
+	@extend %text-format;
+	font-size: $font-size-1;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-2 {
+	@extend %text-format;
+	font-size: $font-size-2;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-3 {
+	@extend %text-format;
+	font-size: $font-size-3;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-4 {
+	@extend %text-format;
+	font-size: $font-size-4;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-5 {
+	@extend %text-format;
+	font-size: $font-size-5;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-6 {
+	@extend %text-format;
+	font-size: $font-size-6;
+	font-weight: $font-weight-normal;
+}
+
+@mixin body-7 {
+	@extend %text-format;
+	font-size: $font-size-7;
+	font-weight: $font-weight-normal;
+}

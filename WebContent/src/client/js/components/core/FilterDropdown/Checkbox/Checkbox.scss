@@ -1,0 +1,37 @@
+@import "~CSS/index";
+
+.checkbox-component {
+	position: relative;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	height: 100%;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	.checkbox-label {
+		margin-left: 0.5em;
+	}
+
+	input {
+		position: absolute;
+		opacity: 0;
+		cursor: pointer;
+		height: 0;
+		width: 0;
+	}
+
+	.checkmark {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: $white;
+
+		&:after {
+			content: "";
+			position: absolute;
+			display: none;
+		}
+	}
+}

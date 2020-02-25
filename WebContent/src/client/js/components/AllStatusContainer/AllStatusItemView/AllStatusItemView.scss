@@ -1,0 +1,36 @@
+@import "~CSS/index";
+
+.all-status-items-container {
+}
+
+.all-status-items {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: row;
+	align-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.task-display-button {
+	cursor: pointer;
+	&:hover {
+		color: $cyan-700 !important;
+	}
+}
+
+.all-status-task-item-link {
+	color: $white;
+	text-decoration: none;
+
+	&:focus,
+	&:visited,
+	&:link,
+	&:active {
+		text-decoration: none;
+	}
+
+	&:hover {
+		color: $cyan-300;
+	}
+}

@@ -1,0 +1,41 @@
+@import "~CSS/index";
+
+.notification-view {
+	@include heading-3;
+	position: absolute;
+	right: 0.5em;
+	background-color: $blue-grey-900;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	margin: 0 0 0 0;
+	width: 30em;
+	height: 25em;
+
+	.notification-view-header-container {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		position: relative;
+
+		.notification-view-minimize-button {
+			cursor: pointer;
+			position: absolute;
+			right: 0;
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+	}
+
+	.notifications-view-none {
+		display: block;
+		margin-top: 0.5em;
+	}
+
+	.notification-view-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		overflow-y: scroll;
+		height: inherit;
+	}
+}

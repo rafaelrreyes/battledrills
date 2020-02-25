@@ -1,0 +1,34 @@
+@import "~CSS/index";
+
+.attachments-view {
+
+    .attachments-header {
+        @include body-4;
+        text-align: left;
+        display: flex;
+        align-items: center;
+    }
+
+    display: block;
+    width: 100%;
+    padding: 0 1em 0 1em;
+
+    .upload-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .upload-bar {
+            display: flex;
+            align-items: center;
+            position: relative;
+            background-color: $cyan-800;
+            .upload-percentage {
+                position: absolute;
+                left: .5em;
+                @include body-3;
+            }
+        }
+    }
+
+}

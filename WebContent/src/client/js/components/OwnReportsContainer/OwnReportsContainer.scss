@@ -1,0 +1,43 @@
+@import "~CSS/index";
+
+.drill-reports-container {
+	height: 100%;
+	display: flex;
+	flex-flow: column;
+
+	.drill-reports-main {
+		display: flex;
+		flex-flow: row;
+		height: 100%;
+
+		.drill-reports-left {
+			width: 100%;
+			display: flex;
+			flex-flow: column;
+
+			.drill-owner-table {
+				display: flex;
+				flex-flow: row wrap;
+				overflow: hidden;
+				overflow-y: auto;
+				justify-content: flex-start;
+				margin: 0 1em 1em 1em;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+		}
+	}
+
+	.detailed-view-side-bar-button {
+		display: flex;
+		align-items: center;
+		align-content: center;
+		background-color: $blue-grey-800;
+		cursor: pointer;
+
+		&:hover {
+			background-color: $cyan-900;
+		}
+	}
+}

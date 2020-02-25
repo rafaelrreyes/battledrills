@@ -1,0 +1,26 @@
+@import "~CSS/index";
+
+.link-button {
+	@include heading-5;
+	text-decoration: none;
+	background-color: $blue-grey-800;
+	color: $white;
+	padding: 0.5em;
+
+	&:focus,
+	&:visited,
+	&:link,
+	&:active {
+		text-decoration: none;
+	}
+
+	&:hover {
+		background: $cyan-700;
+		color: $white;
+	}
+}
+
+.active-link {
+	background-color: $grey-100;
+	color: $black;
+}

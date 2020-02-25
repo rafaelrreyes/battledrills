@@ -1,0 +1,24 @@
+@import "~CSS/index";
+
+.text-area-container {
+	border-radius: 1em;
+	background-color: $grey-900;
+	border-radius: 1em;
+	width: 90%;
+	padding: 0.125em 0;
+	border: 0.125em solid $border-color-hover;
+	height: 30px;
+	overflow: hidden;
+}
+
+.auto-size-textarea {
+	@include body-3;
+	border: 0;
+	overflow: hidden;
+	padding: 0.5em;
+	background-color: $grey-900;
+	height: 30px;
+	resize: none;
+	border-radius: 1em;
+	width: 100%;
+}

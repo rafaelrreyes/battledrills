@@ -1,0 +1,203 @@
+{
+	"type": "attack_on_critical_infrastructure",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 590,
+			"y": 15
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 590,
+					"y": 75
+				},
+				"tasks_coordinates": {
+					"x": 865,
+					"y": 30
+				},
+				"tasks": [
+					{
+						"description": "Stand to QRF"
+					},
+					{
+						"description": "Notify RCT SWO when details are available"
+					}
+				],
+				"children": [
+					{
+						"title": "XO",
+						"self_coordinates": {
+							"x": 70,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 5,
+							"y": 190
+						},
+						"tasks": [
+							{
+								"description": "Receive report from S-1"
+							},
+							{
+								"description": "Report to CO"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 195,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 168,
+							"y": 190
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support with RCT S-2 WO"
+							},
+							{
+								"description": "Reposition ISR"
+							},
+							{
+								"description": "Assess threat"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 360,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 332,
+							"y": 190
+						},
+						"tasks": [
+							{
+								"description": "W/O to QRF and nearest unit to site"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 505,
+							"y": 120
+						},
+						"tasks_coordinates": {
+							"x": 370,
+							"y": 330
+						},
+						"tasks": [
+							{
+								"description": "Coordinate air CASEVAC if required"
+							},
+							{
+								"description": "Monitor air control net"
+							},
+							{
+								"description": "Coordinate with BAS for CASEVAC"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 605,
+							"y": 145
+						},
+						"tasks_coordinates": {
+							"x": 555,
+							"y": 210
+						},
+						"tasks": [
+							{
+								"description": "Coordinate FS with nearest unit"
+							},
+							{
+								"description": "Build FSCMs (ACA/RFA)"
+							},
+							{
+								"description": "Pass aimpoint to Btry"
+							},
+							{
+								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "LOC",
+						"self_coordinates": {
+							"x": 805,
+							"y": 145
+						},
+						"tasks_coordinates": {},
+						"tasks": [],
+						"children": [
+							{
+								"title": "S-1",
+								"self_coordinates": {
+									"x": 755,
+									"y": 240
+								},
+								"tasks_coordinates": {
+									"x": 720,
+									"y": 295
+								},
+								"tasks": [
+									{
+										"description": "Submit PCR\"s for any 3/2 casualties"
+									},
+									{
+										"description": "Accountability report from unit"
+									},
+									{
+										"description": "Report to XO"
+									}
+								],
+								"children": []
+							},
+							{
+								"title": "S-4",
+								"self_coordinates": {
+									"x": 940,
+									"y": 240
+								},
+								"tasks_coordinates": {
+									"x": 883,
+									"y": 295
+								},
+								"tasks": [
+									{
+										"description": "Identify loss of equipment"
+									},
+									{
+										"description": "Coordinate with RCT for required Spt"
+									},
+									{
+										"description": "Coordinate Engr Spt"
+									},
+									{
+										"description": "Coordinate with RCT for required support"
+									}
+								],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

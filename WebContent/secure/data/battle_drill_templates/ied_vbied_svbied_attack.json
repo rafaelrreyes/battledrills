@@ -1,0 +1,206 @@
+{
+	"type": "ied_vbied_svbied_attack",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 610,
+			"y": 40
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 610,
+					"y": 95
+				},
+				"tasks_coordinates": {
+					"x": 750,
+					"y": 32
+				},
+				"tasks": [
+					{
+						"description": "Stand to QRF"
+					},
+					{
+						"description": "Notify RCT SWO"
+					}
+				],
+				"children": [
+					{
+						"title": "S-1",
+						"self_coordinates": {
+							"x": 45,
+							"y": 190
+						},
+						"tasks_coordinates": {
+							"x": 10,
+							"y": 260
+						},
+						"tasks": [
+							{
+								"description": "Get accountability of all units"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 235,
+							"y": 190
+						},
+						"tasks_coordinates": {
+							"x": 177,
+							"y": 260
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support with RCT S-2 WO"
+							},
+							{
+								"description": "Assess threat"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 335,
+							"y": 412
+						},
+						"tasks_coordinates": {
+							"x": 385,
+							"y": 510
+						},
+						"tasks": [
+							{
+								"description": "W/O to QRF and to nearest unit"
+							}
+						],
+						"children": [
+							{
+								"title": "IO",
+								"self_coordinates": {
+									"x": 285,
+									"y": 445
+								},
+								"tasks_coordinates": {
+									"x": 220,
+									"y": 510
+								},
+								"tasks": [
+									{
+										"description": "Combat Correspondent documents site"
+									},
+									{
+										"description": "PAO prepare press release"
+									}
+								],
+								"children": []
+							}
+						]
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 425,
+							"y": 190
+						},
+						"tasks_coordinates": {
+							"x": 375,
+							"y": 260
+						},
+						"tasks": [
+							{
+								"description": "Coordinate air CASEVAC, if required"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 595,
+							"y": 190
+						},
+						"tasks_coordinates": {
+							"x": 545,
+							"y": 260
+						},
+						"tasks": [
+							{
+								"description": "Coordinate FS with nearest unit"
+							},
+							{
+								"description": "Build FSCMs (ACA/RFA)"
+							},
+							{
+								"description": "Pass aimpoint to Btry"
+							},
+							{
+								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "LOC",
+						"self_coordinates": {
+							"x": 850,
+							"y": 175
+						},
+						"tasks_coordinates": {},
+						"tasks": [],
+						"children": [
+							{
+								"title": "S-1",
+								"self_coordinates": {
+									"x": 770,
+									"y": 260
+								},
+								"tasks_coordinates": {
+									"x": 715,
+									"y": 325
+								},
+								"tasks": [
+									{
+										"description": "Submit PCR\"s for any 3/2 casualties"
+									}
+								],
+								"children": []
+							},
+							{
+								"title": "S-4",
+								"self_coordinates": {
+									"x": 940,
+									"y": 260
+								},
+								"tasks_coordinates": {
+									"x": 885,
+									"y": 325
+								},
+								"tasks": [
+									{
+										"description": "Identify combat loss equipment"
+									},
+									{
+										"description": "Coordinate with RCT for required support"
+									},
+									{
+										"description": "Redirect movement if required"
+									},
+									{
+										"description": "Gather SALT report"
+									}
+								],
+								"children": []
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}

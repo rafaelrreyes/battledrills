@@ -1,0 +1,38 @@
+@import "~CSS/index";
+
+.tab {
+	@include heading-4;
+	color: $cyan-300;
+	background-color: $blue-grey-800;
+
+	height: 2.25em;
+	width: 12em;
+	padding: 0.5em;
+	border-radius: 5px 5px 0px 0px;
+	border-bottom: none;
+	margin-right: 0.5em;
+	cursor: pointer;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.active {
+	background: $grey-100;
+	color: $grey-900;
+}
+
+.tabs-list {
+	padding: 0;
+	margin: 0;
+	list-style: none;
+	display: flex;
+}
+
+.tabs-content {
+	margin: 1em;
+	padding: 1em;
+	border: 1px solid grey;
+	margin-top: -1em;
+}

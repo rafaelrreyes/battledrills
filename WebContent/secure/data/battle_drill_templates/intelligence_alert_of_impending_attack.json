@@ -1,0 +1,140 @@
+{
+	"type": "intelligence_alert_of_impending_attack",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 590,
+			"y": 30
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 590,
+					"y": 100
+				},
+				"tasks_coordinates": {
+					"x": 827,
+					"y": 72
+				},
+				"tasks": [
+					{
+						"description": "Stand to QRF"
+					},
+					{
+						"description": "Notify RCT SWO"
+					}
+				],
+				"children": [
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 62,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 5,
+							"y": 240
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support with RCT S-2 WO"
+							},
+							{
+								"description": "Reposition ISR"
+							},
+							{
+								"description": "Assess threat"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 230,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 173,
+							"y": 240
+						},
+						"tasks": [
+							{
+								"description": "W/O to QRF and all units"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 395,
+							"y": 175
+						},
+						"tasks_coordinates": {
+							"x": 345,
+							"y": 240
+						},
+						"tasks": [
+							{
+								"description": "Coordinate air recon & CAS with RCT AirO"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 575,
+							"y": 180
+						},
+						"tasks_coordinates": {
+							"x": 525,
+							"y": 240
+						},
+						"tasks": [
+							{
+								"description": "Coordinate FS with nearest unit"
+							},
+							{
+								"description": "Build FSCMs (ACA/RFA/FFA)"
+							},
+							{
+								"description": "Pass aimpoint to Btry"
+							},
+							{
+								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-4",
+						"self_coordinates": {
+							"x": 755,
+							"y": 180
+						},
+						"tasks_coordinates": {
+							"x": 697,
+							"y": 240
+						},
+						"tasks": [
+							{
+								"description": "Notify RCT of required support"
+							},
+							{
+								"description": "Redirect movement, if required"
+							},
+							{
+								"description": "W/O to convoys via available secure means"
+							}
+						],
+						"children": []
+					}
+				]
+			}
+		]
+	}
+}

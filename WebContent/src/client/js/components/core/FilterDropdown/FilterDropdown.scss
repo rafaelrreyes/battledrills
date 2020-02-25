@@ -1,0 +1,62 @@
+@import "~CSS/index";
+
+$dropdown-border-width: 0.125em;
+$dropdown-background-color: $grey-900;
+$dropdown-height: 2em;
+$dropdown-border-color-hover: $border-color-hover;
+
+.filter-dropdown {
+	margin: 0 0.5em;
+	background-color: $dropdown-background-color;
+	position: relative;
+	z-index: 100;
+	display: block;
+	float: left;
+
+	.filter-dropdown-default {
+		color: white;
+		@include body-3;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		cursor: pointer;
+		position: relative;
+		user-select: none;
+		display: flex;
+		padding: 0 0.5em;
+		background-color: $dropdown-background-color;
+		height: $dropdown-height;
+		align-items: center;
+		border: $dropdown-border-width solid $dropdown-border-color-hover;
+		height: 2em;
+		box-sizing: border-box;
+		width: -moz-max-content;
+
+		&:hover {
+			background-color: $blue-grey-700;
+		}
+	}
+
+	.filter-list {
+		list-style: none;
+		margin: 0;
+		padding: 0.25em 0 0 0;
+		position: absolute;
+		left: 0;
+		background-color: $dropdown-background-color;
+		width: 8em;
+
+		.filter-item {
+			color: $white;
+			@include body-3;
+			text-align: left;
+			height: 30px;
+			padding: 0 10px;
+			width: 90%;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+	}
+}

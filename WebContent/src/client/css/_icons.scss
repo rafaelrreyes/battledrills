@@ -1,0 +1,81 @@
+@import "palette";
+
+$material-icon-xxxs-size: 0.75em;
+$material-icon-xxs-size: 0.875em;
+$material-icon-xs-size: 1em;
+$material-icon-sm-size: 1.125em;
+$material-icon-md-size: 1.25em;
+$material-icon-default-size: 1.5em;
+$material-icon-lg-size: 2.25em;
+$material-icon-xl-size: 3em;
+$material-icon-xxl-size: 6em;
+
+@mixin icons($size: $material-icon-default-size) {
+	font-size: $size;
+}
+
+@mixin material-icons() {
+	font-family: "Material Icons";
+	font-weight: normal;
+	font-style: normal;
+	display: inline-block;
+	line-height: 1;
+	text-transform: none;
+	letter-spacing: normal;
+	vertical-align: middle;
+	word-wrap: normal;
+	white-space: nowrap;
+	direction: ltr;
+	color: $white;
+	@include icons();
+
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+
+	/* Support for all WebKit browsers. */
+	-webkit-font-smoothing: antialiased;
+	/* Support for Safari and Chrome. */
+	text-rendering: optimizeLegibility;
+
+	/* Support for Firefox. */
+	-moz-osx-font-smoothing: grayscale;
+
+	/* Support for IE. */
+	font-feature-settings: "liga";
+}
+
+.material-icons {
+	@include material-icons();
+}
+
+.material-icons.md-12 {
+	@include icons($material-icon-xxxs-size);
+}
+.material-icons.md-14 {
+	@include icons($material-icon-xxs-size);
+}
+.material-icons.md-16 {
+	@include icons($material-icon-xs-size);
+}
+.material-icons.md-18 {
+	@include icons($material-icon-sm-size);
+}
+.material-icons.md-20 {
+	@include icons($material-icon-md-size);
+}
+.material-icons.md-24 {
+	@include icons($material-icon-default-size);
+}
+.material-icons.md-36 {
+	@include icons($material-icon-lg-size);
+}
+.material-icons.md-48 {
+	@include icons($material-icon-xl-size);
+}
+.material-icons.md-96 {
+	@include icons($material-icon-xxl-size);
+}

@@ -1,0 +1,230 @@
+@import "~CSS/index";
+
+$input-text-color: $black;
+$input-text-color-disabled: $grey-800;
+$input-text-color-active: $grey-900;
+
+$input-background-color: $grey-900;
+$input-background-color-active: $cyan-300;
+$input-background-color-disabled: $grey-500;
+$input-grey-background-color: $grey-700;
+
+$input-border-width: 0.125em;
+$input-border-color-error: $border-color-error;
+$input-border-color-hover: $border-color-hover;
+$input-border-color-focus: $border-color-focus;
+
+$input-shadow-color-hover: $shadow-color-default;
+$input-shadow-color-active: $shadow-color-default;
+$input-shadow-color-focus: $shadow-color-default;
+
+$input-shadow-width-hover: $shadow-width-hover;
+$input-shadow-width-focus: $shadow-width-active;
+
+$input-height: 1.75em;
+$input-width-fill: 100%;
+$input-width-lg: 14.75em;
+$input-width-md: 11.25em;
+$input-width-sm: 7em;
+$input-width-xs: 5.25em;
+$input-width-xxs: 3.5em;
+
+input::-moz-focus-inner {
+	border: 0;
+}
+
+%input-flex-container-template {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+	background-color: $input-background-color;
+	box-sizing: border-box; //needed to include border size in width/height
+	border: solid $input-border-width $input-border-color-hover;
+	height: $input-height;
+	&:hover {
+		box-shadow: 0 0 $input-shadow-width-hover $input-shadow-color-hover;
+	}
+}
+
+%input-template {
+	color: $white;
+	background-color: $input-background-color;
+	text-align: left;
+	border: none;
+	flex: 99 1 auto;
+	min-width: 0;
+	padding: 0 0.5em 0 0.5em;
+	@include body-3;
+	:hover {
+		-webkit-box-shadow: none;
+		-moz-box-shadow: none;
+		box-shadow: none;
+	}
+	&:disabled {
+		color: $input-text-color-disabled;
+		background-color: $input-background-color-disabled;
+	}
+}
+
+div.input-flex-container {
+	&-fill {
+		@extend %input-flex-container-template;
+		width: $input-width-fill;
+	}
+	&-lg {
+		@extend %input-flex-container-template;
+		width: $input-width-lg;
+	}
+	&-md {
+		@extend %input-flex-container-template;
+		width: $input-width-md;
+	}
+	&-sm {
+		@extend %input-flex-container-template;
+		width: $input-width-sm;
+	}
+	&-xs {
+		@extend %input-flex-container-template;
+		width: $input-width-xs;
+	}
+	&-xxs {
+		@extend %input-flex-container-template;
+		width: $input-width-xxs;
+	}
+}
+
+div.input-flex-container-grey {
+	&-fill {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-fill;
+	}
+	&-lg {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-lg;
+	}
+	&-md {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-md;
+	}
+	&-sm {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-sm;
+	}
+	&-xs {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-xs;
+	}
+	&-xxs {
+		@extend %input-flex-container-template;
+		background-color: $input-grey-background-color;
+		width: $input-width-xxs;
+	}
+}
+
+div.input-flex-container-error {
+	&-fill {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-fill;
+	}
+	&-lg {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-lg;
+	}
+	&-md {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-md;
+	}
+	&-sm {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-sm;
+	}
+	&-xs {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-xs;
+	}
+	&-xxs {
+		@extend %input-flex-container-template;
+		border: solid $input-border-width $input-border-color-error;
+		width: $input-width-xxs;
+	}
+}
+
+input.c2pc-input {
+	&-fill {
+		@extend %input-template;
+	}
+	&-lg {
+		@extend %input-template;
+	}
+	&-md {
+		@extend %input-template;
+	}
+	&-sm {
+		@extend %input-template;
+	}
+	&-xs {
+		@extend %input-template;
+	}
+	&-xxs {
+		@extend %input-template;
+	}
+}
+
+input.c2pc-input-grey {
+	&-fill {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+	&-lg {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+	&-md {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+	&-sm {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+	&-xs {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+	&-xxs {
+		@extend %input-template;
+		background-color: $input-grey-background-color;
+	}
+}
+
+input.c2pc-input-error {
+	&-fill {
+		@extend %input-template;
+	}
+	&-lg {
+		@extend %input-template;
+	}
+	&-md {
+		@extend %input-template;
+	}
+	&-sm {
+		@extend %input-template;
+	}
+	&-xs {
+		@extend %input-template;
+	}
+	&-xxs {
+		@extend %input-template;
+	}
+}

@@ -1,0 +1,138 @@
+@import "~CSS/index";
+
+$cell-width: 21.5%;
+$left-column-width: 10%;
+$border: 1px solid $cyan-700;
+
+.all-status-headers {
+	border-top: $border;
+	border-left: $border;
+	border-right: $border;
+	display: flex;
+	align-items: center;
+	@include body-3;
+	margin: 0em 2em;
+	background-color: $blue-grey-800;
+	height: 5%;
+	min-height: min-content;
+
+	.all-status-empty-header {
+		min-width: $left-column-width;
+		width: $left-column-width;
+		padding: 0.5em;
+	}
+
+	.all-status-header-item {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0.5em;
+		width: $cell-width;
+	}
+}
+
+.all-status-table {
+	@include body-3;
+	margin: 0em 2em;
+	background-color: $blue-grey-800;
+	border-collapse: collapse;
+	height: 85%;
+	overflow: auto;
+	border: $border;
+
+	.all-status-table-body {
+		.all-status-role-row {
+			border-bottom: $border;
+			display: flex;
+
+			.all-status-role-name {
+				padding: 1em;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-width: $left-column-width;
+				width: $left-column-width;
+				border-right: $border;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.all-status-drill-column {
+				vertical-align: top;
+				width: $cell-width;
+				padding: 0.5em;
+
+				.all-status-tasks-cell {
+					.all-status-tasks-list {
+						list-style: none;
+						padding: 0;
+						margin: 0;
+
+						.all-status-tasks-item {
+							display: flex;
+							text-align: left;
+							padding: 0.5em;
+							background-color: $cyan-900;
+							margin: 0.5em;
+							box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+
+							.all-status-item-text {
+								padding: 0 0 0 0.5em;
+								flex: 99 1 auto;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+@media screen and (min-height: 200px) {
+	.all-status-table {
+		height: 75%;
+	}
+}
+
+@media screen and (min-height: 400px) {
+	.all-status-table {
+		height: 80%;
+	}
+}
+
+@media screen and (min-height: 600px) {
+	.all-status-table {
+		height: 85%;
+	}
+}
+
+@media screen and (min-width: 250px) {
+	.all-status-table {
+		height: 77.5%;
+	}
+}
+
+@media screen and (min-width: 400px) {
+	.all-status-table {
+		height: 80%;
+	}
+}
+
+@media screen and (min-width: 650px) {
+	.all-status-table {
+		height: 75%;
+	}
+}
+
+@media screen and (min-width: 900px) {
+	.all-status-table {
+		height: 77.5%;
+	}
+}
+
+@media screen and (min-width: 1100px) {
+	.all-status-table {
+		height: 80%;
+	}
+}

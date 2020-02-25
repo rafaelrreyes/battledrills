@@ -1,0 +1,82 @@
+@import "~CSS/index";
+
+.notes-view {
+	flex-grow: 1;
+	height: 100%;
+	display: flex;
+	flex-flow: column;
+
+	.notes-view-list {
+		height: 100%;
+		list-style: none;
+		margin: 0;
+		text-align: left;
+		padding: 1em;
+		overflow-y: scroll;
+
+		.notes-view-item {
+			@include heading-2;
+			color: $white;
+			background-color: $blue-grey-800;
+			border-radius: 1em;
+			margin-bottom: 1em;
+
+			.notes-view-header {
+				padding: 1em;
+				color: $cyan-400;
+				display: flex;
+				justify-content: space-between;
+
+				.notes-view-sender {
+				}
+
+				.notes-view-timestamp {
+				}
+			}
+
+			.notes-view-text {
+				padding: 1em;
+				word-wrap: break-word;
+
+				.notes-view-automated-label-in-progress {
+					color: $in-progress-color;
+				}
+
+				.notes-view-automated-label-blocked {
+					color: $blocked-color;
+				}
+
+				.notes-view-automated-label-completed {
+					color: $completed-color;
+				}
+			}
+		}
+	}
+
+	.message-container {
+		display: flex;
+		flex-direction: column;
+		.notes-message {
+			display: flex;
+			flex-direction: row;
+			padding: 0 1em;
+			.notes-send-icon {
+				color: $cyan-300;
+				cursor: pointer;
+				padding-left: 0.25em;
+				padding-top: 0.25em;
+			}
+		}
+
+		.character-limit {
+			display: flex;
+			flex-direction: row;
+			justify-content: flex-end;
+			padding-right: 4em;
+		}
+
+		.error-character-limit {
+			color: $red-700;
+		}
+	}
+}

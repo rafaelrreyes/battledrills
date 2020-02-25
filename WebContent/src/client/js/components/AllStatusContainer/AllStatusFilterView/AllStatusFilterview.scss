@@ -1,0 +1,78 @@
+@import "~CSS/index";
+
+.all-status-filter-view {
+	@include body-3;
+
+	display: flex;
+	margin: 0.5em 2em 0.5em 2em;
+	align-items: center;
+
+	.drill-dropdown {
+		float: left;
+		display: block;
+	}
+
+	.all-status-filter-roles-label {
+		margin-left: 1em;
+	}
+
+	.all-status-page-label {
+		@include body-3;
+		display: block;
+		float: right;
+		width: -moz-max-content;
+		white-space: -moz-pre-space;
+		margin-left: 0.5em;
+	}
+
+	@media screen and (max-width: 675px) {
+		.all-status-filter-roles-container {
+			display: none;
+		}
+	}
+
+	.all-status-filter-roles-container {
+		width: -moz-fit-content;
+		.all-status-filter-roles-list {
+			list-style: none;
+			display: flex;
+			flex-wrap: wrap;
+			margin: 0;
+			padding: 0;
+
+			.all-status-filter-role-item {
+				@include heading-3;
+				background-color: $cyan-700;
+				padding: 0 0.5em;
+				margin: 0 0.1em 0.1em 0.1em;
+				height: 2em;
+				display: flex;
+				align-items: center;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+
+				.all-status-filter-delete {
+					margin-left: 0.25em;
+					cursor: pointer;
+
+					&:hover {
+						opacity: 0.5;
+					}
+				}
+			}
+
+			.all-status-filter-role-item-all {
+				padding: 0.5em;
+				background-color: $cyan-700;
+				margin: 0 0.5em;
+				line-height: 1.5em;
+			}
+		}
+	}
+
+	.all-status-page-label {
+		display: block;
+		float: left;
+	}
+}

@@ -1,0 +1,31 @@
+@import "~CSS/index";
+
+.menu-content {
+	background-color: $grey-800;
+	box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
+	z-index: 2147483647; // max
+	position: absolute;
+	cursor: pointer;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.menu-option {
+	@include body-3;
+	padding: 0.5em 1em;
+	cursor: pointer;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	white-space: nowrap;
+
+	&:hover {
+		background-color: $grey-700;
+	}
+
+	.menu-option-icon {
+		vertical-align: bottom;
+		padding-right: 0.25em;
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"allowSyntheticDefaultImports": false,
+		"baseUrl": "./",
+		"paths": {
+			"CSS/*": ["src/client/css/*"],
+			"UTILITIES/*": ["src/client/js/utilities/*"],
+			"REDUX/*": ["src/client/js/redux/*"],
+			"CORE/*": ["src/client/js/components/core/*"],
+			"COMPONENTS/*": ["src/client/js/components/*"],
+			"HOOKS/*": ["src/client/js/hooks/*"]
+		}
+	},
+	"exclude": ["node_modules", "dist"]
+}

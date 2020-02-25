@@ -1,0 +1,243 @@
+{
+	"type": "missing_marine",
+	"data": {
+		"title": "CO",
+		"self_coordinates": {
+			"x": 465,
+			"y": 20
+		},
+		"tasks_coordinates": {},
+		"children": [
+			{
+				"title": "WO",
+				"self_coordinates": {
+					"x": 465,
+					"y": 75
+				},
+				"tasks_coordinates": {
+					"x": 890,
+					"y": 25
+				},
+				"tasks": [
+					{
+						"description": "Receive report from unit"
+					},
+					{
+						"description": "Warning Order to suborinate units and 3/2 QRF"
+					},
+					{
+						"description": "Report Missing Marine to RCT SWO"
+					},
+					{
+						"description": "Update when details are available"
+					}
+				],
+				"children": [
+					{
+						"title": "XO",
+						"self_coordinates": {
+							"x": 70,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 5,
+							"y": 195
+						},
+						"tasks": [
+							{
+								"description": "Receive reports from S-1 & Report to CO"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-2",
+						"self_coordinates": {
+							"x": 170,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 30,
+							"y": 345
+						},
+						"tasks": [
+							{
+								"description": "Coordinate ISR support with RCT S-2 WO"
+							},
+							{
+								"description": "Reposition ISR & Assess situation"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "S-3",
+						"self_coordinates": {
+							"x": 290,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 295,
+							"y": 220
+						},
+						"tasks": [
+							{
+								"description": "Receive Reports"
+							},
+							{
+								"description": "W/O to all companies and 3/2 QRF"
+							},
+							{
+								"description": "Reposition ISR"
+							},
+							{
+								"description": "Issue FRAGO to cordon area and search for missing marine"
+							}
+						],
+						"children": [
+							{
+								"title": "IO",
+								"self_coordinates": {
+									"x": 225,
+									"y": 335
+								},
+								"tasks_coordinates": {
+									"x": 215,
+									"y": 515
+								},
+								"tasks": [
+									{
+										"description": "IO prepare IO FRAGO"
+									}
+								]
+							}
+						]
+					},
+					{
+						"title": "AirO",
+						"self_coordinates": {
+							"x": 450,
+							"y": 150
+						},
+						"tasks_coordinates": {
+							"x": 400,
+							"y": 520
+						},
+						"tasks": [
+							{
+								"description": "Coordinate Air Support with RCT AirO if required"
+							},
+							{
+								"description": "Assess ability to provide continuous CAS"
+							},
+							{
+								"description": "Monitor A/C movement"
+							},
+							{
+								"description": "Coordinate with S-2 for ISR coverage"
+							},
+							{
+								"description": "Coordinate with BAS for CASEVAC"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "FSCC",
+						"self_coordinates": {
+							"x": 550,
+							"y": 130
+						},
+						"tasks_coordinates": {
+							"x": 500,
+							"y": 220
+						},
+						"tasks": [
+							{
+								"description": "Coordinate FS with nearest unit"
+							},
+							{
+								"description": "Build FSCMs (ACA/RFA)"
+							},
+							{
+								"description": "Pass aimpoint to Btry"
+							},
+							{
+								"description": "Coordinate with AirO to clear air space for CASEVAC/CAS"
+							}
+						],
+						"children": []
+					},
+					{
+						"title": "LOC",
+						"self_coordinates": {
+							"x": 690,
+							"y": 150
+						},
+						"tasks_coordinates": {},
+						"tasks": [],
+						"children": [
+							{
+								"title": "S-1",
+								"self_coordinates": {
+									"x": 690,
+									"y": 250
+								},
+								"tasks_coordinates": {
+									"x": 580,
+									"y": 520
+								},
+								"tasks": [
+									{
+										"description": "Submit information on missing marine"
+									},
+									{
+										"description": "Accountability report from units/sections"
+									},
+									{
+										"description": "Report to XO"
+									}
+								]
+							},
+							{
+								"title": "S-4",
+								"self_coordinates": {
+									"x": 775,
+									"y": 250
+								},
+								"tasks_coordinates": {
+									"x": 880,
+									"y": 350
+								},
+								"tasks": [
+									{
+										"description": "Notify RCT of any required support"
+									}
+								],
+								"children": [
+									{
+										"title": "BAS",
+										"self_coordinates": {
+											"x": 775,
+											"y": 385
+										},
+										"tasks_coordinates": {
+											"x": 755,
+											"y": 520
+										},
+										"tasks": [
+											{
+												"description": "Stand to BAS"
+											}
+										],
+										"children": []
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
