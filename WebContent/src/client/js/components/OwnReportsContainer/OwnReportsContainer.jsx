@@ -31,14 +31,8 @@ const OwnReportsContainer = () => {
 	}, [role]);
 
 	const getNewOwnerReport = (role) => {
-		API.getOwnerBillet(role, {}, (response) => {
-			let drills = [];
-			for (var key in response) {
-				drills.push({
-					[key]: response[key]
-				});
-			}
-			dispatch(setActiveBillet(drills));
+		API.getOwnerBillet(role, {}, (data) => {
+			dispatch(setActiveBillet(data));
 		});
 	};
 

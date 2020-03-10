@@ -2,15 +2,8 @@ import React from "react";
 import store from "REDUX/store";
 import { StatusIcon } from "CORE/index";
 import { API, STATUS_TYPES } from "UTILITIES/index";
-import {
-	getUser,
-	getNextActiveTask,
-	getSelectedDrill,
-	editTask,
-	resetSelectedTask,
-	editActiveBillet
-} from "REDUX/index";
-import "./TaskActionsMenu.scss";
+import { getUser, getSelectedDrill, editTask, resetSelectedTask, editActiveBillet } from "REDUX/index";
+import { setSelectedDrill } from "REDUX/index";
 
 export const getAvailableActions = (status, selectedTask) => {
 	const start = {
@@ -58,8 +51,10 @@ export const changeTaskState = (status, selectedTask) => {
 
 	API.updateTaskStatus(updatedSelectedTask, (response) => {
 		store.dispatch(editTask(selectedDrill, response, response.taskId));
-		store.dispatch(getNextActiveTask(selectedDrill.data, response));
 		store.dispatch(editActiveBillet(selectedDrill.name, response));
 		store.dispatch(resetSelectedTask());
+		API.getDrillByName(selectedDrill.name, {}, (drill) => {
+			store.dispatch(setSelectedDrill(drill));
+		});
 	});
 };

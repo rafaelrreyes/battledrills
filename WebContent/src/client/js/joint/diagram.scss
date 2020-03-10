@@ -9,6 +9,43 @@
 	background-color: $blue-grey-800;
 }
 
+.owner-container {
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	background: $white;
+	box-sizing: border-box;
+	padding: 0;
+	border: 0.125em solid $grey-900;
+	/* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
+	pointer-events: none;
+	-webkit-user-select: none;
+	z-index: 2;
+	text-align: left;
+
+	.owner-title {
+		@include heading-3;
+		color: $black;
+	}
+
+	.edit-owner-icon {
+		font-size: 1.25em;
+		color: $black;
+		cursor: pointer;
+		pointer-events: all;
+
+		&:hover {
+			color: $cyan-700;
+		}
+	}
+
+	.filler-div {
+		pointer-events: auto;
+	}
+}
+
 .action-items-container {
 	border: 0.125em solid $grey-900;
 	box-shadow: 0 0 0.625em rgba($black, 0.75);

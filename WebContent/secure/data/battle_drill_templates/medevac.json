@@ -1,5 +1,6 @@
 {
 	"type": "medevac",
+	"participants": ["CO", "WO", "S-3", "IO", "AirO", "S-2", "FSCC", "S-6", "LOC", "BAS", "S-4", "S-1"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

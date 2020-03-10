@@ -6,7 +6,8 @@ import {
 	taskUpdated,
 	chatMessageReceived,
 	websocketOpened,
-	attachmentManipulated
+	attachmentManipulated,
+	taskDescriptionUpdated
 } from "./WebsocketActions";
 
 import { dispatchToastNotification } from "CORE/index";
@@ -31,6 +32,11 @@ export const WebsocketTypes = {
 	}
 };
 
+const TaskEditKeys = {
+	STATUS: "status",
+	DESCRIPTION: "description"
+};
+
 /**
  * Uses data from the backend Notification classes to determine what to do.
  * The backend determines which clients should be receiving an update via websockets
@@ -48,6 +54,7 @@ export const dispatchWebsocket = (json) => {
 	isDrillReorder(json) && drillsReordered(json);
 	isAttachmentUpload(json) && attachmentManipulated(json);
 	isAttachmentDelete(json) && attachmentManipulated(json);
+	isTaskDescriptionEdit(json) && taskDescriptionUpdated(json);
 };
 
 export const isWebsocketOpened = ({ objectType, operationType }) => {
@@ -95,9 +102,9 @@ export const isDrillReorder = ({ objectType, operationType }) => {
 	return false;
 };
 
-export const isTaskStatusUpdate = ({ objectType, operationType }) => {
+export const isTaskStatusUpdate = ({ objectType, operationType, edittedKey }) => {
 	if (objectType === WebsocketTypes.OBJECT_TYPES.TASK) {
-		if (operationType === WebsocketTypes.OPERATION_TYPES.EDIT) {
+		if (operationType === WebsocketTypes.OPERATION_TYPES.EDIT && edittedKey === TaskEditKeys.STATUS) {
 			return true;
 		}
 	}
@@ -116,6 +123,15 @@ export const isAttachmentUpload = ({ objectType, operationType }) => {
 export const isAttachmentDelete = ({ objectType, operationType }) => {
 	if (objectType === WebsocketTypes.OBJECT_TYPES.ATTACHMENT) {
 		if (operationType === WebsocketTypes.OPERATION_TYPES.DELETE) {
+			return true;
+		}
+	}
+	return false;
+};
+
+export const isTaskDescriptionEdit = ({ objectType, operationType, edittedKey }) => {
+	if (objectType === WebsocketTypes.OBJECT_TYPES.TASK) {
+		if (operationType === WebsocketTypes.OPERATION_TYPES.EDIT && edittedKey === TaskEditKeys.DESCRIPTION) {
 			return true;
 		}
 	}

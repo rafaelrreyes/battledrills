@@ -5,9 +5,14 @@
  */
 package com.ngc.battledrills.data;
 
+import com.ngc.battledrills.comms.Notification;
+import com.ngc.battledrills.comms.Notify;
+import com.ngc.battledrills.comms.NotifyManager;
+import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.manage.BattleDrillManager;
 import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.exception.ItemNotFoundException;
+import com.ngc.battledrills.util.BattleDrillConstants;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -73,6 +78,21 @@ public class TaskRepo {
         }
         
         masterTasks.put(task.getId(), task);
+    }
+    
+    public static void editTaskDescription(Task task, String description) {
+        Objects.requireNonNull(task);
+        
+        if (masterTasks.containsKey(task.getId())) {
+            Task edittedTask = masterTasks.get(task.getId());
+            String newDescription = "";
+            if (null != description || !StringUtils.isBlank(description)) {
+                newDescription = description;
+            }
+            
+            edittedTask.setDescription(newDescription);
+            masterTasks.replace(task.getId(), edittedTask);
+        }
     }
     
     public static int size()
@@ -156,12 +176,14 @@ public class TaskRepo {
             BattleDrillManager mgr = BattleDrillManager.getInstance();
             BattleDrill battleDrill = mgr.getByName(battleDrillName);
 
-            if(null != battleDrill)
+            if (null != battleDrill)
             {
                 boolean success = battleDrill.deleteTask(taskId);
                 if(success)
-                {
+                {          
+                    battleDrill.dequeuePrioritizedTask(taskId);
                     masterTasks.remove(taskId);
+                    mgr.saveBattleDrill(battleDrillName, false);
                 }
             }
             else

@@ -1,6 +1,6 @@
 import React from "react";
 import store from "REDUX/store";
-import { addToast, setSelectedDrill } from "REDUX/index";
+import { addToast, setSelectedDrill } from "REDUX/";
 import {
 	API,
 	Routes,
@@ -13,9 +13,10 @@ import {
 	isAttachmentUpload,
 	AttachmentTypes,
 	isAttachmentDelete,
+	isTaskDescriptionEdit,
 	NoteTypes
-} from "UTILITIES/index";
-import { Button, ButtonSizes, ButtonTypes } from "CORE/index";
+} from "UTILITIES/";
+import { Button, ButtonSizes, ButtonTypes } from "CORE/";
 
 import "./ToastHelper.scss";
 
@@ -75,10 +76,9 @@ const getPlainToastMessage = (websocketResponse) => {
  * @returns {JSX} toast message in HTML for styling
  */
 export const getToastMessageHtml = (props) => {
-	const { user } = props;
+	const { user, drillName, taskData } = props;
 
 	if (isTaskStatusUpdate(props)) {
-		const { taskData } = props;
 		const { taskDescription, currentStatus } = taskData;
 		const splitDescription = taskDescription.split(" ");
 		const shortenedTaskDesc =
@@ -93,6 +93,11 @@ export const getToastMessageHtml = (props) => {
 				</span>
 			</>
 		);
+		return message;
+	}
+
+	if (isTaskDescriptionEdit(props)) {
+		const message = <>{`${user.role} edited description of a task in drill "${drillName}"`}</>;
 		return message;
 	}
 
@@ -143,6 +148,11 @@ export const getToastMessageString = (props) => {
 		const id = attachmentType === AttachmentTypes.DRILL ? drillName : taskData.taskDescription;
 		return `${user.role} deleted attachment "${attachmentName}" from ${attachmentType} "${id}"`;
 	}
+
+	if (isTaskDescriptionEdit(props)) {
+		const { drillName } = props;
+		return `${user.role} edited description of a task in drill "${drillName}"`;
+	}
 };
 
 export const getNotificationLink = (props) => {
@@ -151,7 +161,8 @@ export const getNotificationLink = (props) => {
 		isNewNote(props) ||
 		isNewDrill(props) ||
 		isAttachmentUpload(props) ||
-		isAttachmentDelete(props)
+		isAttachmentDelete(props) ||
+		isTaskDescriptionEdit(props)
 	) {
 		const link = (
 			<Button
@@ -175,7 +186,7 @@ export const getNotificationLink = (props) => {
  */
 export const onNotificationClick = (props) => {
 	const { drillName, setVisible, history } = props;
-	if (isTaskStatusUpdate(props) || isNewNote(props) || isNewDrill(props)) {
+	if (isTaskStatusUpdate(props) || isNewNote(props) || isNewDrill(props) || isTaskDescriptionEdit(props)) {
 		const { taskData } = props;
 
 		// this stuff is run after the navigation to /active_diagram because of the request being async

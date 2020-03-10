@@ -1,0 +1,29 @@
+@import "~CSS/index";
+
+.new-task-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.new-task-header {
+		@include heading-5;
+	}
+
+	.new-task-form {
+		margin-top: 0.5em;
+		width: 30em;
+
+		.new-task-role {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0.5em 0 0.5em 0;
+
+			.new-task-label {
+				min-width: max-content;
+				@include body-3;
+				margin-right: 0.5em;
+			}
+		}
+	}
+}

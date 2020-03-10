@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -16,8 +17,11 @@ import com.ngc.battledrills.comms.Notification;
 import com.ngc.battledrills.comms.Notify;
 import com.ngc.battledrills.comms.NotifyManager;
 import com.ngc.battledrills.comms.NotifyTypes;
+import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.AttachmentManager;
+import com.ngc.battledrills.manage.BattleDrillManager;
 import com.ngc.battledrills.template.BattleDrillTemplate;
+import com.ngc.battledrills.util.BattleDrillConstants;
 import java.security.InvalidParameterException;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,6 +30,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -34,13 +42,16 @@ import org.apache.commons.lang3.StringUtils;
  */
 @JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BattleDrill extends BattleDrillTemplate{
+public class BattleDrill extends BattleDrillTemplate {
     private String name;
     private String creatorName;
     private LocalDateTime startTime = null;
     private LocalDateTime endTime = null;
     private Map<String, String> location = new HashMap<>();
     private List<Attachment> attachments = new ArrayList<>();
+    
+    @JsonProperty("prioritizedTasks")
+    private List<Task> prioritizedTasks = new ArrayList<>();
     
     public BattleDrill(){}
 
@@ -115,7 +126,7 @@ public class BattleDrill extends BattleDrillTemplate{
         }
         return isDeleted;
     }
-    
+
     public void setName(String name)
     {
         this.name = name;
@@ -170,7 +181,7 @@ public class BattleDrill extends BattleDrillTemplate{
         }
         
         Node root = this.getRoot();
-        return (root.getOwner().equalsIgnoreCase(owner))?root.getTasks():root.getTasksByOwner(owner);
+        return (null == root ? null : (root.getOwner().equalsIgnoreCase(owner))?root.getTasks():root.getTasksByOwner(owner));
     }
     
     // Returns a list of all tasks grouped by the tasks' owner
@@ -225,7 +236,7 @@ public class BattleDrill extends BattleDrillTemplate{
     // @return a boolean value indicating whether or not the task was found and deleted.  A false value indicates the task was not found in this battle drill
     public boolean deleteTask(String taskId)
     {
-        if(StringUtils.isBlank(taskId))
+        if (StringUtils.isBlank(taskId))
         {
             throw new InvalidParameterException("Unable to delete task - taskId parameter cannot be blank");
         }
@@ -243,16 +254,7 @@ public class BattleDrill extends BattleDrillTemplate{
      * @throws java.lang.Exception
      */
     public void updateDiagramCoordinates(String owner, String coordinateType, int x, int y) throws Exception {
-        Node root = this.getRoot();
-        Node targetNode;
-        
-        // case for root owner, in most cases CO or Convoy Commander
-        if (root.getOwner().equalsIgnoreCase(owner)){
-            targetNode = root;
-        } else {
-            targetNode = root.getSubtreeByOwner((owner));
-        }
-        
+        Node targetNode = getNodeByOwner(owner);
         switch (coordinateType) {
             case Node.NodeConstants.SELF:
                 targetNode.updateSelfCoordinates(x, y);
@@ -263,8 +265,259 @@ public class BattleDrill extends BattleDrillTemplate{
             default:
                 throw new Exception("Coordinate type must be one of the following: self, tasks");
         }
+        
+        // TODO
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        mgr.saveBattleDrill(this.getName(), false);
     }
     
+    /**
+     * Updates the description of a task embedded within this drill. Looks up the target owner node and then updates its target task.
+     * @param owner
+     * @param user
+     * @param taskId
+     * @param description 
+     * @return boolean
+     */
+    public boolean updateTaskDescription(String owner, User user, String taskId, String description) {
+        Node targetNode = getNodeByOwner(owner);
+        return targetNode.updateTaskDescriptionById(taskId, user, description);
+    }
+    
+    /**
+     * Adds a new task to an owner by their name.
+     * @param owner
+     * @param description
+     * @param user
+     * @return boolean
+     */
+    public boolean addTaskToOwner(String owner, String description, User user) {
+
+        try {
+            Node targetNode = getNodeByOwner(owner);
+            Map<String, Integer> coordinates = new HashMap<>();
+            
+            // only set the coordinates if it the first task being added
+            if (targetNode.getTasks().isEmpty()) {
+                coordinates.put("x", targetNode.getSelfCoordinates().get("x"));
+                coordinates.put("y", targetNode.getSelfCoordinates().get("y") + BattleDrillConstants.DEFAULT_DIAGRAM_Y_COORDINATE_OFFSET);
+            }
+            
+            // TODO perform notification here
+            return targetNode.addNewTask(description, coordinates);
+        } catch (Exception e) {
+            throw new WebApplicationException("Error when trying to find owner of name: " + owner + ". That owner does not exist.");
+        }
+        
+    }
+    
+    /**
+     * Adds a new owner to this drill.
+     * @param owner
+     * @param parent
+     * @return boolean
+     */
+    public boolean addOwner(String owner, String parent) {
+        
+        // create the new owner
+        Node newNode = new Node();
+        Map<String, Integer> coordinates = new HashMap<>();
+        newNode.setOwner(owner);
+        
+        // this owner is being added as a child to another node
+        if (null != parent || !StringUtils.isBlank(parent)) {
+        
+            Node parentNode = getNodeByOwner(parent);
+            
+            // Place new owner node directly under its parent in diagram
+            coordinates.put("x", parentNode.getSelfCoordinates().get("x"));
+            coordinates.put("y", parentNode.getSelfCoordinates().get("y") + BattleDrillConstants.DEFAULT_DIAGRAM_Y_COORDINATE_OFFSET);
+            newNode.setSelfCoordinates(coordinates);
+            
+            // add the new node to the children of parent
+            parentNode.addChildNode(newNode);
+
+            
+            // set the parent of the new node
+            newNode.parent = parentNode;
+            
+        // this is the new root node
+        } else {
+            // Default new root node in "middle" of diagram
+            coordinates.put("x", BattleDrillConstants.DEFAULT_DIAGRAM_ROOT_X_COORDINATE);
+            coordinates.put("y", BattleDrillConstants.DEFAULT_DIAGRAM_ROOT_Y_COORDINATE);
+            newNode.setSelfCoordinates(coordinates);
+            newNode.setBattleDrillName(this.getName());
+            this.setRoot(newNode);
+        }
+        
+        super.addParticipant(owner);
+        
+        // save to database
+        try {
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            mgr.saveBattleDrill(this.getName(), false);
+        } catch (ItemNotFoundException ex) {
+            throw new WebApplicationException("Error when adding new owner.");
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Edits a current owner to a new title.
+     * @param owner
+     * @param newOwner
+     * @return 
+     */
+    public boolean editOwner(String owner, String newOwner) {
+        Node targetNode = getNodeByOwner(owner);
+        return targetNode.editOwnerAndSave(newOwner);
+    }
+    
+    /**
+     * 
+     * @param owner
+     * @return 
+     */
+    public boolean deleteOwner(String owner) {
+        // deleting an owner should also delete their task and subgroups, otherwise, we may want to set the deleted owner's owner to the childs (mending open wound)
+        try {
+            Node targetNode = getNodeByOwner(owner);
+            
+            // delete all participants under this owner from participants data structure
+            recursiveDeleteParticipant(targetNode);
+            
+            // delete self from participants data structure
+            super.deleteParticipant(owner);
+            
+            // empty all tasks and children data structures
+            targetNode.emptyTasks();
+            targetNode.emptyChildren();
+            
+            // loop through the parent of this owner and delete its pointer to this node
+            Node parentNode = targetNode.parent;
+            
+            // check if this is not the root
+            if (null != parentNode) {
+                for (int i = 0; i < parentNode.getChildNodes().size(); i++) {
+                    if (parentNode.getChildNodes().get(i).getOwner().equalsIgnoreCase(owner)) {
+                        parentNode.getChildNodes().remove(i);
+                    }
+                }
+            } else {
+                super.emptyParticipants();
+                this.setRoot(null);
+            }
+            
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            mgr.saveBattleDrill(getName(), false);
+            return true;
+        } catch (ItemNotFoundException ex) {
+            throw new WebApplicationException("Error when attempting to delete owner");
+        }
+    }
+    
+    /**
+     * Deletes all owners under the parameter node (subordinates) from the participants data structure.
+     * @param node 
+     */
+    public void recursiveDeleteParticipant(Node node) {
+        if (node.getChildNodes() == null || node.getChildNodes().isEmpty()) {
+            super.deleteParticipant(node.getOwner());
+        } else {
+            node.getChildNodes().forEach((childNode) -> {
+                recursiveDeleteParticipant(childNode);
+            });
+        }
+    }
+    
+    public void enqueuePrioritizedTask(Task task) {
+        // can only queue if there are less than max allowed
+        if (this.prioritizedTasks.size() < BattleDrillConstants.MAX_PRIORITIZED_TASKS) {
+            this.prioritizedTasks.add(task);
+        }
+    }
+    
+    public void dequeuePrioritizedTask(String taskId) {
+        boolean dequeuedTask = false;
+        if (this.prioritizedTasks.isEmpty()) {
+            // TODO cannot dequeue any tasks
+        } else {
+            // loop through queue and identify task that should be dequeued
+            for (int i = 0; i < this.prioritizedTasks.size(); i++) {
+                Task targetTask = this.prioritizedTasks.get(i);
+                if (targetTask.getId().equalsIgnoreCase(taskId)) {
+                    System.out.println("removing task from prioritized: " + taskId);
+                    this.prioritizedTasks.remove(i);
+                    dequeuedTask = true;
+                }
+            }
+            
+            // whenever a task is dequeued, find the next task to be queued
+            // usually start at root owner, usually CO
+            // only need to find a new task to queue if one was actually removed
+            if (dequeuedTask) {
+                Node rootNode = this.getRoot();
+                findTaskToQueue(rootNode);
+            }
+        }
+    }
+    
+    public void findTaskToQueue(Node node) {
+        // check if this node has any tasks that aren't completed
+        if (node.getTasks() != null || node.getTasks().size() > 0) {
+            List<Task> tasks = new ArrayList<>(node.getTasks());
+            
+            // check if any of the tasks of current node are NOT COMPLETED, then queue them
+            for (int i = 0; i < tasks.size(); i++) {
+                // check if task is COMPLETED
+                String status = tasks.get(i).getCurrentStatus().getStatus();
+                if (!status.equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
+                    // check if this task is already queued...
+                    boolean isAlreadyQueued = false;
+                    for (int j = 0; j < this.prioritizedTasks.size(); j++) {
+                        // found task in priority already
+                        if (tasks.get(i).getId().equals(this.prioritizedTasks.get(j).getId())) {
+                            isAlreadyQueued = true;
+                        }
+                    }
+                    
+                    // prevent duplicate task queues
+                    if (!isAlreadyQueued) {
+                        enqueuePrioritizedTask(tasks.get(i));   
+                    }
+                    
+                    // break when we find a task that isn't completed, allowing next child node to queue a task
+                    break;
+                }
+            }
+        }
+        
+        // recursively check through tasks of child nodes
+        // TODO: might be worth checking if max size of queue is reached before recursively checking
+        if (node.getChildNodes() != null || node.getChildNodes().size() > 0) {
+            List<Node> children = new ArrayList<>(node.getChildNodes());
+            
+            // check if any of the children of current node has tasks that are NOT COMPLETED, then queue them
+            for (int i = 0; i < children.size(); i++) {
+                findTaskToQueue(children.get(i));
+            }
+        }
+    }
+    
+    public void setPrioritizedTasks(List<Task> prioritizedTasks) {
+        this.prioritizedTasks = prioritizedTasks;
+    }
+    
+    public List<Task> getPrioritizedTasks() {
+        return this.prioritizedTasks;
+    }
+    
+    /**
+     * Sets the location latitude and longitude of this drill.
+     * @param location 
+     */
     public void setLocation(Map<String, String> location) {
         if (StringUtils.isBlank(location.get("latitude")) 
             || StringUtils.isBlank(location.get("longitude"))) {
@@ -284,19 +537,42 @@ public class BattleDrill extends BattleDrillTemplate{
         }
     }
     
+    /**
+     * Helper to get the node by the owner name.
+     * @param owner
+     * @return Node
+     */
+    private Node getNodeByOwner(String owner) {
+        Node rootNode = this.getRoot();
+        return rootNode.getOwner().equalsIgnoreCase(owner) ? rootNode : rootNode.getSubtreeByOwner(owner);
+    }
+    
     @JsonProperty("location")
     public Map<String, String> getLocation() {
         return this.location;
     }
     
-    public void start()
+    public void start() throws ItemNotFoundException
     {
        startTime = LocalDateTime.now();
+       // TODO, begin tasks prioritizing here
+       Node rootNode = this.getRoot();
+       
+       // in cases where a drill does not have a single role
+       if (null != rootNode) {
+           findTaskToQueue(rootNode);
+       }
+       
+       BattleDrillManager mgr = BattleDrillManager.getInstance();
+       mgr.saveBattleDrill(this.getName(), false);
     }
     
-    public void stop()
+    public void stop() throws ItemNotFoundException
     {
         endTime = LocalDateTime.now();
+        this.setPrioritizedTasks(null);
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        mgr.saveBattleDrill(this.getName(), false);
     }
     
     @Override

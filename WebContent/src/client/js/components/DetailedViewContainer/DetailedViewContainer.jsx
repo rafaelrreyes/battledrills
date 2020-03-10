@@ -1,26 +1,44 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { TaskActionsMenu, AttachmentsView } from "COMPONENTS/";
-import { AttachmentTypes } from "UTILITIES/";
+import { Input, INPUT_SIZES, INPUT_TYPES } from "CORE/";
+import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES/";
 import "./DetailedViewContainer.scss";
 
 // views
 import { NotesView } from "../index";
 
 // redux
-import { getSelectedTask, getUser, getCurrentView } from "REDUX/index";
+import {
+	getSelectedTask,
+	getUser,
+	getCurrentView,
+	getSelectedDrillName,
+	setSelectedDrill,
+	setSelectedTask,
+	setActiveBillet
+} from "REDUX/";
 
-import { MaterialIconNames, Routes } from "UTILITIES/index";
-
+const MAX_TASK_DESCRIPTION_LENGTH = 150;
 const DetailedViewContainer = () => {
 	// state
 	const [displayActionButtons, setDisplayActionButtons] = useState(false);
+	const [editDescription, setEditDescription] = useState(false);
+
+	const dispatch = useDispatch();
 
 	// redux selectors
 	const selectedTask = useSelector(getSelectedTask);
-	const { taskId, description, notes } = selectedTask;
+	const selectedDrillName = useSelector(getSelectedDrillName);
+	const { taskId, description, notes, owner } = selectedTask;
 	const user = useSelector(getUser);
 	const currentView = useSelector(getCurrentView);
+
+	const [newDescription, setNewDescription] = useState(description);
+
+	useEffect(() => {
+		cancelEditDescription();
+	}, [selectedTask]);
 
 	const showActionsButton = () => {
 		setDisplayActionButtons(true);
@@ -28,6 +46,49 @@ const DetailedViewContainer = () => {
 
 	const hideActionsButtons = () => {
 		setDisplayActionButtons(false);
+	};
+
+	const toggleEditDescription = () => {
+		if (editDescription) {
+			const requestBody = {
+				owner,
+				description: newDescription,
+				taskId,
+				user
+			};
+
+			API.editTask(
+				requestBody,
+				() => {
+					API.getDrillByName(selectedDrillName, {}, (drill) => {
+						dispatch(setSelectedDrill(drill));
+					});
+
+					API.getTaskById(taskId, {}, (task) => {
+						dispatch(setSelectedTask(task));
+					});
+
+					if (currentView === Routes.MY_REPORT) {
+						API.getOwnerBillet(owner, {}, (data) => {
+							dispatch(setActiveBillet(data));
+						});
+					} else if (currentView === Routes.ACTIVE_DIAGRAM) {
+						API.getTaskById(taskId, {}, (task) => {
+							dispatch(setSelectedTask(task));
+						});
+					}
+				},
+				(error) => {
+					console.error(`Error when editing task: ${taskId}`);
+				}
+			);
+		}
+		setEditDescription(!editDescription);
+	};
+
+	const cancelEditDescription = () => {
+		setEditDescription(false);
+		setNewDescription(description);
 	};
 
 	const renderActionsButtons = () => {
@@ -60,14 +121,45 @@ const DetailedViewContainer = () => {
 		return <div className="detailed-view" />;
 	}
 
+	const renderDescription = () => {
+		if (editDescription) {
+			return (
+				<Input
+					inputType={INPUT_TYPES.REGULAR}
+					inputSize={INPUT_SIZES.FILL}
+					defaultValue={description}
+					onChange={onDescriptionChange}
+					submit={toggleEditDescription}
+					focus={true}
+					placeholder="Description"
+					maxlength={MAX_TASK_DESCRIPTION_LENGTH}
+				/>
+			);
+		} else {
+			return newDescription ? newDescription : TASK_DESCRIPTION_PLACEHOLDER;
+		}
+	};
+
+	const onDescriptionChange = (value) => {
+		setNewDescription(value);
+	};
+
 	return (
 		<div className="detailed-view">
 			<div className="alt-card-title">Task Information</div>
 			<div className="alt-card-content">
 				<div className="data-flex-container">
-					<div className="data-info">
-						<div className="data-key">Description</div>
-						<div className="data-value">{description}</div>
+					<div className="detailed-task-description-container">
+						<i className="material-icons edit-description-icon" onClick={toggleEditDescription}>
+							{editDescription ? MaterialIconNames.SAVE : MaterialIconNames.EDIT}
+						</i>
+						{editDescription ? (
+							<i className="material-icons cancel-edit-description-icon" onClick={cancelEditDescription}>
+								{MaterialIconNames.BLOCK}
+							</i>
+						) : null}
+
+						<span className="detailed-task-description">{renderDescription()}</span>
 					</div>
 					{currentView !== Routes.COMPLETED_DIAGRAM && (
 						<div className="detailed-view-actions">

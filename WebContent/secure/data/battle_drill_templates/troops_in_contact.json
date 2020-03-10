@@ -1,5 +1,6 @@
 {
 	"id": "12345",
+	"participants": ["CO", "WO", "XO", "S-2", "S-3", "AirO", "IO", "FSCC", "LOC", "S-1", "S-4", "SAS"],
 	"type": "troops_in_contact",
 	"attachments": [],
 	"data": {
@@ -22,7 +23,7 @@
 				},
 				"tasks": [
 					{
-						"description": "Recieve report from unit in contact"
+						"description": "Receive report from unit in contact"
 					},
 					{
 						"description": "Report contact to RCT SWO"

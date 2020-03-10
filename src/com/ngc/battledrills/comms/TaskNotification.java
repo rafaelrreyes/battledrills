@@ -19,21 +19,24 @@ public class TaskNotification extends Notification {
     private Map<String, String> taskData = new HashMap<>();
     private String noteId = "";
     private String drillName = "";
+    private String edittedKey = "";
     
     /**
      * This is when a task gets a status change.
      * @param operationType
+     * @param edittedKey
      * @param user
      * @param drillName
      * @param taskData
      * @param noteId
      */
-    public TaskNotification(String operationType, User user, String drillName, Map<String, String> taskData, String noteId) {
+    public TaskNotification(String operationType, String edittedKey, User user, String drillName, Map<String, String> taskData, String noteId) {
         super(NotifyTypes.OBJECT_TYPES.TASK, operationType, user);
-        if(taskData.isEmpty() || StringUtils.isBlank(operationType))
+        if(taskData.isEmpty() || StringUtils.isBlank(operationType) || StringUtils.isBlank(edittedKey))
         {
-            throw new InvalidParameterException("Unable to create TaskNotification - taskId and operationType parameters cannot be blank");
+            throw new InvalidParameterException("Unable to create TaskNotification - taskId, edittedKey, and operationType parameters cannot be blank");
         }
+        this.edittedKey = edittedKey;
         this.taskData.putAll(taskData);
         this.noteId = noteId;
         this.drillName = drillName;
@@ -51,6 +54,10 @@ public class TaskNotification extends Notification {
         return this.drillName;
     }
     
+    public String getEdittedKey() {
+        return this.edittedKey;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -60,6 +67,7 @@ public class TaskNotification extends Notification {
         sb.append("Drill Name: ").append(getDrillName()).append(System.lineSeparator());
         sb.append("Object Type: ").append(getObjectType()).append(System.lineSeparator());
         sb.append("Operation Type: ").append(getOperationType()).append(System.lineSeparator());
+        sb.append("Editted Key: ").append(getEdittedKey()).append(System.lineSeparator());
 
         return sb.toString();
     }

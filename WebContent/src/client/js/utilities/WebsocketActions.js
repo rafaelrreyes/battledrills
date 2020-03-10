@@ -1,13 +1,6 @@
 import store from "REDUX/store";
 import { API, AttachmentTypes } from "UTILITIES/";
-import {
-	getSelectedDrillName,
-	getRole,
-	getSelectedTask,
-	getSelectedDrill,
-	getNextActiveTask,
-	getAllChats
-} from "REDUX/index";
+import { getSelectedDrillName, getRole, getSelectedTask, getSelectedDrill, getAllChats } from "REDUX/index";
 import {
 	setActiveBillet,
 	setAllStatuses,
@@ -82,14 +75,8 @@ export const taskUpdated = (websocketResponse) => {
 	const selectedDrill = getSelectedDrill(store.getState());
 	const selectedTask = getSelectedTask(store.getState());
 
-	API.getOwnerBillet(role, {}, (response) => {
-		let drills = [];
-		for (let key in response) {
-			drills.push({
-				[key]: response[key]
-			});
-		}
-		store.dispatch(setActiveBillet(drills));
+	API.getOwnerBillet(role, {}, (data) => {
+		store.dispatch(setActiveBillet(data));
 	});
 
 	API.getMetrics({}, (response) => {
@@ -112,7 +99,61 @@ export const taskUpdated = (websocketResponse) => {
 						const updatedSelectedDrill = getSelectedDrill(store.getState());
 
 						store.dispatch(editTask(updatedSelectedDrill, task, taskData.taskId));
-						store.dispatch(getNextActiveTask(updatedSelectedDrill.data, task));
+						// doesn't need to be run if the task changed is not the one being viewed
+						if (taskData.taskId === selectedTask.taskId) {
+							const automatedNote = {
+								id: noteId,
+								noteText: taskData.currentStatus,
+								timestampMillis: timestamp,
+								type: "auto",
+								user: user.role
+							};
+
+							store.dispatch(editSelectedTaskNotes(automatedNote));
+							// this is pretty much just updating top-level end time, but uses the whole response from getTaskById to do so
+							store.dispatch(setSelectedTask(task));
+						}
+					});
+				}
+			},
+			(err) => {
+				console.log("err", err);
+			}
+		);
+	}
+};
+
+export const taskDescriptionUpdated = (websocketResponse) => {
+	const { taskData, drillName, noteId, timestamp, user } = websocketResponse;
+
+	const role = getRole(store.getState()).toUpperCase();
+	const selectedDrill = getSelectedDrill(store.getState());
+	const selectedTask = getSelectedTask(store.getState());
+
+	API.getOwnerBillet(role, {}, (data) => {
+		store.dispatch(setActiveBillet(data));
+	});
+
+	API.getMetrics({}, (response) => {
+		store.dispatch(setAllStatuses(response));
+	});
+
+	// none of this needs to be called if the drill selected for a subscriber is not the one being updated by the websocket
+	if (drillName === selectedDrill.name) {
+		API.getDrillByName(
+			selectedDrill.name,
+			{},
+			(response) => {
+				if (response !== null) {
+					// this makes sense because the selected drill should be updated on
+					// subscriber client assuming theyre looking at the same drill as person
+					// who updated
+					store.dispatch(setSelectedDrill(response));
+					// now update the task that was updated on subscriber clients redux stores
+					API.getTaskById(taskData.taskId, {}, (task) => {
+						const updatedSelectedDrill = getSelectedDrill(store.getState());
+
+						store.dispatch(editTask(updatedSelectedDrill, task, taskData.taskId));
 						// doesn't need to be run if the task changed is not the one being viewed
 						if (taskData.taskId === selectedTask.taskId) {
 							const automatedNote = {
@@ -191,7 +232,10 @@ export const attachmentManipulated = (websocketResponse) => {
 		}
 	} else if (attachmentType === AttachmentTypes.TASK) {
 		const { taskData } = websocketResponse;
-		if (taskData !== null || taskData.taskId !== "undefined" && taskData.taskId === getSelectedTask(store.getState()).taskId) {
+		if (
+			taskData !== null ||
+			(taskData.taskId !== "undefined" && taskData.taskId === getSelectedTask(store.getState()).taskId)
+		) {
 			API.getTaskById(taskData.taskId, {}, (response) => {
 				if (response !== null) {
 					store.dispatch(setSelectedTask(response));

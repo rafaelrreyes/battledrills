@@ -1,5 +1,6 @@
 {
 	"type": "lost_communication_with_unit",
+	"participants": ["CO", "WO", "S-2", "S-3", "AirO", "S-6", "S-4"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

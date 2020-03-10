@@ -1,0 +1,24 @@
+@import "~CSS/";
+
+.new-owner-container {
+	.new-owner-header {
+		@include heading-5;
+	}
+
+	.new-owner-form {
+		margin: 1em 0 0 0;
+
+		.new-owner-form-item {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0.5em 0 0.5em 0;
+
+			.new-owner-label {
+				@include heading-3;
+				min-width: max-content;
+				margin-right: 0.5em;
+			}
+		}
+	}
+}

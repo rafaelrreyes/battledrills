@@ -1,5 +1,6 @@
 {
 	"type": "tactical_maneuver",
+	"participants": ["Convoy Commander", "WO", "S-2", "S-3", "AirO", "FSCC", "LOC", "S-1", "S-4", "BAS"],
 	"data": {
 		"title": "Convoy Commander",
 		"self_coordinates": {

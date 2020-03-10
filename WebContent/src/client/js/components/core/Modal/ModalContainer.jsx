@@ -1,14 +1,23 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal } from "./Modal";
-import { CreateDrillContainer, Version, Confirmation, Settings } from "./ModalContent/index";
+import {
+	CreateDrillContainer,
+	Version,
+	Confirmation,
+	Settings,
+	NewOwnerContainer,
+	NewTaskContainer
+} from "./ModalContent/index";
 import { getModalContentType, getModalContentData, closeModal } from "REDUX/index";
 
 export const ModalContentTypes = {
 	NEW_DRILL: "NEW_DRILL",
 	VERSION: "VERSION",
 	CONFIRMATION: "CONFIRMATION",
-	SETTINGS: "SETTINGS"
+	SETTINGS: "SETTINGS",
+	NEW_OWNER: "NEW_OWNER",
+	NEW_TASK: "NEW_TASK"
 };
 
 export const ModalContainer = () => {
@@ -66,6 +75,24 @@ export const ModalContainer = () => {
 						icon={contentData.icon}
 						description={contentData.description}
 						updateData={updateData}
+					/>
+				);
+			case ModalContentTypes.NEW_OWNER:
+				return (
+					<NewOwnerContainer
+						updateData={updateData}
+						fromPalette={contentData.fromPalette}
+						updateDisableSubmit={updateDisableSubmit}
+						submit={submitModal}
+					/>
+				);
+			case ModalContentTypes.NEW_TASK:
+				return (
+					<NewTaskContainer
+						updateData={updateData}
+						fromPalette={contentData.fromPalette}
+						updateDisableSubmit={updateDisableSubmit}
+						submit={submitModal}
 					/>
 				);
 			default:

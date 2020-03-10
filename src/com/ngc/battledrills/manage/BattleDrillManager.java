@@ -315,7 +315,6 @@ public class BattleDrillManager {
             activeBattleDrills.put(battleDrill.getName(), battleDrill);
             orderedActiveBattleDrills.add(name);
             saveOrderedDrills();
-            System.out.println("Successfully created battle drill: " + battleDrill);
         }
         
         return battleDrill;

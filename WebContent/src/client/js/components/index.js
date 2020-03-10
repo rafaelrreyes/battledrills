@@ -19,8 +19,9 @@ export { default as DetailedViewContainer } from "./DetailedViewContainer/Detail
 export { default as TaskPriorityItem } from "./TaskPriorityItem/TaskPriorityItem";
 export { default as DetailedTimer } from "./DetailedTimer/DetailedTimer";
 export { default as TaskPriorityContainer } from "./TaskPriorityContainer/TaskPriorityContainer";
+export { default as DrillEditorView } from "./DrillEditorView/DrillEditorView";
 export { default as TaskActionsMenu } from "./TaskActionsMenu/TaskActionsMenu";
-
+export { default as OwnerActionsMenu } from "./OwnerActionsMenu/OwnerActionsMenu";
 // Notes View
 export { default as NotesView } from "./NotesView/NotesView";
 

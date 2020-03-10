@@ -1,5 +1,6 @@
 {
 	"type": "ied_vbied_svbied_attack",
+	"participants": ["CO", "WO", "S-1", "S-2", "S-3", "IO", "AirO", "FSCC", "LOC", "S-4"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {
@@ -40,6 +41,9 @@
 						"tasks": [
 							{
 								"description": "Get accountability of all units"
+							},
+							{
+								"description": "Submit PCR\"s for any 3/2 casualties"
 							}
 						],
 						"children": []
@@ -154,23 +158,6 @@
 						"tasks_coordinates": {},
 						"tasks": [],
 						"children": [
-							{
-								"title": "S-1",
-								"self_coordinates": {
-									"x": 770,
-									"y": 260
-								},
-								"tasks_coordinates": {
-									"x": 715,
-									"y": 325
-								},
-								"tasks": [
-									{
-										"description": "Submit PCR\"s for any 3/2 casualties"
-									}
-								],
-								"children": []
-							},
 							{
 								"title": "S-4",
 								"self_coordinates": {

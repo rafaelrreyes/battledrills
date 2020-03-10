@@ -40,6 +40,7 @@ public class Note {
         public static final String STATUS_CHANGE = "status";
         public static final String ATTACHMENT_UPLOAD = "attachment_upload";
         public static final String ATTACHMENT_DELETE = "attachment_delete";
+        public static final String TASK_DESCRIPTION_EDIT ="task_description_edit";
     }
     
     // Used for JSON deserialization - not intended for external use

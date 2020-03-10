@@ -68,8 +68,9 @@ export class Input extends Component {
 	constructor(props) {
 		super(props);
 
+		const { defaultValue } = this.props;
 		this.state = {
-			value: ""
+			value: defaultValue ? defaultValue : ""
 		};
 	}
 
@@ -101,14 +102,14 @@ export class Input extends Component {
 	};
 
 	render = () => {
-		const { inputType, inputSize, focus, placeholder, showError } = this.props;
+		const { inputType, inputSize, focus, placeholder, showError, defaultValue } = this.props;
 		const { value } = this.state;
 		// defaults to 'medium' size and 'regular' type
 		return (
 			<div className={getInputDivClass(inputSize, inputType, showError.isError)}>
 				<input
 					className={getInputClass(inputSize, inputType)}
-					value={value}
+					value={typeof value !== "undefined" || value === "" ? value : defaultValue}
 					onChange={this.onChange}
 					onKeyPress={this.onKeyPress}
 					autoFocus={focus}

@@ -198,4 +198,52 @@ public class BattleDrillService {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
     }
+    
+    @POST
+    @Path("/owner")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response addOwnerToDrill(OwnerRestParams params) {
+        
+        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        }
+        
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        BattleDrill drill = mgr.getByName(params.getDrillName());
+        boolean isSuccessful = drill.addOwner(params.getOwner(), params.getParent());
+        return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    @PUT
+    @Path("/owner")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response editOwnerOnDrill(OwnerRestParams params) {
+        
+        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getNewOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        }
+        
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        BattleDrill drill = mgr.getByName(params.getDrillName());
+        boolean isSuccessful = drill.editOwner(params.getOwner(), params.getNewOwner());
+        return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    @DELETE
+    @Path("/owner")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response deleteOwnerFromDrill(OwnerRestParams params) {
+        
+        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        }
+        
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        BattleDrill drill = mgr.getByName(params.getDrillName());
+        boolean isSuccessful = drill.deleteOwner(params.getOwner());
+        return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
 }

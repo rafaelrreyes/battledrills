@@ -1,6 +1,6 @@
 {
-	"id": "1234",
 	"type": "ied_discovered",
+	"participants": ["CO", "WO", "S-3", "S-4", "LOC", "FSCC", "S-2", "AirO", "IO"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {
@@ -21,7 +21,6 @@
 				},
 				"tasks": [
 					{
-						"taskId": "ied_1",
 						"description": "Notify RCT SWO and pass UXO/IED report"
 					}
 				],
@@ -38,19 +37,15 @@
 						},
 						"tasks": [
 							{
-								"taskId": "ied_2",
 								"description": "Request EOD"
 							},
 							{
-								"taskId": "ied_3",
 								"description": "W/O to nearest unit to site"
 							},
 							{
-								"taskId": "ied_4",
 								"description": "Notify adjacent/supporting units"
 							},
 							{
-								"taskId": "ied_5",
 								"description": "Monitor mission and assess need for reinforcements"
 							}
 						],
@@ -67,15 +62,12 @@
 								},
 								"tasks": [
 									{
-										"taskId": "ied_6",
 										"description": "PA-press release if civilians injured"
 									},
 									{
-										"taskId": "ied_7",
 										"description": "Ensure Combat Correspondent document site"
 									},
 									{
-										"taskId": "ied_8",
 										"description": "EW-coord EMS localized suppression"
 									}
 								],
@@ -95,7 +87,6 @@
 						},
 						"tasks": [
 							{
-								"taskId": "ied_9",
 								"description": "Monitor A/C movement/employment"
 							}
 						],
@@ -113,7 +104,6 @@
 						},
 						"tasks": [
 							{
-								"taskId": "ied_10",
 								"description": "Plot location and develop pattern analysis"
 							}
 						],
@@ -131,19 +121,15 @@
 						},
 						"tasks": [
 							{
-								"taskId": "ied_11",
 								"description": "Coordinate FS with nearest unit"
 							},
 							{
-								"taskId": "ied_12",
 								"description": "Build FSCMs (ACA/RFA)"
 							},
 							{
-								"taskId": "ied_13",
 								"description": "Pass aimpoint to Btry"
 							},
 							{
-								"taskId": "ied_14",
 								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
 							}
 						],
@@ -170,19 +156,15 @@
 								},
 								"tasks": [
 									{
-										"taskId": "ied_15",
 										"description": "Redirect movement, if required"
 									},
 									{
-										"taskId": "ied_16",
 										"description": "Ensure convoy remains with IED until relieved"
 									},
 									{
-										"taskId": "ied_17",
 										"description": "Gather info from convoy or relaying station (IED Report)"
 									},
 									{
-										"taskId": "ied_18",
 										"description": "Coordinate with RCT for required support"
 									}
 								],

@@ -1,6 +1,8 @@
 import { ShapesConstants } from "./ShapesHelper";
 import { CoordinateTypes } from "UTILITIES/index";
 import joint from "jointjs/index";
+import store from "REDUX/store";
+import { getEditMode } from "REDUX/";
 
 export default class BattleDrillElements {
 	constructor() {
@@ -14,46 +16,74 @@ export default class BattleDrillElements {
 	 * @returns {Object} contributor element object
 	 */
 	addContributorRectangle(data = {}) {
-		const width = data.title.length * ShapesConstants.CONTRIBUTOR_WIDTH_MULTIPLIER;
+		const width = data.title.length * ShapesConstants.CONTRIBUTOR_WIDTH_MULTIPLIER + 25;
 		const height = ShapesConstants.CONTRIBUTOR_HEIGHT;
 		const { self_coordinates } = data;
-		const contributorRect = new joint.shapes.standard.Rectangle({
+
+		const contributorEditorRect = new joint.shapes.html.OwnerBlock({
 			size: {
-				width: width,
-				height: height
+				width,
+				height
 			},
 			attrs: {
-				text: {
-					text: data.title,
-					fontWeight: "bolder",
-					fontFamily: "Roboto"
-				},
+				title: data.title,
+				// TODO use this flag to enable editting
+				isEditEnabled: getEditMode(store.getState()),
 				diagramData: {
 					owner: data.title,
 					coordinateType: CoordinateTypes.SELF
 				},
+				// removes the default square
 				body: {
-					fill: ShapesConstants.CONTRIBUTOR_COLOR,
-					filter: {
-						name: "dropShadow",
-						args: {
-							dx: 2,
-							dy: 2,
-							blur: 3
-						}
-					}
+					strokeWidth: 0
 				}
 			}
 		});
+		// const contributorRect = new joint.shapes.standard.Rectangle({
+		// 	size: {
+		// 		width: width,
+		// 		height: height
+		// 	},
+		// 	attrs: {
+		// 		text: {
+		// 			text: data.title,
+		// 			fontWeight: "bolder",
+		// 			fontFamily: "Roboto"
+		// 		},
+		// 		diagramData: {
+		// 			owner: data.title,
+		// 			coordinateType: CoordinateTypes.SELF
+		// 		},
+		// 		body: {
+		// 			fill: ShapesConstants.CONTRIBUTOR_COLOR,
+		// 			filter: {
+		// 				name: "dropShadow",
+		// 				args: {
+		// 					dx: 2,
+		// 					dy: 2,
+		// 					blur: 3
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// });
 
+		// TODO
 		if (self_coordinates) {
 			if (typeof self_coordinates.x !== "undefined" && typeof self_coordinates.y !== "undefined") {
-				contributorRect.position(self_coordinates.x, self_coordinates.y);
+				contributorEditorRect.position(self_coordinates.x, self_coordinates.y);
 			}
 		}
 
-		this.elements.push(contributorRect);
-		return contributorRect;
+		// if (self_coordinates) {
+		// 	if (typeof self_coordinates.x !== "undefined" && typeof self_coordinates.y !== "undefined") {
+		// 		contributorRect.position(self_coordinates.x, self_coordinates.y);
+		// 	}
+		// }
+
+		this.elements.push(contributorEditorRect);
+		// this.elements.push(contributorRect);
+		return contributorEditorRect;
 	}
 
 	/**
@@ -62,7 +92,7 @@ export default class BattleDrillElements {
 	 * @param {Array} tasks
 	 * @returns {Object} tasks element object
 	 */
-	addTaskItemsBlock(ownerNode, tasks = [], tasks_coordinates = { x: 0, y: 0 }, selectedTask = {}, activeTasks = []) {
+	addTaskItemsBlock(ownerNode, tasks = [], tasks_coordinates = { x: 0, y: 0 }, selectedTask = {}) {
 		if (tasks.length === 0) {
 			return null;
 		}
@@ -74,7 +104,6 @@ export default class BattleDrillElements {
 			},
 			attrs: {
 				list: tasks,
-				activeTasks,
 				selectedTask,
 				body: {
 					strokeWidth: 0

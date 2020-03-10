@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import "./NotificationViewItem.scss";
 import { getNotificationLink, getToastMessageHtml } from "CORE/index";
 import { MaterialIconNames, secondsToDateMinimal } from "UTILITIES/index";
@@ -15,9 +16,12 @@ const NotificationViewItem = ({
 	setVisible,
 	deleteNotification,
 	attachmentName,
-	attachmentType
+	attachmentType,
+	edittedKey
 }) => {
 	const [expanded, setExpanded] = useState(false);
+
+	const history = useHistory();
 
 	const onNotificationClick = () => {
 		setExpanded(!expanded);
@@ -37,7 +41,8 @@ const NotificationViewItem = ({
 					drillName,
 					note,
 					attachmentName,
-					attachmentType
+					attachmentType,
+					edittedKey
 				})}
 			</span>
 
@@ -49,7 +54,9 @@ const NotificationViewItem = ({
 					taskData,
 					drillName,
 					note,
-					setVisible
+					setVisible,
+					edittedKey,
+					history
 				})}
 				<i
 					className="material-icons notification-view-item-delete"

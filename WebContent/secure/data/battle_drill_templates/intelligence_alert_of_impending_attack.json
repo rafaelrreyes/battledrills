@@ -1,5 +1,6 @@
 {
 	"type": "intelligence_alert_of_impending_attack",
+	"participants": ["CO", "WO", "S-2", "S-3", "AirO", "FSCC", "S-4"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

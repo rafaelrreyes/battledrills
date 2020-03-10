@@ -1,5 +1,6 @@
 {
 	"type": "weapon_cache_discovery",
+	"participants": ["CO", "WO", "S-3", "IO", "AirO", "S-2", "FSCC", "LOC", "S-4"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

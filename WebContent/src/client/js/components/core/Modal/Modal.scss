@@ -48,7 +48,6 @@ $modal-message-error-text-color: $dark-text-primary;
 		max-height: $modal-max-height;
 		max-width: $modal-max-width;
 		width: 100%;
-		height: 100%;
 		text-align: center;
 
 		.modal-close {
@@ -59,20 +58,20 @@ $modal-message-error-text-color: $dark-text-primary;
 			color: $modal-close-icon-color;
 		}
 		.modal-data {
-			order: 1;
 			width: 100%;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 		}
 		.modal-btns {
-			position: absolute;
+			position: relative;
 			display: flex;
 			justify-content: center;
-			bottom: $modal-outer-padding;
 			width: $button-width-md * 2;
 			margin-left: auto;
 			margin-right: auto;
+			margin-bottom: 1em;
+			margin-top: 1em;
 			left: 0;
 			right: 0;
 		}

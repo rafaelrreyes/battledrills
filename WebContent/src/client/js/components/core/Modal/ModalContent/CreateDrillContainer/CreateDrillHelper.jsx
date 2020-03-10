@@ -62,14 +62,8 @@ export const createDrillUpdate = (drillName) => {
 export const createDrillUpdateMyDrillsView = () => {
 	if (getCurrentView(store.getState()) === Routes.MY_REPORT) {
 		const role = getRole(store.getState()).toUpperCase();
-		API.getOwnerBillet(role, {}, (response) => {
-			let drills = [];
-			for (let key in response) {
-				drills.push({
-					[key]: response[key]
-				});
-			}
-			store.dispatch(setActiveBillet(drills));
+		API.getOwnerBillet(role, {}, (data) => {
+			store.dispatch(setActiveBillet(data));
 		});
 	}
 };

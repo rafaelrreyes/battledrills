@@ -47,6 +47,11 @@ public class Task {
     private List<Status> previousStatuses = null;
     private List<Attachment> attachments = new ArrayList<>();
     
+    public static class EditableKeys {
+        public static final String DESCRIPTION = "description";
+        public static final String STATUS = "status";
+    }
+    
     @JacksonInject
     protected boolean isNew = false; // When the battle drill is new, we need to generate new IDs for each task.  Otherwise, just load the IDs from the stored JSON
     
@@ -138,7 +143,6 @@ public class Task {
         return (null != parent)?parent.getBattleDrillName():"";
     }
     
-    @JsonIgnore
     public String getOwner()
     {
         return (null != parent)?parent.getOwner():"";
@@ -171,10 +175,6 @@ public class Task {
             this.setEndTime(null);
         }
         
-        // if the new state of the task is Completed, then the task is finished and can be given an end time
-        if (newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
-            this.setEndTime(LocalDateTime.now());
-        }
         // changing currentStatus to newStatus update and adding old to array for history
         // set newStatus start time to now
         // then set endtime of current status to now
@@ -185,6 +185,15 @@ public class Task {
         newStatus.setStartTime(LocalDateTime.now());
         setCurrentStatus(newStatus); // could change status to an object to get start and end time in API
         
+        // if the new state of the task is Completed, then the task is finished and can be given an end time
+        if (newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
+            // also dequeue from Task Priority Queue
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            BattleDrill drill = mgr.getByName(this.getBattleDrillName());
+            drill.dequeuePrioritizedTask(this.getId());
+            this.setEndTime(LocalDateTime.now());
+        }
+        
         // create a new Note and add to the notes of this task
         String automatedNoteStatusText = newStatus.getStatus().toUpperCase();
         Note statusNote = new Note(user, automatedNoteStatusText);
@@ -193,7 +202,7 @@ public class Task {
         addNote(statusNote);
         
         // send task edit notification
-        Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, user, getBattleDrillName(), getTaskData(), statusNote.getId());
+        Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, Task.EditableKeys.STATUS, user, getBattleDrillName(), getTaskData(), statusNote.getId());
         Notify.sendNotificationToAllExcluding(taskNotification);
         Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, taskNotification));
         
@@ -321,7 +330,7 @@ public class Task {
         return this.description;
     }
     
-    private Map<String, String> getTaskData() {
+    public Map<String, String> getTaskData() {
         Map<String, String> taskData  = new HashMap<>();
         taskData.put("taskId", getId());
         taskData.put("taskDescription", getDescription());
@@ -341,6 +350,7 @@ public class Task {
         this.endTime = endTime;
     }
     
+    // TODO, change this to queuedAt ?
     @JsonProperty("start")
     public long getStartTimeMillis()
     {

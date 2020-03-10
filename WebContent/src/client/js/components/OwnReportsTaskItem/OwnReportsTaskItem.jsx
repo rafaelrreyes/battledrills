@@ -1,8 +1,8 @@
 import React from "react";
-import { StatusIcon } from "CORE/index";
+import { StatusIcon } from "CORE/";
 import { useSelector, useDispatch } from "react-redux";
-import { setSelectedTask, setSelectedDrill, getSelectedTask } from "REDUX/index";
-import { API } from "UTILITIES/index";
+import { setSelectedTask, setSelectedDrill, getSelectedTask } from "REDUX/";
+import { API, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES/";
 import "./OwnReportsTaskItem.scss";
 
 const OwnReportsTaskItem = ({ drillName, task }) => {
@@ -44,7 +44,7 @@ const OwnReportsTaskItem = ({ drillName, task }) => {
 			<span className="task-report-status">
 				<StatusIcon type={currentStatus.status} size={36} />
 			</span>
-			<span className="task-report-description">{description}</span>
+			<span className="task-report-description">{description ? description : TASK_DESCRIPTION_PLACEHOLDER}</span>
 		</li>
 	);
 };

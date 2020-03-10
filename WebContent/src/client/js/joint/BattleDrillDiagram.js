@@ -13,7 +13,7 @@ export default class BattleDrillDiagram {
 	 * Creates an entirely new battle drill from scratch by first removing the existing one in the jointjs paper.
 	 * @param {Object} selectedDrill
 	 */
-	createBattleDrill(selectedDrill, selectedTask = {}, activeTasks = []) {
+	createBattleDrill(selectedDrill, selectedTask = {}) {
 		if (typeof selectedDrill === "undefined") {
 			return;
 		}
@@ -24,15 +24,15 @@ export default class BattleDrillDiagram {
 		this.resetDiagramData();
 
 		//create the root owner
-		if (data) {
+		if (data && typeof data.title !== "undefined") {
 			const owner = currentDrillElements.addContributorRectangle({
 				title: data.title,
 				self_coordinates: data.self_coordinates
 			});
 
 			//create root owner and its children/action items recursively
-			this.createChildren(owner, data.children, selectedTask, activeTasks);
-			// this.createTaskItems(owner, data.tasks);
+			this.createChildren(owner, data.children, selectedTask);
+			this.createTaskItems(owner, data.tasks, data.tasks_coordinates);
 		}
 
 		this.cells = currentDrillElements.getElements().concat(currentDrillElements.getLinks());
@@ -48,7 +48,7 @@ export default class BattleDrillDiagram {
 	 * @param {Object} parentNode
 	 * @param {Array} children
 	 */
-	createChildren(parentNode, children = [], selectedTask = {}, activeTasks = []) {
+	createChildren(parentNode, children = [], selectedTask = {}) {
 		const { battleDrillElements } = this;
 		if (children === undefined || children.length === 0) {
 			return;
@@ -62,14 +62,8 @@ export default class BattleDrillDiagram {
 					self_coordinates: currentChild.self_coordinates
 				});
 				battleDrillElements.createLink(parentNode, childRectangle);
-				this.createChildren(childRectangle, currentChild.children, selectedTask, activeTasks);
-				this.createTaskItems(
-					childRectangle,
-					currentChild.tasks,
-					currentChild.tasks_coordinates,
-					selectedTask,
-					activeTasks
-				);
+				this.createChildren(childRectangle, currentChild.children, selectedTask);
+				this.createTaskItems(childRectangle, currentChild.tasks, currentChild.tasks_coordinates, selectedTask);
 			});
 		}
 	}
@@ -79,7 +73,7 @@ export default class BattleDrillDiagram {
 	 * @param {Object} parentNode
 	 * @param {Array} taskItems
 	 */
-	createTaskItems(parentNode, taskItems = [], tasks_coordinates = {}, selectedTask = {}, activeTasks = []) {
+	createTaskItems(parentNode, taskItems = [], tasks_coordinates = {}, selectedTask = {}) {
 		if (taskItems === undefined || taskItems.length === 0) {
 			return;
 		}
@@ -88,8 +82,7 @@ export default class BattleDrillDiagram {
 			parentNode,
 			taskItems,
 			tasks_coordinates,
-			selectedTask,
-			activeTasks
+			selectedTask
 		);
 		this.battleDrillElements.createTaskLink(parentNode, taskBlock);
 	}

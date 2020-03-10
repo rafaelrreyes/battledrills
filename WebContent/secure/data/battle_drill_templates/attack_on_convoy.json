@@ -1,5 +1,6 @@
 {
 	"type": "attack_on_convoy",
+	"participants": ["CO","WO","FSCC","S-1", "S-2", "S-3", "S-4", "LOC", "XO", "AirO"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

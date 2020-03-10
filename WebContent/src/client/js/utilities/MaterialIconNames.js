@@ -22,6 +22,7 @@ export const MaterialIconNames = {
 	DOWNLOAD: "vertical_align_bottom",
 	DRAG_HANDLE: "drag_handle",
 	DRAG_INDICATOR: "drag_indicator",
+	EDIT: "edit",
 	ERROR: "error",
 	ERROR_OUTLINE: "error_outline",
 	EXPAND_MORE: "expand_more",
@@ -36,11 +37,13 @@ export const MaterialIconNames = {
 	PERSON: "person",
 	PLAY_ARROW: "play_arrow",
 	REMOVE: "remove",
+	SAVE: "save",
 	SCHEDULE: "schedule",
 	SEND: "send",
 	SETTINGS: "settings",
 	STOP: "stop",
 	SWAP_VERT: "swap_vert",
+	TASK: "assignment_turned_in",
 	TASK_LIST: "assignment",
 	WARNING: "warning"
 };

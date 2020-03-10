@@ -1,5 +1,6 @@
 {
 	"type": "assassination_of_iraqi_government_official",
+	"participants": ["CO", "WO", "S-2", "S-3", "S-4", "IO"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

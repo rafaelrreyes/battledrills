@@ -13,12 +13,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ngc.battledrills.comms.Notification;
+import com.ngc.battledrills.comms.Notify;
+import com.ngc.battledrills.comms.NotifyManager;
+import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.exception.DuplicateItemException;
+import com.ngc.battledrills.exception.ItemNotFoundException;
+import com.ngc.battledrills.manage.BattleDrillManager;
 import com.ngc.battledrills.template.BattleDrillTemplate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *
@@ -66,7 +77,7 @@ public class Node {
      * @param coordinates 
      */
     @JsonProperty("self_coordinates")
-    private void setSelfCoordinates(Map<String, Integer> coordinates)
+    public void setSelfCoordinates(Map<String, Integer> coordinates)
     {
         if (coordinates.containsKey("x") && coordinates.containsKey("y")) {
             this.selfCoordinates.put("x", coordinates.get("x"));
@@ -83,7 +94,7 @@ public class Node {
      * @param coordinates 
      */
     @JsonProperty("tasks_coordinates")
-    private void setTasksCoordinates(Map<String, Integer> coordinates)
+    public void setTasksCoordinates(Map<String, Integer> coordinates)
     {
         if (coordinates.containsKey("x") && coordinates.containsKey("y")) {
             this.tasksCoordinates.put("x", coordinates.get("x"));
@@ -131,6 +142,11 @@ public class Node {
             return "";
         }
     }
+    
+    public void setBattleDrillName(String battleDrillName) {
+        bdroot = new BattleDrillTemplate();
+        bdroot.setName(battleDrillName);
+    }
 
     @JsonProperty("tasks")
     public void setTasks(List<Task> tasks)
@@ -145,6 +161,139 @@ public class Node {
             System.err.println("Unable to set tasks for owner " + getOwner() + " - duplicate task being added: " + d);
         }
     }
+    
+    public void emptyTasks() throws ItemNotFoundException {
+        deleteFromTaskRepo(this.getTasks());
+        this.tasks.clear();
+    }
+    
+    public void emptyChildren() throws ItemNotFoundException {
+        
+        // TODO need to recursively check if any of the tasks of any children were prioritized, to remove them
+        if (null != this.children || this.children.size() > 0) {
+            for (int i = 0; i < this.children.size(); i++) {
+                Node childNode = this.children.get(i);
+                if (null != childNode.getTasks() || childNode.getTasks().size() > 0) {
+                    deleteFromTaskRepo(childNode.getTasks());
+                }
+                
+                // need to do a deep remove of childrens tasks from task repo
+                childNode.emptyChildren();
+            }
+        
+        }
+
+        this.children.clear();
+    }
+    
+    public void deleteFromTaskRepo(List<Task> tasks) throws ItemNotFoundException {
+         List<String> taskIdsToRemove = new ArrayList<>();
+        
+        // need to create a temporary array that holds the task ID's to remove, actually invoking the deleteTask in this first loop doesn't work 
+        for (int i = 0; i < tasks.size(); i++) {
+
+            String taskId = tasks.get(i).getId();
+            taskIdsToRemove.add(taskId);
+        }
+        
+        // clear all task repo corresponding tasks as well
+        for (String taskId : taskIdsToRemove) {
+            TaskRepo.deleteTask(taskId);
+        }
+    }
+    
+    /**
+     * Add a new task to this node. 
+     * @param description
+     * @param coordinates
+     * @return  
+     */
+    @JsonIgnore
+    public boolean addNewTask(String description, Map<String, Integer> coordinates) {
+        try {
+            Task newTask = new Task();
+   
+            // set description if it is defined by user
+            if (!StringUtils.isBlank(description)) {
+                newTask.setDescription(description);
+            } else {
+                newTask.setDescription("---");
+            }
+            
+            // set the parent of the new task to the caller (aka node)
+            newTask.parent = this;
+            TaskRepo.addTask(newTask);
+            this.tasks.add(newTask);
+            
+            // only need to set the coordinates if they are set
+            if (!coordinates.isEmpty()) {
+                this.setTasksCoordinates(coordinates);
+            }
+            
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            mgr.saveBattleDrill(newTask.parent.getBattleDrillName(), false);
+            return true;
+        } catch (DuplicateItemException | ItemNotFoundException e) {
+            throw new WebApplicationException("Error when adding a new task.");
+        }
+    }
+    
+    /**
+     * Updates a task description within this node by its id.
+     * @param taskId
+     * @param user
+     * @param description 
+     * @return boolean
+     */
+    @JsonIgnore
+    public boolean updateTaskDescriptionById(String taskId, User user, String description) {
+        
+        try {
+            Task task = TaskRepo.getTask(taskId);
+            TaskRepo.editTaskDescription(task, description);
+            // TODO can have report modification here if we want to track task modifications
+            
+            // find task in this node that matches, and edit it by replacing it with the new task
+            for (int i = 0; i < this.tasks.size(); i++) {
+                
+                if (this.tasks.get(i).getId().equals(taskId)) {
+                    this.tasks.set(i, task);
+                }
+            }
+            
+            // create notification using user obj
+            // send task edit notification
+            String automatedNoteText = task.getDescription();
+            Note descriptionNote = new Note(user, automatedNoteText);
+            descriptionNote.setType(Note.NoteTypes.AUTO_GENERATED);
+            descriptionNote.setAutoType(Note.AutoGenTypes.TASK_DESCRIPTION_EDIT);
+            Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, Task.EditableKeys.DESCRIPTION, user, getBattleDrillName(), task.getTaskData(), descriptionNote.getId());
+            Notify.sendNotificationToAllExcluding(taskNotification);
+            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.EDIT, taskNotification));
+            
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            mgr.saveBattleDrill(getBattleDrillName(), false);
+            return true;
+        } catch (ItemNotFoundException e) {
+            throw new WebApplicationException("Error when attempting to update a task description", Response.Status.BAD_REQUEST);
+        }
+    }
+    
+    /**
+     * Edits owner name then saves it to database.
+     * @param newOwner
+     * @return boolean
+     */
+    public boolean editOwnerAndSave(String newOwner) {
+        try {
+            this.setOwner(newOwner);
+            BattleDrillManager mgr = BattleDrillManager.getInstance();
+            mgr.saveBattleDrill(getBattleDrillName(), false);
+            return true;
+        } catch(ItemNotFoundException e) {
+            throw new WebApplicationException("Error when attempting to edit owner title.");
+        }
+    }
 
     public List<Task> getTasks()
     {
@@ -155,6 +304,14 @@ public class Node {
     public void setChildNodes(List<Node> children)
     {
         this.children = children;
+    }
+    
+    /**
+     * Adds a new child node to this current node.
+     * @param node 
+     */
+    public void addChildNode(Node node){
+        this.children.add(node);
     }
 
     public List<Node> getChildNodes()

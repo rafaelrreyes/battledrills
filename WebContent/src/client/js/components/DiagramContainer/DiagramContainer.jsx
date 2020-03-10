@@ -1,19 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { DiagramViewContainer, DetailedViewContainer } from "../index";
-import { TaskPriorityContainer } from "../index";
-import { getSelectedDrill, getActiveDrills, getCompletedDrills, getSelectedTask } from "REDUX/index";
+import { DiagramViewContainer, DetailedViewContainer } from "../";
+import { TaskPriorityContainer, DrillEditorView } from "../";
+import { getSelectedDrill, getActiveDrills, getCompletedDrills, getSelectedTask } from "REDUX/";
 import {
 	setSelectedDrill,
 	resetSelectedTask,
 	resetSelectedDrill,
-	resetActiveTasks,
 	updateAllDrills,
-	setCurrentView
-} from "REDUX/index";
-import { ScrollableTabs, TooltipPlacement } from "CORE/index";
-import { API, MaterialIconNames, Routes } from "UTILITIES/index";
+	setCurrentView,
+	getEditMode,
+	setEditMode
+} from "REDUX/";
+import { ScrollableTabs, TooltipPlacement } from "CORE/";
+import { API, MaterialIconNames, Routes } from "UTILITIES/";
 //css
 import "./DiagramContainer.scss";
 
@@ -28,6 +29,7 @@ const DiagramContainer = () => {
 	const selectedDrill = useSelector(getSelectedDrill);
 	const activeDrills = useSelector(getActiveDrills);
 	const completedDrills = useSelector(getCompletedDrills);
+	const editMode = useSelector(getEditMode);
 
 	useEffect(() => {
 		dispatch(setCurrentView(location.pathname));
@@ -65,7 +67,6 @@ const DiagramContainer = () => {
 		// on unmount, reset active tasks
 		return () => {
 			dispatch(resetSelectedTask());
-			dispatch(resetActiveTasks());
 		};
 	}, [location]);
 
@@ -104,8 +105,33 @@ const DiagramContainer = () => {
 				/>
 			</div>
 			{location.pathname === Routes.ACTIVE_DIAGRAM && (
-				<div className="task-priority-flex-box">
-					<TaskPriorityContainer />
+				<div className="diagram-view-bar">
+					{editMode ? (
+						<DrillEditorView />
+					) : (
+						<div className="tasks-priority-container">
+							<TaskPriorityContainer />
+						</div>
+					)}
+
+					<div
+						className="edit-mode-button"
+						onClick={() => {
+							dispatch(setEditMode(!editMode));
+						}}
+					>
+						{editMode ? (
+							<>
+								<i className="material-icons">{MaterialIconNames.TASK}</i>
+								<label className="mode-button-label">Task Priority</label>
+							</>
+						) : (
+							<>
+								<i className="material-icons">{MaterialIconNames.EDIT}</i>
+								<label className="mode-button-label">Edit Drill</label>
+							</>
+						)}
+					</div>
 				</div>
 			)}
 			<div className="diagram-detailed-flex-box">

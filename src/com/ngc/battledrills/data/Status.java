@@ -97,7 +97,7 @@ public class Status {
         return sb.toString();
     }
     
-    public final class StatusTypes {
+    public static final class StatusTypes {
         public static final String PENDING = "pending";
         public static final String IN_PROGRESS = "in-progress";
         public static final String BLOCKED = "blocked";

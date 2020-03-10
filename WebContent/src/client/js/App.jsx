@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { hot } from "react-hot-loader/root";
-import { Header, Main, Footer, ModalContainer } from "./components/index";
-import { WS, SUPPORTED_WS_EVENT_TYPES, dispatchWebsocket } from "UTILITIES/index";
+import { Header, Main, Footer, ModalContainer } from "COMPONENTS/";
+import { WS, SUPPORTED_WS_EVENT_TYPES, dispatchWebsocket } from "UTILITIES/";
 import { setUser } from "REDUX/index";
 
 //css

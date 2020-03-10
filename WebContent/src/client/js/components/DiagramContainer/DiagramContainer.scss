@@ -8,13 +8,41 @@
 	.tab-flex-box {
 		display: flex;
 		flex-flow: row;
-		//justify-content: space-evenly;
-		//overflow: scroll;
 		min-height: 3em;
 	}
 
-	.task-priority-flex-box {
-		min-height: 6em;
+	.diagram-view-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.tasks-priority-container {
+			width: 100%;
+			height: 100%;
+		}
+
+		.edit-mode-button {
+			display: flex;
+			align-items: center;
+			@include body-3;
+			cursor: pointer;
+			margin: 1em;
+			padding: 1em;
+			background-color: $blue-grey-700;
+
+			.mode-button-label {
+				cursor: pointer;
+				width: max-content;
+			}
+
+			&:hover {
+				color: $cyan-700;
+
+				i.material-icons {
+					color: $cyan-700;
+				}
+			}
+		}
 	}
 
 	.diagram-detailed-flex-box {

@@ -18,7 +18,8 @@ export const Toast = ({
 	operationType,
 	objectType,
 	attachmentName,
-	attachmentType
+	attachmentType,
+	edittedKey
 }) => {
 	const [visible, setVisible] = useState(true);
 	const history = useHistory();
@@ -32,13 +33,14 @@ export const Toast = ({
 		setVisible,
 		history,
 		attachmentName,
-		attachmentType
+		attachmentType,
+		edittedKey
 	};
 
 	useEffect(() => {
 		setDisappearingTimer(enterDelay, setVisible);
 		const options = {
-			body: getToastMessageString({ operationType, objectType, user, taskData, drillName, note }),
+			body: getToastMessageString({ operationType, objectType, user, taskData, drillName, note, edittedKey }),
 			icon: notification_important,
 			badge: notification_important
 		};

@@ -3,9 +3,9 @@
 .active-task-item-view {
 	background-color: $cyan-900;
 	//box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5); //messes up the box-shadow animation
-	width: 18%;
+	width: 19%;
 	float: left;
-	margin-right: 0.5em;
+	margin: 0 0.2em 0 0.2em;
 	padding: 0.25em 0;
 	height: 5em;
 	box-sizing: border-box;

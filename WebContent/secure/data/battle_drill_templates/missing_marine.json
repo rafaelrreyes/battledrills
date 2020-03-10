@@ -1,5 +1,6 @@
 {
 	"type": "missing_marine",
+	"participants": ["CO", "WO", "XO", "S-2", "S-3", "IO", "AirO", "FSCC", "LOC", "S-1", "S-4", "BAS"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {

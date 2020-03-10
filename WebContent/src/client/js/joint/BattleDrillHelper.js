@@ -1,25 +1,30 @@
 import store from "REDUX/store";
 import { getIcon } from "./ShapesHelper";
-import { MaterialIconNames, Routes } from "UTILITIES/index";
-import { getCurrentView } from "REDUX/index";
+import { MaterialIconNames, Routes, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES/";
+import { getCurrentView, getSelectedDrill } from "REDUX/";
 
-export const getTaskItemStyle = (task, activeTasks, selectedTask) => {
+export const getTaskItemStyle = (task, selectedTask) => {
 	const { status } = task.currentStatus;
 	const icon = getIcon(status);
-	const description = `<span class="task-description">${task.description}</span>`;
+	const description = `<span class="task-description">${
+		task.description ? task.description : TASK_DESCRIPTION_PLACEHOLDER
+	}</span>`;
 	const options = `<div class="task-option-icon-flex-container"><i class="material-icons md-18 task-option-icon">${MaterialIconNames.MORE_VERT}</i><div class="filler-div"></div></div>`;
 	let classes = ["action-item", "task-flex-container"];
 	// check view, if the view is on /completed_diagram, don't render the options on the diagram
 	const currentView = getCurrentView(store.getState());
+	const { prioritizedTasks } = getSelectedDrill(store.getState());
 
 	if (task.taskId === selectedTask.taskId) {
 		classes.push("selected");
 	}
 
-	for (let i = 0; i < activeTasks.length; i++) {
-		if (activeTasks[i].taskId === task.taskId) {
-			classes.push("queued");
-			break;
+	if (typeof prioritizedTasks !== "undefined" || prioritizedTasks.length > 0) {
+		for (let i = 0; i < prioritizedTasks.length; i++) {
+			if (prioritizedTasks[i].taskId === task.taskId) {
+				classes.push("queued");
+				break;
+			}
 		}
 	}
 

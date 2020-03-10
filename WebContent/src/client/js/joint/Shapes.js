@@ -3,15 +3,16 @@ import $ from "jquery";
 import _ from "lodash";
 import { getTaskItemStyle, getLiElement } from "./BattleDrillHelper";
 import { STATUS_TYPES, selectTask } from "UTILITIES/index";
-import { TaskActionsMenu } from "COMPONENTS/index";
+import { TaskActionsMenu, OwnerActionsMenu } from "COMPONENTS/index";
 import ReactDOM from "react-dom";
 import React from "react";
 
 joint.shapes.html = {};
-joint.shapes.html.ActionBlock = joint.shapes.standard.Rectangle.extend({
+
+joint.shapes.html.OwnerBlock = joint.shapes.standard.Rectangle.extend({
 	defaults: joint.util.deepSupplement(
 		{
-			type: "html.Element",
+			type: "html.Owner",
 			attrs: {
 				rect: { stroke: "none", "fill-opacity": 0 }
 			}
@@ -20,7 +21,75 @@ joint.shapes.html.ActionBlock = joint.shapes.standard.Rectangle.extend({
 	)
 });
 
-joint.shapes.html.ElementView = joint.dia.ElementView.extend({
+joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
+	template: ['<div class="owner-container"', '<div><span class="owner-title"></div>', "</div>"].join(""),
+	initialize: function() {
+		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
+		this.$box = $(_.template(this.template)());
+
+		this.model.on("change", this.updateBox, this);
+		// Remove the box when the model gets removed from the graph.
+		this.model.on("remove", this.removeBox, this);
+	},
+	updateBox: function() {
+		// TODO
+		var bbox = this.model.getBBox();
+		let owner = this.model.get("attrs").title;
+		let isEditEnabled = this.model.get("attrs").isEditEnabled;
+		if (isEditEnabled) {
+			this.$box
+				.find("span.owner-title")
+				.html(`${owner}<i class="material-icons edit-owner-icon">edit</i><div class="filler-div"></div>`);
+		} else {
+			this.$box.find("span").html(owner);
+		}
+
+		this.$box.find("i").on("click", (event) => {
+			const dropdownAlreadyOpen = ReactDOM.unmountComponentAtNode(event.target.nextSibling);
+			if (dropdownAlreadyOpen) {
+				return;
+			}
+			ReactDOM.render(
+				<OwnerActionsMenu
+					closeMenu={() => {
+						ReactDOM.unmountComponentAtNode(event.target.nextSibling);
+					}}
+					owner={owner}
+				/>,
+				event.target.nextSibling
+			);
+		});
+
+		this.$box.css({
+			width: bbox.width,
+			left: bbox.x,
+			top: bbox.y
+		});
+	},
+	render: function() {
+		joint.dia.ElementView.prototype.render.apply(this, arguments);
+		this.paper.$el.prepend(this.$box);
+		this.updateBox();
+		return this;
+	},
+	removeBox: function(evt) {
+		this.$box.remove();
+	}
+});
+
+joint.shapes.html.ActionBlock = joint.shapes.standard.Rectangle.extend({
+	defaults: joint.util.deepSupplement(
+		{
+			type: "html.Action",
+			attrs: {
+				rect: { stroke: "none", "fill-opacity": 0 }
+			}
+		},
+		joint.shapes.standard.Rectangle.prototype.defaults
+	)
+});
+
+joint.shapes.html.ActionView = joint.dia.ElementView.extend({
 	template: [
 		'<div class="action-items-container">',
 		'<div class="draggable-tasks"><i class="material-icons">drag_indicator</i></div>',
@@ -84,11 +153,10 @@ joint.shapes.html.ElementView = joint.dia.ElementView.extend({
 
 		// Create action items HTML
 		var tasks = this.model.get("attrs").list;
-		let activeTasks = this.model.get("attrs").activeTasks;
 		let selectedTask = this.model.get("attrs").selectedTask;
 
 		var tasksHTML = _.map(tasks, (task) => {
-			return getTaskItemStyle(task, activeTasks, selectedTask);
+			return getTaskItemStyle(task, selectedTask);
 		});
 
 		let allTasksCompleted = tasks.filter((task) => task.currentStatus.status !== STATUS_TYPES.COMPLETED);

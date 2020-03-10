@@ -82,18 +82,19 @@ public class NotifyManager {
      * Factory helper to create a notification based on operationType.
      * This is when tasks receive an update, ie. status update/change
      * @param operationType
+     * @param edittedKey
      * @param user
      * @param drillName
      * @param taskData
      * @param noteId
      * @return TaskNotification
      */
-    public static Notification createTaskNotification(String operationType, User user, String drillName, Map<String, String> taskData, String noteId) {
+    public static Notification createTaskNotification(String operationType, String edittedKey, User user, String drillName, Map<String, String> taskData, String noteId) {
         if (!isValidNotification(operationType)) {
             return null;
         }
         
-        return new TaskNotification(operationType, user, drillName, taskData, noteId);
+        return new TaskNotification(operationType, edittedKey, user, drillName, taskData, noteId);
     }
     
     /**

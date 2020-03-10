@@ -6,7 +6,7 @@ import Shapes from "../../joint/Shapes";
 import BattleDrillDiagram from "../../joint/BattleDrillDiagram";
 import "./DiagramViewContainer.scss";
 import "./joint.css";
-import { getActiveTasks, getSelectedDrill, getSelectedTask, editCoordinates } from "REDUX/index";
+import { getSelectedDrill, getSelectedTask, editCoordinates, getEditMode } from "REDUX/index";
 import { API } from "UTILITIES/index";
 
 const DEFAULTS = {
@@ -15,16 +15,16 @@ const DEFAULTS = {
 	WINDOW_HEIGHT: 1080 // works for now
 };
 
-const DiagramView = () => {
+const DiagramViewContainer = () => {
 	const diagramViewElement = useRef(null);
 	const [width, setWidth] = useState(DEFAULTS.WINDOW_WIDTH); // can set the width/height of the paper and graph in later features
 	const [height, setHeight] = useState(DEFAULTS.WINDOW_HEIGHT);
 
 	let activeElement = {};
 
-	const activeTasks = useSelector(getActiveTasks);
 	const selectedDrill = useSelector(getSelectedDrill);
 	const selectedTask = useSelector(getSelectedTask);
+	const editMode = useSelector(getEditMode);
 	const dispatch = useDispatch();
 
 	const graph = new joint.dia.Graph();
@@ -50,9 +50,9 @@ const DiagramView = () => {
 		}
 
 		if (selectedDrill !== null || typeof selectedDrill !== "undefined") {
-			battleDrillDiagram.createBattleDrill(selectedDrill, selectedTask, activeTasks);
+			battleDrillDiagram.createBattleDrill(selectedDrill, selectedTask);
 		}
-	}, [selectedDrill, selectedTask, activeTasks]);
+	}, [selectedDrill, selectedTask, editMode]);
 
 	useEffect(() => {
 		// in future, if width or height is changed, we can change the width of the rendering area, hence the width and height being
@@ -108,6 +108,11 @@ const DiagramView = () => {
 		// using x and y parameters here refers to the pointer, which we do not want. we want the position of the element
 		// which does not have exclusive variables for x and y, unless you extract them from a transform string which is too hacky.
 		paper.on("element:pointerup", (element) => {
+			// TODO: disable diagram, show a loading wheel to block it off until the API request is complete.
+			if (typeof tempPosition === "undefined") {
+				return;
+			}
+
 			const { owner, coordinateType } = element.model.get("attrs").diagramData;
 			const requestBody = {
 				battleDrillName: selectedDrill.name,
@@ -130,4 +135,4 @@ const DiagramView = () => {
 	);
 };
 
-export default DiagramView;
+export default DiagramViewContainer;

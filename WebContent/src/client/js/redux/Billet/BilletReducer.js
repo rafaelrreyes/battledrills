@@ -9,9 +9,15 @@ export default function(state = initialState, action) {
 
 	switch (type) {
 		case BilletConstants.SET_ACTIVE_BILLET:
+			const drills = [];
+			for (let key in payload) {
+				drills.push({
+					[key]: payload[key]
+				});
+			}
 			return {
 				...state,
-				billet: payload
+				billet: drills
 			};
 		case BilletConstants.EDIT_BILLET:
 			return {

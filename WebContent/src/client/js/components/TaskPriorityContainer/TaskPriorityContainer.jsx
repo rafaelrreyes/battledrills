@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getActiveTasks } from "REDUX/index";
-import { getNextActiveTask, resetActiveTasks, getSelectedTask, getSelectedDrill } from "REDUX/index";
+import { getSelectedTask, getSelectedDrill } from "REDUX/index";
 import { TaskPriorityItem } from "../index";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { selectTask } from "UTILITIES/index";
@@ -12,27 +11,15 @@ const TaskPriorityContainer = () => {
 
 	// redux selectors
 	const selectedTask = useSelector(getSelectedTask);
-	const activeTasks = useSelector(getActiveTasks);
 	const selectedDrill = useSelector(getSelectedDrill);
+	const { prioritizedTasks } = selectedDrill;
 
-	useEffect(() => {
-		if (typeof selectedDrill.name === "undefined") {
-			dispatch(resetActiveTasks());
-			return;
-		}
-
-		if (typeof selectedDrill.data !== "undefined") {
-			dispatch(resetActiveTasks());
-			dispatch(getNextActiveTask(selectedDrill.data));
-		}
-	}, [selectedDrill.name]);
-
-	const renderActiveTasks = () => {
-		if (activeTasks.length === 0) {
+	const renderPrioritizedTasks = () => {
+		if (typeof prioritizedTasks === "undefined" || prioritizedTasks.length === 0) {
 			return null;
 		}
 
-		return activeTasks.map((task) => {
+		return prioritizedTasks.map((task) => {
 			return (
 				<CSSTransition key={task.taskId} classNames="example" timeout={{ enter: 100, exit: 100 }}>
 					<TaskPriorityItem
@@ -46,10 +33,9 @@ const TaskPriorityContainer = () => {
 			);
 		});
 	};
-
 	return (
 		<TransitionGroup className="active-task-list" component="ul">
-			{renderActiveTasks()}
+			{renderPrioritizedTasks()}
 		</TransitionGroup>
 	);
 };

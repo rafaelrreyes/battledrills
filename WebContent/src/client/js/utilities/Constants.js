@@ -48,3 +48,5 @@ export const AutogenTypes = {
 	ATTACHMENT_DELETE: "attachment_delete",
 	STATUS_CHANGE: "status"
 };
+
+export const TASK_DESCRIPTION_PLACEHOLDER = "--";

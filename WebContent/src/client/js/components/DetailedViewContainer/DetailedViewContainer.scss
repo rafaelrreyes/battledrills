@@ -15,6 +15,33 @@
 		min-height: 0;
 	}
 
+	.detailed-task-description-container {
+		display: flex;
+		justify-content: left;
+		align-items: center;
+		margin: 0 1em 1em 1em;
+
+		.detailed-task-description {
+			flex: 1;
+			text-align: left;
+			margin-left: 0.5em;
+		}
+	}
+
+	.edit-description-icon {
+		cursor: pointer;
+		&:hover {
+			color: $cyan-700;
+		}
+	}
+
+	.cancel-edit-description-icon {
+		cursor: pointer;
+		&:hover {
+			color: $cyan-700;
+		}
+	}
+
 	.detailed-view-actions {
 		position: relative;
 		-moz-user-select: none;

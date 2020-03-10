@@ -308,9 +308,9 @@ const checkAttachmentExists = (params, onSuccess, onError) => {
 
 /**
  * Uploads the attachment to a drill or task.
- * @param {Object} formdata 
- * @param {Function} onSuccess 
- * @param {Function} onError 
+ * @param {Object} formdata
+ * @param {Function} onSuccess
+ * @param {Function} onError
  */
 const uploadAttachment = (formdata, config, onSuccess, onError) => {
 	const endpoint = `/${ATTACHMENT}`;
@@ -319,9 +319,9 @@ const uploadAttachment = (formdata, config, onSuccess, onError) => {
 
 /**
  * Deletes the attachment of a drill or task.
- * @param {Object} requestBody 
- * @param {Function} onSuccess 
- * @param {Function} onError 
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
  */
 const deleteAttachment = (requestBody, onSuccess, onError) => {
 	const endpoint = `/${ATTACHMENT}`;
@@ -329,15 +329,58 @@ const deleteAttachment = (requestBody, onSuccess, onError) => {
 };
 /**
  * Downloads the attachment of a drill or task.
- * @param {Object} params 
- * @param {Function} onSuccess 
- * @param {Function} onError 
+ * @param {Object} params
+ * @param {Function} onSuccess
+ * @param {Function} onError
  */
 const downloadAttachment = (params, onSuccess, onError) => {
 	const endpoint = `/${ATTACHMENT}`;
 	return get(endpoint, params, onSuccess, onError);
 };
 
+/**
+ * Adds a new task to an owner.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const addTaskToOwner = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TASK}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Adds a new subordinate to an owner.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const addSubordinateToOwner = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/owner`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Deletes an owner and all of its associated tasks and subordinates.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const deleteOwner = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/owner`;
+	return del(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Edits a tasks description.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const editTask = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TASK}`;
+	return put(endpoint, requestBody, onSuccess, onError);
+};
 
 /**
  * Wrapper method for AXIOS GET requests.
@@ -472,5 +515,9 @@ export const API = {
 	checkAttachmentExists,
 	uploadAttachment,
 	deleteAttachment,
-	downloadAttachment
+	downloadAttachment,
+	addTaskToOwner,
+	addSubordinateToOwner,
+	deleteOwner,
+	editTask
 };

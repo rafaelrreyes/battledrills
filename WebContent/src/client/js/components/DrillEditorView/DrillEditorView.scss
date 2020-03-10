@@ -1,0 +1,32 @@
+@import "~CSS/";
+
+.drill-editor-view {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	align-items: center;
+	height: 5em;
+
+	.drill-editor-commands {
+		display: flex;
+		align-items: center;
+		@include body-3;
+
+		div.editor-button {
+			display: flex;
+			align-items: center;
+			padding: 1em;
+			background-color: $blue-grey-700;
+			cursor: pointer;
+			margin: 0 0.5em 0 0.5em;
+
+			&:hover {
+				color: $cyan-700;
+
+				i {
+					color: $cyan-700;
+				}
+			}
+		}
+	}
+}

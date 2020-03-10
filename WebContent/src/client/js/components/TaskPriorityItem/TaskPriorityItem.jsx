@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./TaskPriorityItem.scss";
 import { DetailedTimer } from "../index";
-import { API } from "UTILITIES/API";
+import { API, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES/";
 
 const TaskPriorityItem = ({ task, onTaskClick, isSelected }) => {
 	const { description, owner, taskId } = task;
@@ -34,7 +34,7 @@ const TaskPriorityItem = ({ task, onTaskClick, isSelected }) => {
 		>
 			<label className="active-task-item-owner-label">{owner}</label>
 			<div className="active-task-item-container">
-				<p className="description">{description}</p>
+				<p className="description">{description ? description : TASK_DESCRIPTION_PLACEHOLDER}</p>
 				<div className="timer">{startTime !== 0 ? <DetailedTimer start={startTime} /> : null}</div>
 			</div>
 		</li>

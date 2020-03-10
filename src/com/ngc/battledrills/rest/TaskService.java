@@ -14,6 +14,7 @@ import com.ngc.battledrills.manage.TaskManager;
 import com.ngc.battledrills.data.Node;
 import com.ngc.battledrills.data.Task;
 import com.ngc.battledrills.data.TaskRepo;
+import com.ngc.battledrills.data.User;
 import java.security.InvalidParameterException;
 import java.util.List;
 import javax.ws.rs.DELETE;
@@ -103,10 +104,43 @@ public class TaskService {
         return DEFAULT_JSON_WRITER.writeValueAsString(TaskRepo.getTasksByBillet(billet));
     }
     
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response addTask(TaskRestParams params) {
+        
+        // TODO || null == params.getUser()
+        if (StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
+            throw new WebApplicationException("Owner, drill name, and user object parameters cannot be blank.", Response.Status.BAD_REQUEST);
+        }  
+        
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        BattleDrill drill = mgr.getByName(params.getDrillName());
+        boolean isSuccessful = drill.addTaskToOwner(params.getOwner(), params.getDescription(), params.getUser());
+        return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response editTask(TaskRestParams params) throws ItemNotFoundException {
+        
+        if (StringUtils.isBlank(params.getTaskId()) || StringUtils.isBlank(params.getOwner()) || null == params.getUser()) {
+            throw new WebApplicationException("Task ID, owner, user, parameters cannot be blank.", Response.Status.BAD_REQUEST);
+        }
+        
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        Task task = TaskRepo.getTask(params.getTaskId());
+        BattleDrill drill = mgr.getByName(task.getBattleDrillName());
+        boolean isSuccessful = drill.updateTaskDescription(params.getOwner(), params.getUser(), params.getTaskId(), params.getDescription());
+        
+        return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+    }
+    
     
     @DELETE
     @Path("/{id}")
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     public void deleteTaskById(@PathParam("id") String taskId) throws JsonProcessingException {
         if(StringUtils.isBlank(taskId))
         {

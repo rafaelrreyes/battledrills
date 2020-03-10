@@ -1,5 +1,6 @@
 {
 	"type": "attack_on_critical_infrastructure",
+	"participants": ["CO", "WO", "XO", "AirO", "FSCC", "S-1", "S-2", "S-4", "S-3", "LOC"],
 	"data": {
 		"title": "CO",
 		"self_coordinates": {
