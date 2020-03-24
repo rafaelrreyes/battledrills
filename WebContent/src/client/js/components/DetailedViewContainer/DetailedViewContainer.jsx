@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { TaskActionsMenu, AttachmentsView } from "COMPONENTS/";
-import { Input, INPUT_SIZES, INPUT_TYPES } from "CORE/";
-import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES/";
+import { Input, INPUT_SIZES, INPUT_TYPES, Button, ButtonSizes, ButtonTypes } from "CORE/";
+import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER, deleteTask } from "UTILITIES/";
 import "./DetailedViewContainer.scss";
 
 // views
@@ -91,22 +91,31 @@ const DetailedViewContainer = () => {
 		setNewDescription(description);
 	};
 
-	const renderActionsButtons = () => {
+	const renderActionsMenu = () => {
 		if (displayActionButtons) {
 			return (
-				<>
-					<TaskActionsMenu
-						className="task-commands"
-						closeMenu={() => {
-							hideActionsButtons();
-						}}
-						taskId={taskId}
-					/>
-				</>
+				<TaskActionsMenu
+					className="task-commands"
+					closeMenu={() => {
+						hideActionsButtons();
+					}}
+					taskId={taskId}
+				/>
 			);
 		}
 
 		return null;
+	};
+
+	const renderActionsButton = () => {
+		return (
+			<span>
+				<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={showActionsButton}>
+					<i className="material-icons">{MaterialIconNames.COMMANDS}</i>Actions
+				</Button>
+				{renderActionsMenu()}
+			</span>
+		);
 	};
 
 	const renderAttachments = () => {
@@ -140,6 +149,18 @@ const DetailedViewContainer = () => {
 		}
 	};
 
+	const renderDeleteButton = () => {
+		return (
+			<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={onDeleteTask}>
+				<i className="material-icons">{MaterialIconNames.DELETE}</i>Delete
+			</Button>
+		);
+	};
+
+	const onDeleteTask = () => {
+		deleteTask(taskId);
+	};
+
 	const onDescriptionChange = (value) => {
 		setNewDescription(value);
 	};
@@ -162,12 +183,11 @@ const DetailedViewContainer = () => {
 						<span className="detailed-task-description">{renderDescription()}</span>
 					</div>
 					{currentView !== Routes.COMPLETED_DIAGRAM && (
-						<div className="detailed-view-actions">
-							<div className="detailed-view-actions-button" onClick={showActionsButton}>
-								<i className="material-icons">{MaterialIconNames.COMMANDS}</i>
-								<span className="detailed-view-actions-button-label">ACTIONS</span>
-							</div>
-							{renderActionsButtons()}
+						<div className="detailed-view-container">
+							<span className="detailed-view-actions">
+								{renderActionsButton()}
+								{renderDeleteButton()}
+							</span>
 							{renderAttachments()}
 						</div>
 					)}

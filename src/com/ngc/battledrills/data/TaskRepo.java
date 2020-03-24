@@ -151,7 +151,7 @@ public class TaskRepo {
     }
     
     // The task needs to be deleted from both this current task list and the containing battle drill as well
-    public static void deleteTask(String taskId) throws ItemNotFoundException
+    public static void deleteTask(String taskId, User user) throws ItemNotFoundException
     {
         if(StringUtils.isBlank(taskId))
         {
@@ -178,10 +178,9 @@ public class TaskRepo {
 
             if (null != battleDrill)
             {
-                boolean success = battleDrill.deleteTask(taskId);
+                boolean success = battleDrill.deleteTask(taskId, user);
                 if(success)
-                {          
-                    battleDrill.dequeuePrioritizedTask(taskId);
+                {
                     masterTasks.remove(taskId);
                     mgr.saveBattleDrill(battleDrillName, false);
                 }

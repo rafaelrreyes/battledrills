@@ -123,6 +123,25 @@ export const taskUpdated = (websocketResponse) => {
 	}
 };
 
+export const taskDeleted = (websocketResponse) => {
+	const { taskData } = websocketResponse;
+
+	const role = getRole(store.getState()).toUpperCase();
+	const selectedTask = getSelectedTask(store.getState());
+
+	API.getOwnerBillet(role, {}, (data) => {
+		store.dispatch(setActiveBillet(data));
+	});
+
+	API.getMetrics({}, (response) => {
+		store.dispatch(setAllStatuses(response));
+	});
+
+	if (taskData.taskId === selectedTask.taskId) {
+		store.dispatch(resetSelectedTask());
+	}
+};
+
 export const taskDescriptionUpdated = (websocketResponse) => {
 	const { taskData, drillName, noteId, timestamp, user } = websocketResponse;
 

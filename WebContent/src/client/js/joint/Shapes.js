@@ -22,7 +22,11 @@ joint.shapes.html.OwnerBlock = joint.shapes.standard.Rectangle.extend({
 });
 
 joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
-	template: ['<div class="owner-container"', '<div><span class="owner-title"></div>', "</div>"].join(""),
+	template: [
+		'<div class="owner-container">', 
+		'<div><span class="owner-title"></span></div>', 
+		'</div>'
+	].join(""),
 	initialize: function() {
 		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 		this.$box = $(_.template(this.template)());
@@ -32,18 +36,20 @@ joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
 		this.model.on("remove", this.removeBox, this);
 	},
 	updateBox: function() {
-		// TODO
 		var bbox = this.model.getBBox();
 		let owner = this.model.get("attrs").title;
-		let isEditEnabled = this.model.get("attrs").isEditEnabled;
-		if (isEditEnabled) {
-			this.$box
-				.find("span.owner-title")
-				.html(`${owner}<i class="material-icons edit-owner-icon">edit</i><div class="filler-div"></div>`);
-		} else {
-			this.$box.find("span").html(owner);
-		}
 
+		// TODO
+		this.$box.hover(() => { 
+			console.log("hovering");
+		}, () => {
+			console.log("unhoveringed");
+		});
+
+		this.$box
+			.find("span.owner-title")
+			.html(`${owner}<i class="material-icons edit-owner-icon">edit</i><div class="filler-div"></div>`);
+	
 		this.$box.find("i").on("click", (event) => {
 			const dropdownAlreadyOpen = ReactDOM.unmountComponentAtNode(event.target.nextSibling);
 			if (dropdownAlreadyOpen) {
@@ -98,7 +104,6 @@ joint.shapes.html.ActionView = joint.dia.ElementView.extend({
 	].join(""),
 
 	initialize: function() {
-		//_.bindAll(this, "updateBox");
 		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 		this.$box = $(_.template(this.template)());
 

@@ -200,8 +200,8 @@ const getTaskById = (taskId, params, onSuccess, onError) => {
  *
  * @returns Data retrieved, if any
  */
-const deleteTaskById = (taskId, requestBody, onSuccess, onError) => {
-	const endpoint = `/${TASK}/${taskId}`;
+const deleteTaskById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TASK}`;
 	return del(endpoint, requestBody, onSuccess, onError);
 };
 

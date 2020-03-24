@@ -6,7 +6,7 @@ import Shapes from "../../joint/Shapes";
 import BattleDrillDiagram from "../../joint/BattleDrillDiagram";
 import "./DiagramViewContainer.scss";
 import "./joint.css";
-import { getSelectedDrill, getSelectedTask, editCoordinates, getEditMode } from "REDUX/index";
+import { getSelectedDrill, getSelectedTask, editCoordinates } from "REDUX/";
 import { API } from "UTILITIES/index";
 
 const DEFAULTS = {
@@ -24,7 +24,6 @@ const DiagramViewContainer = () => {
 
 	const selectedDrill = useSelector(getSelectedDrill);
 	const selectedTask = useSelector(getSelectedTask);
-	const editMode = useSelector(getEditMode);
 	const dispatch = useDispatch();
 
 	const graph = new joint.dia.Graph();
@@ -52,7 +51,7 @@ const DiagramViewContainer = () => {
 		if (selectedDrill !== null || typeof selectedDrill !== "undefined") {
 			battleDrillDiagram.createBattleDrill(selectedDrill, selectedTask);
 		}
-	}, [selectedDrill, selectedTask, editMode]);
+	}, [selectedDrill, selectedTask]);
 
 	useEffect(() => {
 		// in future, if width or height is changed, we can change the width of the rendering area, hence the width and height being

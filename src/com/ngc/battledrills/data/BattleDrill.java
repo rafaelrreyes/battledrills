@@ -50,9 +50,6 @@ public class BattleDrill extends BattleDrillTemplate {
     private Map<String, String> location = new HashMap<>();
     private List<Attachment> attachments = new ArrayList<>();
     
-    @JsonProperty("prioritizedTasks")
-    private List<Task> prioritizedTasks = new ArrayList<>();
-    
     public BattleDrill(){}
 
     @JsonProperty("attachments")
@@ -234,14 +231,14 @@ public class BattleDrill extends BattleDrillTemplate {
     }
     
     // @return a boolean value indicating whether or not the task was found and deleted.  A false value indicates the task was not found in this battle drill
-    public boolean deleteTask(String taskId)
+    public boolean deleteTask(String taskId, User user)
     {
         if (StringUtils.isBlank(taskId))
         {
             throw new InvalidParameterException("Unable to delete task - taskId parameter cannot be blank");
         }
         Node root = this.getRoot();
-        return root.deleteTask(taskId);
+        return root.deleteTask(taskId, user);
     }
     
     /**
@@ -432,88 +429,6 @@ public class BattleDrill extends BattleDrillTemplate {
         }
     }
     
-    public void enqueuePrioritizedTask(Task task) {
-        // can only queue if there are less than max allowed
-        if (this.prioritizedTasks.size() < BattleDrillConstants.MAX_PRIORITIZED_TASKS) {
-            this.prioritizedTasks.add(task);
-        }
-    }
-    
-    public void dequeuePrioritizedTask(String taskId) {
-        boolean dequeuedTask = false;
-        if (this.prioritizedTasks.isEmpty()) {
-            // TODO cannot dequeue any tasks
-        } else {
-            // loop through queue and identify task that should be dequeued
-            for (int i = 0; i < this.prioritizedTasks.size(); i++) {
-                Task targetTask = this.prioritizedTasks.get(i);
-                if (targetTask.getId().equalsIgnoreCase(taskId)) {
-                    System.out.println("removing task from prioritized: " + taskId);
-                    this.prioritizedTasks.remove(i);
-                    dequeuedTask = true;
-                }
-            }
-            
-            // whenever a task is dequeued, find the next task to be queued
-            // usually start at root owner, usually CO
-            // only need to find a new task to queue if one was actually removed
-            if (dequeuedTask) {
-                Node rootNode = this.getRoot();
-                findTaskToQueue(rootNode);
-            }
-        }
-    }
-    
-    public void findTaskToQueue(Node node) {
-        // check if this node has any tasks that aren't completed
-        if (node.getTasks() != null || node.getTasks().size() > 0) {
-            List<Task> tasks = new ArrayList<>(node.getTasks());
-            
-            // check if any of the tasks of current node are NOT COMPLETED, then queue them
-            for (int i = 0; i < tasks.size(); i++) {
-                // check if task is COMPLETED
-                String status = tasks.get(i).getCurrentStatus().getStatus();
-                if (!status.equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
-                    // check if this task is already queued...
-                    boolean isAlreadyQueued = false;
-                    for (int j = 0; j < this.prioritizedTasks.size(); j++) {
-                        // found task in priority already
-                        if (tasks.get(i).getId().equals(this.prioritizedTasks.get(j).getId())) {
-                            isAlreadyQueued = true;
-                        }
-                    }
-                    
-                    // prevent duplicate task queues
-                    if (!isAlreadyQueued) {
-                        enqueuePrioritizedTask(tasks.get(i));   
-                    }
-                    
-                    // break when we find a task that isn't completed, allowing next child node to queue a task
-                    break;
-                }
-            }
-        }
-        
-        // recursively check through tasks of child nodes
-        // TODO: might be worth checking if max size of queue is reached before recursively checking
-        if (node.getChildNodes() != null || node.getChildNodes().size() > 0) {
-            List<Node> children = new ArrayList<>(node.getChildNodes());
-            
-            // check if any of the children of current node has tasks that are NOT COMPLETED, then queue them
-            for (int i = 0; i < children.size(); i++) {
-                findTaskToQueue(children.get(i));
-            }
-        }
-    }
-    
-    public void setPrioritizedTasks(List<Task> prioritizedTasks) {
-        this.prioritizedTasks = prioritizedTasks;
-    }
-    
-    public List<Task> getPrioritizedTasks() {
-        return this.prioritizedTasks;
-    }
-    
     /**
      * Sets the location latitude and longitude of this drill.
      * @param location 
@@ -555,13 +470,7 @@ public class BattleDrill extends BattleDrillTemplate {
     public void start() throws ItemNotFoundException
     {
        startTime = LocalDateTime.now();
-       // TODO, begin tasks prioritizing here
        Node rootNode = this.getRoot();
-       
-       // in cases where a drill does not have a single role
-       if (null != rootNode) {
-           findTaskToQueue(rootNode);
-       }
        
        BattleDrillManager mgr = BattleDrillManager.getInstance();
        mgr.saveBattleDrill(this.getName(), false);
@@ -570,7 +479,6 @@ public class BattleDrill extends BattleDrillTemplate {
     public void stop() throws ItemNotFoundException
     {
         endTime = LocalDateTime.now();
-        this.setPrioritizedTasks(null);
         BattleDrillManager mgr = BattleDrillManager.getInstance();
         mgr.saveBattleDrill(this.getName(), false);
     }

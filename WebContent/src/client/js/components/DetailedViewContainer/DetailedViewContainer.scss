@@ -42,11 +42,17 @@
 		}
 	}
 
-	.detailed-view-actions {
+	.detailed-view-container {
 		position: relative;
 		-moz-user-select: none;
 		-ms-user-select: none;
 		user-select: none;
+
+		.detailed-view-actions {
+			display: flex;
+			justify-content: space-evenly;
+			align-items: center;
+		}
 
 		.detailed-view-commands-bar {
 			position: absolute;
@@ -59,6 +65,9 @@
 		}
 
 		.task-actions-container {
+			left: -60%;
+			position: relative;
+			
 			.menu-content {
 				left: 1em;
 			}

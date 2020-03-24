@@ -49,7 +49,6 @@ public class Status {
         if (isDefinedStatus(status)) {
             this.status = StringEscapeUtils.escapeJava(status);
         }
-        
     }
     
     public String getStatus() {

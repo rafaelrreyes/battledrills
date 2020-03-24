@@ -28,6 +28,8 @@
 			cursor: pointer;
 			margin: 1em;
 			padding: 1em;
+			min-width: fit-content;
+			min-width: -moz-fit-content;
 			background-color: $blue-grey-700;
 
 			.mode-button-label {

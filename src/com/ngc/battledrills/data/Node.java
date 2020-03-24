@@ -169,7 +169,6 @@ public class Node {
     
     public void emptyChildren() throws ItemNotFoundException {
         
-        // TODO need to recursively check if any of the tasks of any children were prioritized, to remove them
         if (null != this.children || this.children.size() > 0) {
             for (int i = 0; i < this.children.size(); i++) {
                 Node childNode = this.children.get(i);
@@ -198,7 +197,7 @@ public class Node {
         
         // clear all task repo corresponding tasks as well
         for (String taskId : taskIdsToRemove) {
-            TaskRepo.deleteTask(taskId);
+            TaskRepo.deleteTask(taskId, null);
         }
     }
     
@@ -405,7 +404,7 @@ public class Node {
     }
 
     // Traverse the tree to delete the requested task
-    public boolean deleteTask(String taskId)
+    public boolean deleteTask(String taskId, User user)
     {
         boolean success = false;
         Task toDelete = null;
@@ -425,12 +424,20 @@ public class Node {
         {
             tasks.remove(toDelete);
             success = true;
+            
+            // create notification using user obj
+            // send task edit notification
+            if (null != user) {
+                Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, toDelete.getTaskData(), getBattleDrillName());
+                Notify.sendNotificationToAllExcluding(taskNotification);
+                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, taskNotification));
+            }
         }
         else // If the task was not found, pass the delete request to child nodes, and return immediately if the task is successfully deleted in a descendant of this node
         {
             for(Node child : children)
             {
-                success = child.deleteTask(taskId);
+                success = child.deleteTask(taskId, user);
                 if(success == true)
                 {
                     break;

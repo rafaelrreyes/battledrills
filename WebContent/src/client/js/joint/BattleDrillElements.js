@@ -2,7 +2,6 @@ import { ShapesConstants } from "./ShapesHelper";
 import { CoordinateTypes } from "UTILITIES/index";
 import joint from "jointjs/index";
 import store from "REDUX/store";
-import { getEditMode } from "REDUX/";
 
 export default class BattleDrillElements {
 	constructor() {
@@ -20,15 +19,13 @@ export default class BattleDrillElements {
 		const height = ShapesConstants.CONTRIBUTOR_HEIGHT;
 		const { self_coordinates } = data;
 
-		const contributorEditorRect = new joint.shapes.html.OwnerBlock({
+		const contributorRect = new joint.shapes.html.OwnerBlock({
 			size: {
 				width,
 				height
 			},
 			attrs: {
 				title: data.title,
-				// TODO use this flag to enable editting
-				isEditEnabled: getEditMode(store.getState()),
 				diagramData: {
 					owner: data.title,
 					coordinateType: CoordinateTypes.SELF
@@ -39,51 +36,16 @@ export default class BattleDrillElements {
 				}
 			}
 		});
-		// const contributorRect = new joint.shapes.standard.Rectangle({
-		// 	size: {
-		// 		width: width,
-		// 		height: height
-		// 	},
-		// 	attrs: {
-		// 		text: {
-		// 			text: data.title,
-		// 			fontWeight: "bolder",
-		// 			fontFamily: "Roboto"
-		// 		},
-		// 		diagramData: {
-		// 			owner: data.title,
-		// 			coordinateType: CoordinateTypes.SELF
-		// 		},
-		// 		body: {
-		// 			fill: ShapesConstants.CONTRIBUTOR_COLOR,
-		// 			filter: {
-		// 				name: "dropShadow",
-		// 				args: {
-		// 					dx: 2,
-		// 					dy: 2,
-		// 					blur: 3
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// });
 
-		// TODO
 		if (self_coordinates) {
 			if (typeof self_coordinates.x !== "undefined" && typeof self_coordinates.y !== "undefined") {
-				contributorEditorRect.position(self_coordinates.x, self_coordinates.y);
+				contributorRect.position(self_coordinates.x, self_coordinates.y);
 			}
 		}
 
-		// if (self_coordinates) {
-		// 	if (typeof self_coordinates.x !== "undefined" && typeof self_coordinates.y !== "undefined") {
-		// 		contributorRect.position(self_coordinates.x, self_coordinates.y);
-		// 	}
-		// }
 
-		this.elements.push(contributorEditorRect);
-		// this.elements.push(contributorRect);
-		return contributorEditorRect;
+		this.elements.push(contributorRect);
+		return contributorRect;
 	}
 
 	/**

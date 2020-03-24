@@ -42,6 +42,23 @@ public class TaskNotification extends Notification {
         this.drillName = drillName;
     }
     
+    /**
+     * This is when a task is deleted.
+     * @param operationType
+     * @param user
+     * @param drillName
+     * @param taskData 
+     */
+    public TaskNotification(String operationType, User user, String drillName, Map<String, String> taskData) {
+        super(NotifyTypes.OBJECT_TYPES.TASK, operationType, user);
+        if (StringUtils.isBlank(drillName) || taskData.isEmpty()) {
+            throw new InvalidParameterException("Unable to create TaskNotification - drillName and taskId cannot be blank");
+        }
+        
+        this.drillName = drillName;
+        this.taskData.putAll(taskData);
+    }
+    
     public Map<String, String> getTaskData() {
         return this.taskData;
     }

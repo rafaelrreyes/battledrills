@@ -13,6 +13,4 @@ public class BattleDrillConstants {
     public static final int DEFAULT_DIAGRAM_Y_COORDINATE_OFFSET = 75;
     public static final int DEFAULT_DIAGRAM_ROOT_X_COORDINATE = 450;
     public static final int DEFAULT_DIAGRAM_ROOT_Y_COORDINATE = 20;
-    
-    public static final int MAX_PRIORITIZED_TASKS = 5;
 }

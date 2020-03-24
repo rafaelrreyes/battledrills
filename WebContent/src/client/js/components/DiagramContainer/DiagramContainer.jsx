@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { DiagramViewContainer, DetailedViewContainer } from "../";
-import { TaskPriorityContainer, DrillEditorView } from "../";
+import { DrillEditorView } from "../";
 import { getSelectedDrill, getActiveDrills, getCompletedDrills, getSelectedTask } from "REDUX/";
 import {
 	setSelectedDrill,
 	resetSelectedTask,
 	resetSelectedDrill,
 	updateAllDrills,
-	setCurrentView,
-	getEditMode,
-	setEditMode
+	setCurrentView
 } from "REDUX/";
 import { ScrollableTabs, TooltipPlacement } from "CORE/";
 import { API, MaterialIconNames, Routes } from "UTILITIES/";
@@ -29,7 +27,6 @@ const DiagramContainer = () => {
 	const selectedDrill = useSelector(getSelectedDrill);
 	const activeDrills = useSelector(getActiveDrills);
 	const completedDrills = useSelector(getCompletedDrills);
-	const editMode = useSelector(getEditMode);
 
 	useEffect(() => {
 		dispatch(setCurrentView(location.pathname));
@@ -106,32 +103,7 @@ const DiagramContainer = () => {
 			</div>
 			{location.pathname === Routes.ACTIVE_DIAGRAM && (
 				<div className="diagram-view-bar">
-					{editMode ? (
-						<DrillEditorView />
-					) : (
-						<div className="tasks-priority-container">
-							<TaskPriorityContainer />
-						</div>
-					)}
-
-					<div
-						className="edit-mode-button"
-						onClick={() => {
-							dispatch(setEditMode(!editMode));
-						}}
-					>
-						{editMode ? (
-							<>
-								<i className="material-icons">{MaterialIconNames.TASK}</i>
-								<label className="mode-button-label">Task Priority</label>
-							</>
-						) : (
-							<>
-								<i className="material-icons">{MaterialIconNames.EDIT}</i>
-								<label className="mode-button-label">Edit Drill</label>
-							</>
-						)}
-					</div>
+					<DrillEditorView />
 				</div>
 			)}
 			<div className="diagram-detailed-flex-box">

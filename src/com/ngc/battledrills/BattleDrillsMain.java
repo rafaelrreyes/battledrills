@@ -49,8 +49,14 @@ public class BattleDrillsMain {
 //        String fileName = "a (1).pdf";
 //        String extension = fileName.substring(fileName.lastIndexOf("."), fileName.length());
 //        
-          File file = new File("C:/h/test/test/test");
-          file.mkdirs();
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+          TaskRepo.getAllTasks();
+          Task task = TaskRepo.getTask("4e0bc58b-2813-4f53-982a-c2de282f4d4e");
+          TaskRepo.editTaskDescription(task, "rafa");
+//          System.out.println(task.toString());
+          mgr.saveBattleDrill("222", false);
+//          task.setDescription("testing");
+//          System.out.println(task.toString());
 //        String newName = fileName.substring(0, fileName.lastIndexOf("."));
 //        if (newName.length() <= 2) {
 //            newName = newName.concat("(1)");

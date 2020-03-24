@@ -97,6 +97,14 @@ public class NotifyManager {
         return new TaskNotification(operationType, edittedKey, user, drillName, taskData, noteId);
     }
     
+    public static Notification createTaskNotification(String operationType, User user, Map<String, String> taskData, String drillName) {
+        if (!isValidNotification(operationType)) {
+            return null;
+        }
+        
+        return new TaskNotification(operationType, user, drillName, taskData);
+    }
+    
     /**
      * Wrapper for creating a chat notification based on operationType.
      * @param operationType

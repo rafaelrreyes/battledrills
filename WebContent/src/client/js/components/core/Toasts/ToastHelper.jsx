@@ -14,6 +14,7 @@ import {
 	AttachmentTypes,
 	isAttachmentDelete,
 	isTaskDescriptionEdit,
+	isTaskDelete,
 	NoteTypes
 } from "UTILITIES/";
 import { Button, ButtonSizes, ButtonTypes } from "CORE/";
@@ -101,6 +102,11 @@ export const getToastMessageHtml = (props) => {
 		return message;
 	}
 
+	if (isTaskDelete(props)) {
+		const message = <>{`${user.role} deleted a task from drill ${drillName}`}</>;
+		return message;
+	}
+
 	return <>{getToastMessageString(props)}</>;
 };
 
@@ -152,6 +158,11 @@ export const getToastMessageString = (props) => {
 	if (isTaskDescriptionEdit(props)) {
 		const { drillName } = props;
 		return `${user.role} edited description of a task in drill "${drillName}"`;
+	}
+
+	if (isTaskDelete(props)) {
+		const { drillName } = props;
+		return `${user.role} deleted a task from drill ${drillName}`
 	}
 };
 

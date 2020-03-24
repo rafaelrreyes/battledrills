@@ -139,21 +139,17 @@ public class TaskService {
     
     
     @DELETE
-    @Path("/{id}")
     @Produces(MediaType.TEXT_PLAIN)
-    public void deleteTaskById(@PathParam("id") String taskId) throws JsonProcessingException {
-        if(StringUtils.isBlank(taskId))
-        {
-            throw new WebApplicationException("ID parameter cannot be blank", Response.Status.BAD_REQUEST);
+    public void deleteTaskById(TaskRestParams params) throws JsonProcessingException {
+        if (StringUtils.isBlank(params.getTaskId()) || null == params.getUser()) {
+            throw new WebApplicationException("Task ID and user parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
         
         try
         {
-            TaskRepo.deleteTask(taskId);
-        }
-        catch(ItemNotFoundException | InvalidParameterException i)
-        {
-            throw new WebApplicationException(i);
+            TaskRepo.deleteTask(params.getTaskId(), params.getUser());
+        } catch (ItemNotFoundException e ) {
+            throw new WebApplicationException("Error when deleting task: " + params.getTaskId());
         }
     }
     

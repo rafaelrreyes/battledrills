@@ -7,10 +7,11 @@ import {
 	chatMessageReceived,
 	websocketOpened,
 	attachmentManipulated,
-	taskDescriptionUpdated
+	taskDescriptionUpdated,
+	taskDeleted
 } from "./WebsocketActions";
 
-import { dispatchToastNotification } from "CORE/index";
+import { dispatchToastNotification } from "CORE/";
 
 export const WebsocketTypes = {
 	OBJECT_TYPES: {
@@ -55,6 +56,7 @@ export const dispatchWebsocket = (json) => {
 	isAttachmentUpload(json) && attachmentManipulated(json);
 	isAttachmentDelete(json) && attachmentManipulated(json);
 	isTaskDescriptionEdit(json) && taskDescriptionUpdated(json);
+	isTaskDelete(json) && taskDeleted(json);
 };
 
 export const isWebsocketOpened = ({ objectType, operationType }) => {
@@ -122,6 +124,15 @@ export const isAttachmentUpload = ({ objectType, operationType }) => {
 
 export const isAttachmentDelete = ({ objectType, operationType }) => {
 	if (objectType === WebsocketTypes.OBJECT_TYPES.ATTACHMENT) {
+		if (operationType === WebsocketTypes.OPERATION_TYPES.DELETE) {
+			return true;
+		}
+	}
+	return false;
+};
+
+export const isTaskDelete = ({ objectType, operationType }) => {
+	if (objectType === WebsocketTypes.OBJECT_TYPES.TASK) {
 		if (operationType === WebsocketTypes.OPERATION_TYPES.DELETE) {
 			return true;
 		}

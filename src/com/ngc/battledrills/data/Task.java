@@ -187,10 +187,8 @@ public class Task {
         
         // if the new state of the task is Completed, then the task is finished and can be given an end time
         if (newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
-            // also dequeue from Task Priority Queue
             BattleDrillManager mgr = BattleDrillManager.getInstance();
             BattleDrill drill = mgr.getByName(this.getBattleDrillName());
-            drill.dequeuePrioritizedTask(this.getId());
             this.setEndTime(LocalDateTime.now());
         }
         
@@ -349,8 +347,7 @@ public class Task {
     {
         this.endTime = endTime;
     }
-    
-    // TODO, change this to queuedAt ?
+
     @JsonProperty("start")
     public long getStartTimeMillis()
     {
