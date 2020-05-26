@@ -44,8 +44,9 @@ module.exports = {
 			REDUX: path.resolve(__dirname, "../src/client/js/redux/"), // import * from "REDUX/..."
 			CORE: path.resolve(__dirname, "../src/client/js/components/core/"), // import * from "CORE/..."
 			COMPONENTS: path.resolve(__dirname, "../src/client/js/components/"), // import * from "COMPONENTS/..."
-			HOOKS: path.resolve(__dirname, "../src/client/js/hooks/"), // import * from "HOOKS/...":
-			IMAGES: path.resolve(__dirname, "../src/client/lib/images/") // import * from "IMAGES/...":
+			HOOKS: path.resolve(__dirname, "../src/client/js/hooks/"), // import * from "HOOKS/..."
+			IMAGES: path.resolve(__dirname, "../src/client/lib/images/"), // import * from "IMAGES/..."
+			FONTS: path.resolve(__dirname, "../src/client/lib/fonts/")
 		},
 		extensions: [".js", ".jsx", "*"]
 	},

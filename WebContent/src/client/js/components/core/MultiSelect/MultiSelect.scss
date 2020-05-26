@@ -1,0 +1,91 @@
+@import "~CSS/index";
+
+$multi-select-border-width: 0.125em;
+$multi-select-background-color: $grey-900;
+$multi-select-height: 32px;
+$multi-select-border-color-hover: $border-color-hover;
+
+$multi-select-width-fill: 100%;
+$multi-select-width-lg: 236px;
+$multi-select-width-md: 180px;
+$multi-select-width-sm: 112px;
+$multi-select-width-xs: 84px;
+$multi-select-width-xxs: 56px;
+
+%multi-select-template {
+	.multi-select-dropdown {
+		background-color: $multi-select-background-color;
+		height: $multi-select-height;
+		border: $multi-select-border-width solid $multi-select-border-color-hover;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+
+		&:hover {
+			background-color: $blue-grey-700;
+		}
+	}
+
+	.multi-select-label {
+		@include body-3;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		padding: 0 0.5em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.multi-select-list {
+		position: absolute;
+		background-color: $multi-select-background-color;
+		width: inherit;
+		z-index: 200;
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		max-height: 352px; // can change this height later if needed
+		overflow-y: auto;
+
+		.select-item {
+			@include body-3;
+			text-align: left;
+			height: 32px;
+			display: flex;
+			width: 100%;
+
+			&:hover {
+				background-color: $cyan-800;
+			}
+		}
+	}
+}
+
+.multi-select-wrapper {
+	&-fill {
+		@extend %multi-select-template;
+		width: $multi-select-width-fill;
+	}
+	&-lg {
+		@extend %multi-select-template;
+		width: $multi-select-width-lg;
+	}
+	&-md {
+		@extend %multi-select-template;
+		width: $multi-select-width-md;
+	}
+	&-sm {
+		@extend %multi-select-template;
+		width: $multi-select-width-sm;
+	}
+	&-xs {
+		@extend %multi-select-template;
+		width: $multi-select-width-xs;
+	}
+	&-xxs {
+		@extend %multi-select-template;
+		width: $multi-select-width-xxs;
+	}
+}

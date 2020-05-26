@@ -1,0 +1,12 @@
+@import "~CSS/index";
+
+.manage-templates-container {
+	width: 90%;
+
+	.manage-templates-list-containers {
+		display: flex;
+		align-items: center;
+		flex-direction: column;
+		justify-content: center;
+	}
+}

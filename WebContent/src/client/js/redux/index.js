@@ -9,6 +9,7 @@ import Chat from "./Chat/ChatReducer";
 import AllStatus from "./AllStatus/AllStatusReducer";
 import Billet from "./Billet/BilletReducer";
 import View from "./View/ViewReducer";
+import DiagramEditor from "./DiagramEditor/DiagramEditorReducer";
 
 export * from "./AllDrills/AllDrillsActions";
 export * from "./AllDrills/AllDrillsSelectors";
@@ -30,6 +31,8 @@ export * from "./Billet/BilletActions";
 export * from "./Billet/BilletSelectors";
 export * from "./View/ViewActions";
 export * from "./View/ViewSelectors";
+export * from "./DiagramEditor/DiagramEditorActions";
+export * from "./DiagramEditor/DiagramEditorSelectors";
 
 export default combineReducers({
 	AllDrills,
@@ -41,5 +44,6 @@ export default combineReducers({
 	Chat,
 	AllStatus,
 	Billet,
-	View
+	View,
+	DiagramEditor
 });

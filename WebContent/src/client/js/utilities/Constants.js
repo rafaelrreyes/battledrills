@@ -24,14 +24,17 @@ export const AttachmentTypes = {
 };
 
 export const Routes = {
-	MAIN: "/",
+	OVERVIEW: "/",
 	ACTIVE_DIAGRAM: "/active_diagram",
 	COMPLETED_DIAGRAM: "/completed_diagram",
-	MY_REPORT: "/my_report",
-	STATUS: "/status"
+	MY_DRILLS: "/my_drills",
+	STATUS: "/status",
+	REPORTS: "/reports",
+	MY_ACCOUNT: "/my_account",
+	TEMPLATE_EDITOR: "/template_editor"
 };
 
-export const DrillState = { ACTIVE: "ACTIVE", COMPLETED: "COMPLETED" };
+export const DrillState = { ACTIVE: "Active", COMPLETED: "Completed" };
 
 export const CoordinateTypes = {
 	SELF: "self",
@@ -50,3 +53,24 @@ export const AutogenTypes = {
 };
 
 export const TASK_DESCRIPTION_PLACEHOLDER = "--";
+
+export const LinkStyles = {
+	NORMAL: "Normal",
+	ORTHOGONAL: "Orthogonal",
+	MANHATTAN: "Manhattan",
+	METRO: "Metro"
+};
+
+export const LinkSmoothness = {
+	NORMAL: "Normal",
+	SMOOTH: "Smooth",
+	ROUNDED: "Rounded"
+};
+
+export const DrillTypes = {
+	CUSTOM: "custom",
+	DEFAULT: "default"
+};
+
+export const MobileViewMaxWidth = 820;
+export const DesktopViewMinWidth = 821;

@@ -13,7 +13,8 @@ body {
 
 input,
 select,
-textarea {
+textarea,
+button {
 	-ms-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
@@ -22,11 +23,12 @@ textarea {
 
 .main-body-container {
 	background-color: $blue-grey-900;
-	top: 3.5em;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	position: absolute;
+	text-align: center;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
 }
 
 .no-button {

@@ -1,6 +1,6 @@
 import React from "react";
-import { DraggableList, openCreateDrillModal } from "CORE/index";
-import { API, MaterialIconNames, areArraysEqual, DrillState } from "UTILITIES/index";
+import { DraggableList, openCreateDrillModal, Icon } from "CORE";
+import { API, MaterialIconNames, areArraysEqual, DrillState, DrillTypes } from "UTILITIES";
 
 const ActiveDrills = ({
 	activeDrills,
@@ -37,8 +37,13 @@ const ActiveDrills = ({
 			<div className="card-title">
 				<div className="active-drill-title-container">
 					Active Drills
-					<button className="no-button active-drill-create-icon" onClick={openCreateDrillModal}>
-						<i className="material-icons md-20">{MaterialIconNames.ADD_CIRCLE_OUTLINE}</i>
+					<button
+						className="no-button active-drill-create-icon"
+						onClick={() => {
+							openCreateDrillModal(DrillTypes.DEFAULT);
+						}}
+					>
+						<Icon className="md-20">{MaterialIconNames.ADD_CIRCLE_OUTLINE}</Icon>
 					</button>
 				</div>
 			</div>

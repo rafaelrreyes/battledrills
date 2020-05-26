@@ -1,0 +1,19 @@
+@import "~CSS/index";
+
+.link-container {
+	margin: auto 0.5em;
+	height: 100%;
+	cursor: pointer;
+
+	.selected-link {
+		color: $cyan-700;
+	}
+
+	.link-button {
+		margin: 0;
+	}
+}
+
+.active-link {
+	color: $cyan-700;
+}

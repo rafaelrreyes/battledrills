@@ -1,0 +1,27 @@
+@import "~CSS/index";
+
+.template-editor-container {
+	display: flex;
+	flex-flow: column;
+	height: 93.5%;
+
+	.template-palette-bar {
+	}
+
+	.template-main-container {
+		display: flex;
+		flex-flow: row;
+		min-height: 0;
+	}
+
+	.template-side-bar-button {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		background-color: $blue-grey-800;
+
+		&:hover {
+			background-color: $cyan-900;
+		}
+	}
+}

@@ -45,7 +45,7 @@ const OverviewContainer = () => {
 	const user = useSelector(getUser);
 
 	useEffect(() => {
-		dispatch(setCurrentView(Routes.MAIN));
+		dispatch(setCurrentView(Routes.OVERVIEW));
 
 		API.all(
 			{},
@@ -69,6 +69,7 @@ const OverviewContainer = () => {
 	}, []);
 
 	useEffect(() => {
+		updateElapsedTime();
 		timeTicker = setInterval(() => {
 			updateElapsedTime();
 		}, OPTIONS.TIMER_INTERVAL);
@@ -80,19 +81,22 @@ const OverviewContainer = () => {
 
 	const updateElapsedTime = () => {
 		if (typeof selectedDrill !== "undefined") {
-			const { startTimeMillis, endTimeMillis } = selectedDrill;
-			if (!startTimeMillis || !endTimeMillis || (startTimeMillis === -1 && endTimeMillis === -1)) {
+			const { startTime, endTime } = selectedDrill;
+			if ((startTime && !endTime) || (startTime && endTime)) {
+				const newElapsedTime = getElapsedTime(startTime, endTime);
+				if (elapsedTime !== newElapsedTime) {
+					setElapsedTime(getElapsedTime(startTime, endTime));
+				}
+			} else {
 				if (elapsedTime !== "N/A") {
 					setElapsedTime("N/A");
 				}
-			} else {
-				setElapsedTime(getElapsedTime(startTimeMillis, endTimeMillis));
 			}
 		}
 	};
 
 	const startDrill = (drillName) => {
-		API.startDrill(drillName, (response) => {
+		API.startDrill(drillName, user, (response) => {
 			API.getDrillByName(drillName, {}, (response) => {
 				dispatch(setSelectedDrill(response));
 			});
@@ -100,7 +104,7 @@ const OverviewContainer = () => {
 	};
 
 	const stopDrill = (drillName) => {
-		API.stopDrill(drillName, (response) => {
+		API.stopDrill(drillName, user, (response) => {
 			dispatch(setSelectedDrill(response));
 			// remove this later and just transfer active drill to completed in Redux
 			API.all({}, (res) => {
@@ -112,8 +116,6 @@ const OverviewContainer = () => {
 	const onDrillClick = (itemName) => {
 		API.getDrillByName(itemName, {}, (response) => {
 			dispatch(setSelectedDrill(response));
-			// require update call here to render elapsed time smoothly when new drill selected, no lag
-			updateElapsedTime();
 		});
 	};
 
@@ -151,10 +153,9 @@ const OverviewContainer = () => {
 	};
 
 	const reorderDrillsError = (type, err) => {
-		const displayType = type === DrillState.ACTIVE ? "Active" : "Completed";
 		dispatch(
 			showModal(ModalContentTypes.CONFIRMATION, {
-				title: `Reorder ${displayType} Drills`,
+				title: `Reorder ${type} Drills`,
 				icon: MaterialIconNames.ERROR,
 				description: `Drill reorder failed ${err}`,
 				singleButton: true

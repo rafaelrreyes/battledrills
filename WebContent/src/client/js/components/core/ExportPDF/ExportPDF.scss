@@ -1,0 +1,6 @@
+/* Tablet/Desktop Styles (only care for left margin when on bigger viewports */
+@media only screen and (min-width: 821px) {
+	.export-pdf {
+		margin-left: 20px;
+	}
+}

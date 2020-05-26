@@ -29,7 +29,7 @@ public class AttachmentRestParams {
         this.id = id;
     }
     
-     @JsonProperty("id")
+    @JsonProperty("id")
     public String getId() {
         return this.id;
     }

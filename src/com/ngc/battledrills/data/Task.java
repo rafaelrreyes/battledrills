@@ -5,8 +5,10 @@
  */
 package com.ngc.battledrills.data;
 
+import com.ngc.battledrills.data.reports.ReportData;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,6 +21,7 @@ import com.ngc.battledrills.comms.NotifyManager;
 import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.BattleDrillManager;
+import com.ngc.battledrills.util.JsonUtils;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -29,11 +32,14 @@ import java.util.Map;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import static com.ngc.battledrills.manage.AttachmentManager.AttachmentTypes;
+import com.ngc.battledrills.manage.ReportsManager;
+import com.ngc.battledrills.util.JacksonInjectableValues;
 
 /**
  *
  * @author admin
  */
+@JsonFilter(JsonUtils.DefinedFilters.TASK_FILTER)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Task {
@@ -44,16 +50,15 @@ public class Task {
     private LocalDateTime endTime = null;
     private List<Note> notes = null;
     private Status currentStatus = null;
-    private List<Status> previousStatuses = null;
     private List<Attachment> attachments = new ArrayList<>();
     
     public static class EditableKeys {
         public static final String DESCRIPTION = "description";
         public static final String STATUS = "status";
     }
-    
-    @JacksonInject
-    protected boolean isNew = false; // When the battle drill is new, we need to generate new IDs for each task.  Otherwise, just load the IDs from the stored JSON
+
+    @JacksonInject(JacksonInjectableValues.NEW_TASK)
+    protected boolean newTask = false; // When the battle drill is new, we need to generate new IDs for each task.  Otherwise, just load the IDs from the stored JSON
     
     @JsonBackReference
     public Node parent; // Stores a reference to the parent node.  Useful for traversing backwards to find the root battle drill name.
@@ -148,50 +153,65 @@ public class Task {
         return (null != parent)?parent.getOwner():"";
     }
     
-    private void setPreviousStatuses(List<Status> previousStatuses) {
-        if (null != previousStatuses) {
-            this.previousStatuses = previousStatuses;
-        }
-    }
-    
-    public List<Status> getPreviousStatuses() {
-        return this.previousStatuses;
-    }
-    
     /**
      * Changes the current tasks status while moving the old status to previousStatus container.
      * @param user
-     * @param newStatus
+     * @param status
      * @throws ItemNotFoundException
      * @return Task
      */
-    public Task changeCurrentStatus(User user, Status newStatus) throws ItemNotFoundException {
-        if (null == previousStatuses) {
-            previousStatuses = new ArrayList<>();
+    public Task changeCurrentStatus(User user, String status) throws ItemNotFoundException {
+        BattleDrillManager bdMgr = BattleDrillManager.getInstance();
+        String bdName = getBattleDrillName();
+        LocalDateTime currDateTime = LocalDateTime.now();
+        // start battle drill if task status is changed and the battle drill hasn't been started
+        if (this.currentStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.PENDING)
+                && !bdMgr.isBattleDrillStarted(bdName)) {
+            currDateTime = bdMgr.startBattleDrill(bdName, user);
+            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, bdName);
+            // send specifically to user who changed status since startBattleDrill sends to everyone but user who changed
+            Notify.sendNotificationToSessionId(drillNotification);
         }
-        
+
         // if status was completed, but changed back to a non completed state, end time must be set back to null, to return -1
-        if (!newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
+        if (!status.equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
             this.setEndTime(null);
         }
         
+        // if the new state of the task is Completed, then the task is finished and can be given an end time
+        if (status.equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
+            this.setEndTime(LocalDateTime.now());
+        }
         // changing currentStatus to newStatus update and adding old to array for history
         // set newStatus start time to now
         // then set endtime of current status to now
-        // add current status to previousStatuses
+        // add current status to the battledrill's report
         // then set currentStatus to new incoming status
-        this.currentStatus.setEndTime(LocalDateTime.now());
-        previousStatuses.add(this.currentStatus);
-        newStatus.setStartTime(LocalDateTime.now());
-        setCurrentStatus(newStatus); // could change status to an object to get start and end time in API
-        
-        // if the new state of the task is Completed, then the task is finished and can be given an end time
+        this.currentStatus.setEndTime(currDateTime);
+
+        Status newStatus = new Status();
+        newStatus.setStatus(status);
+        newStatus.setStartTime(currDateTime);
+
+        ReportsManager rMgr = ReportsManager.getInstance();
+        String drillName = getBattleDrillName();
+        int numCompleted = rMgr.getReport(drillName).getNumCompletedTasks();
+
+        // new state is COMPLETED, so set the task's endTime in reportData
         if (newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
-            BattleDrillManager mgr = BattleDrillManager.getInstance();
-            BattleDrill drill = mgr.getByName(this.getBattleDrillName());
-            this.setEndTime(LocalDateTime.now());
+            rMgr.getReport(drillName).setTaskEndTime(this.id, newStatus.getStartTime());
+            rMgr.getReport(drillName).setNumCompletedTasks(++numCompleted);
+        } else if (this.currentStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
+            // set the overall task end time back to null when task is changed from COMPLETED to something else
+            rMgr.getReport(drillName).setTaskEndTime(this.id, null);
+            rMgr.getReport(drillName).setNumCompletedTasks(--numCompleted);
         }
-        
+
+        rMgr.getReport(drillName).addStatus(this.id, newStatus);
+        rMgr.saveReport(rMgr.getReport(drillName));
+
+        setCurrentStatus(newStatus);
+
         // create a new Note and add to the notes of this task
         String automatedNoteStatusText = newStatus.getStatus().toUpperCase();
         Note statusNote = new Note(user, automatedNoteStatusText);
@@ -203,12 +223,21 @@ public class Task {
         Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, Task.EditableKeys.STATUS, user, getBattleDrillName(), getTaskData(), statusNote.getId());
         Notify.sendNotificationToAllExcluding(taskNotification);
         Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, taskNotification));
-        
+
+        // final task was set to COMPLETE
+        if (numCompleted == rMgr.getReport(drillName).getNumTasks()) {
+            bdMgr.stopBattleDrill(drillName, user);
+            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, bdName);
+            // send specifically to user who changed status since stopBattleDrill sends to everyone but user who changed
+            Notify.sendNotificationToSessionId(drillNotification);
+        }
+
         return this;
     }
     
+    @JsonProperty("currentStatus")
     private void setCurrentStatus(Status status) {
-        this.currentStatus = status;
+            this.currentStatus = status;
     }
     
     public Status getCurrentStatus() {
@@ -302,8 +331,7 @@ public class Task {
     {
         // Use the auto-generated ID from the constructor if this is a brand new task in a new battle drill.  
         // Otherwise, load the value that was serialized via JSON
-        if(isNew)
-        {
+        if (newTask) {
             return;
         }
         
@@ -327,7 +355,7 @@ public class Task {
     {
         return this.description;
     }
-    
+
     public Map<String, String> getTaskData() {
         Map<String, String> taskData  = new HashMap<>();
         taskData.put("taskId", getId());
@@ -411,7 +439,6 @@ public class Task {
         sb.append("Start time: ").append(this.getStartTimeMillis()).append(System.lineSeparator());
         sb.append("End Time: ").append(this.getEndTimeMillis()).append(System.lineSeparator());
         sb.append("Status: ").append(this.getCurrentStatus()).append(System.lineSeparator());
-        sb.append("PreviousStatuses: ").append(this.getPreviousStatuses()).append(System.lineSeparator());
         sb.append("Duration: ").append(this.getElapsedTimeInSeconds()).append(System.lineSeparator());
         
         if(null != notes)

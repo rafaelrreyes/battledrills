@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MaterialIconNames } from "UTILITIES/";
-import { Button, ButtonSizes, ButtonTypes } from "CORE/";
+import { MaterialIconNames } from "UTILITIES";
+import { Button, ButtonSizes, ButtonTypes, Icon } from "CORE";
 import PropTypes from "prop-types";
 
 // scss
@@ -40,10 +40,9 @@ const FileInput = ({
 			filenameDisplay = filename.substring(0, maxCharacterLength) + "...." + type;
 		}
 
-		const icon = <i className="material-icons">{MaterialIconNames.ATTACH_FILE}</i>;
 		return filename === "" ? null : (
 			<div className="file-attached">
-				{icon}
+				<Icon>{MaterialIconNames.ATTACH_FILE}</Icon>
 				<label className="filename">{filenameDisplay}</label>
 			</div>
 		);

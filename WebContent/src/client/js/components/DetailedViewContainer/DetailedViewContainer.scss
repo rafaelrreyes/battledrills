@@ -26,6 +26,11 @@
 			text-align: left;
 			margin-left: 0.5em;
 		}
+
+		.disabled {
+			color: $grey-600;
+			pointer-events: none;
+		}
 	}
 
 	.edit-description-icon {
@@ -67,7 +72,7 @@
 		.task-actions-container {
 			left: -60%;
 			position: relative;
-			
+
 			.menu-content {
 				left: 1em;
 			}

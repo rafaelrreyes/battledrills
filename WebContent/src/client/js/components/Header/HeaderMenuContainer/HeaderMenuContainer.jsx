@@ -1,23 +1,25 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { NotificationView } from "COMPONENTS/index";
-import { MenuDropdown, ModalContentTypes, openCreateDrillModal, openSettingsModal } from "CORE/index";
-import { MaterialIconNames, UserConfiguration } from "UTILITIES/index";
+import { NotificationView } from "COMPONENTS";
+import { MenuDropdown, Icon } from "CORE";
+import { MaterialIconNames, UserConfiguration } from "UTILITIES";
 import {
 	showModal,
 	setUser,
+	getUser,
 	getRole,
 	markAllRead,
 	getUnreadNotificationsCount,
 	getToasts,
 	removeToast
-} from "REDUX/index";
+} from "REDUX";
+import { useLocalStorage } from "HOOKS";
 import "./HeaderMenuContainer.scss";
 
 const HeaderMenuContainer = ({}) => {
-	const [showMenu, setShowMenu] = useState(false);
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showNotificationsView, setShowNotificationsViewMenu] = useState(false);
+	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", useSelector(getUser));
 
 	const dispatch = useDispatch();
 
@@ -26,7 +28,7 @@ const HeaderMenuContainer = ({}) => {
 	const unreadNotifications = useSelector(getUnreadNotificationsCount);
 	const toasts = useSelector(getToasts);
 
-	const rolesOptions = (function() {
+	const rolesOptions = (function () {
 		let roles = [];
 		let definedRoles = UserConfiguration.DEFINED_ROLES;
 		definedRoles.forEach((role) => {
@@ -40,37 +42,11 @@ const HeaderMenuContainer = ({}) => {
 		return roles;
 	})();
 
-	const menuOptions = [
-		{
-			name: "Create Drill",
-			menuAction: openCreateDrillModal
-		},
-		{
-			name: "Version",
-			menuAction: () => {
-				dispatch(
-					showModal(ModalContentTypes.VERSION, {
-						title: "Version",
-						singleButton: true
-					})
-				);
-			}
-		},
-		{
-			name: "Settings",
-			menuAction: openSettingsModal
-		}
-	];
-
 	const onToggleNotificationsDisplay = () => {
 		if (!showNotificationsView) {
 			dispatch(markAllRead());
 		}
 		setShowNotificationsViewMenu(!showNotificationsView);
-	};
-
-	const onMenuIconClicked = () => {
-		setShowMenu(!showMenu);
 	};
 
 	const onUserIconClicked = () => {
@@ -91,18 +67,19 @@ const HeaderMenuContainer = ({}) => {
 
 	const onSetUser = (role) => {
 		// change later when we have a username
+		setLoggedInUser({ username: role, role });
 		dispatch(setUser({ username: role, role }));
 	};
 
 	return (
 		<div className="menu">
 			<span className="menu-notification-container">
-				<i
-					className={`material-icons menu-icon ${showNotificationsView ? "toggled" : ""}`}
+				<Icon
+					className={`menu-icon ${showNotificationsView ? "toggled" : ""}`}
 					onClick={onToggleNotificationsDisplay}
 				>
 					{MaterialIconNames.NOTIFICATION}
-				</i>
+				</Icon>
 				{renderNotificationsCounter()}
 				{showNotificationsView && (
 					<NotificationView
@@ -113,14 +90,8 @@ const HeaderMenuContainer = ({}) => {
 				)}
 			</span>
 			<span>
-				<i className="material-icons menu-icon" onClick={onMenuIconClicked}>
-					{MaterialIconNames.MENU}
-				</i>
-				{showMenu && <MenuDropdown menuOptions={menuOptions} closeMenu={onMenuIconClicked} />}
-			</span>
-			<span>
 				<span className="menu-user-button" onClick={onUserIconClicked}>
-					<i className="material-icons menu-icon">{MaterialIconNames.PERSON}</i>
+					<Icon className="menu-icon">{MaterialIconNames.PERSON}</Icon>
 					<span className="user-label">{role}</span>
 				</span>
 				{showUserMenu && <MenuDropdown menuOptions={rolesOptions} closeMenu={onUserIconClicked} />}

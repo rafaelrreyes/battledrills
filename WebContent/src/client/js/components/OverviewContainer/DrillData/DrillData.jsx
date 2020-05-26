@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
-import { MaterialIconNames, secondsToDate, parseType, AttachmentTypes } from "UTILITIES/";
-import { conditionalTooltipRender } from "CORE/";
-import { AttachmentsView } from "COMPONENTS/";
+import { MaterialIconNames, iso8061ToReadable, parseType, AttachmentTypes, saveTemplateByDrillName } from "UTILITIES";
+import { conditionalTooltipRender, Icon } from "CORE";
+import { AttachmentsView } from "COMPONENTS";
 import "./DrillData.scss";
 
 const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill, deleteDrill }) => {
@@ -21,9 +21,9 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 		}
 	}, []);
 
-	const startTimeDate = secondsToDate(drillInfo.startTimeMillis);
-	const endTimeDate = secondsToDate(drillInfo.endTimeMillis);
-	const isDisabled = !Array.isArray(activeDrills) || !activeDrills.length || drillInfo.endTimeMillis !== -1;
+	const startTimeDate = iso8061ToReadable(drillInfo.startTime, "MM/DD/YYYY HH:mm:ss z");
+	const endTimeDate = iso8061ToReadable(drillInfo.endTime, "MM/DD/YYYY HH:mm:ss z");
+	const isDisabled = !Array.isArray(activeDrills) || !activeDrills.length || drillInfo.endTime;
 
 	const renderDrillName = () => {
 		let drillNameElement = (
@@ -43,6 +43,20 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 		return conditionalTooltipRender(drillTypeElement, drillTypeRef, parseType(drillInfo.type));
 	};
 
+	const renderSaveTemplateButton = () => {
+		// if the drill is completed, render save button
+		if (typeof drillInfo.endTime !== "undefined") {
+			return (
+				<div className="data-info-final">
+					<div className="data-key">Save As Template</div>
+					<button className="no-button drill-data-icon-hover data-icon" onClick={saveTemplateByDrillName}>
+						<Icon className="md-20">{MaterialIconNames.SAVE}</Icon>
+					</button>
+				</div>
+			);
+		}
+	};
+
 	return (
 		<div className="data-flex-container">
 			<div className="data-info">
@@ -58,7 +72,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 				<div className="data-value">{drillInfo.name !== "" && drillInfo.creatorName}</div>
 			</div>
 			<div className="data-info">
-				{drillInfo.startTimeMillis === -1 && (
+				{!drillInfo.startTime && (
 					<>
 						<div className="data-key">Start</div>
 						<button
@@ -67,11 +81,11 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 								startDrill(drillInfo.name);
 							}}
 						>
-							<i className="material-icons md-20">{MaterialIconNames.PLAY_ARROW}</i>
+							<Icon className="md-20">{MaterialIconNames.PLAY_ARROW}</Icon>
 						</button>
 					</>
 				)}
-				{drillInfo.startTimeMillis !== -1 && (
+				{drillInfo.startTime && (
 					<>
 						<div className="data-key">Stop</div>
 						<button
@@ -81,14 +95,14 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 								stopDrill(drillInfo.name);
 							}}
 						>
-							<i className="material-icons md-20">{MaterialIconNames.STOP}</i>
+							<Icon className="md-20">{MaterialIconNames.STOP}</Icon>
 						</button>
 					</>
 				)}
 			</div>
 			<div className="data-info">
 				<div className="data-key">Start Time</div>
-				{drillInfo.startTimeMillis === -1 ? (
+				{!drillInfo.startTime ? (
 					<div className="data-value">N/A</div>
 				) : (
 					<div className="data-value">{startTimeDate}</div>
@@ -96,7 +110,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 			</div>
 			<div className="data-info">
 				<div className="data-key">End Time</div>
-				{drillInfo.endTimeMillis === -1 ? (
+				{!drillInfo.endTime ? (
 					<div className="data-value">N/A</div>
 				) : (
 					<div className="data-value">{endTimeDate}</div>
@@ -114,11 +128,12 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 						deleteDrill();
 					}}
 				>
-					<i className="material-icons md-20">{MaterialIconNames.DELETE}</i>
+					<Icon className="md-20">{MaterialIconNames.DELETE}</Icon>
 				</button>
 			</div>
+			{renderSaveTemplateButton()}
 			<div className="attachments-container">
-				<AttachmentsView selectedObject={drillInfo} type={AttachmentTypes.DRILL}/>
+				<AttachmentsView selectedObject={drillInfo} type={AttachmentTypes.DRILL} />
 			</div>
 		</div>
 	);

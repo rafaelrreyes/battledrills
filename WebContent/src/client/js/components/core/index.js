@@ -1,6 +1,6 @@
-export { Dropdown, DROPDOWN_SIZES, DROPDOWN_TYPES } from "./Dropdown/Dropdown";
-export { Input, INPUT_SIZES, INPUT_TYPES } from "./Input/Input";
-export { Button, ButtonSizes, ButtonTypes, LabelAlignment, LabelSizes } from "./Button/Button";
+export { Dropdown, DropdownSizes, DropdownTypes, DROPDOWN_DEFAULT } from "./Dropdown/Dropdown";
+export { Input, InputSizes, InputTypes } from "./Input/Input";
+export { Button, ButtonSizes, ButtonTypes, LabelAlignment } from "./Button/Button";
 export { ModalContainer, ModalContentTypes } from "./Modal/ModalContainer";
 export * from "./Modal/ModalContent";
 export { default as Toasts } from "./Toasts/Toasts";
@@ -23,3 +23,8 @@ export { Checkbox, CheckboxPlacement } from "./Checkbox/Checkbox";
 export { ToggleSwitch } from "./ToggleSwitch/ToggleSwitch";
 export { default as FileDropzone } from "./FileDropzone/FileDropzone";
 export { default as FileInput } from "./FileInput/FileInput";
+export { List, ListSizes } from "./List/List";
+export { Chart } from "./Chart/Chart";
+export { Icon } from "./Icon/Icon";
+export { ExportPDF } from "./ExportPDF/ExportPDF";
+export { MultiSelect, MultiSelectSizes } from "./MultiSelect/MultiSelect";

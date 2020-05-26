@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { MaterialIconNames } from "UTILITIES/index";
+import { MaterialIconNames } from "UTILITIES";
+import { Icon } from "CORE";
 import "./Checkbox.scss";
 
 const Checkbox = ({ selectedFilters, onChangeHandler, label }) => {
@@ -29,9 +30,9 @@ const Checkbox = ({ selectedFilters, onChangeHandler, label }) => {
 export default Checkbox;
 
 const getCheckmarkIcon = (checked) => {
-	if (checked) {
-		return <i className="material-icons">{MaterialIconNames.CHECK_BOX}</i>;
-	} else {
-		return <i className="material-icons">{MaterialIconNames.CHECK_BOX_OUTLINE_BLANK}</i>;
-	}
+	return checked ? (
+		<Icon>{MaterialIconNames.CHECK_BOX}</Icon>
+	) : (
+		<Icon>{MaterialIconNames.CHECK_BOX_OUTLINE_BLANK}</Icon>
+	);
 };

@@ -12,6 +12,7 @@ import com.ngc.battledrills.comms.NotifyManager;
 import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.data.ChatMessage;
 import com.ngc.battledrills.data.User;
+import com.ngc.battledrills.util.JacksonInjectableValues;
 import java.util.HashMap;
 import java.util.Map;
 import javax.websocket.OnClose;
@@ -52,10 +53,9 @@ public class BattleDrillsWebsocket {
             ChatMessage chatMessage = null;
             
             try {
-                InjectableValues inject = new InjectableValues.Std().addValue(boolean.class, true);
-                chatMessage = new ObjectMapper().reader(inject)
-                .forType(ChatMessage.class)
-                .readValue(message);
+                InjectableValues.Std inject = new InjectableValues.Std();
+                inject.addValue(JacksonInjectableValues.NEW_TASK, true);
+                chatMessage = new ObjectMapper().reader(inject).forType(ChatMessage.class).readValue(message);
                 
                 Notify.sendNotification(NotifyManager.createChatNotification(NotifyTypes.OPERATION_TYPES.CREATE, chatMessage));
             } catch (Exception e) {

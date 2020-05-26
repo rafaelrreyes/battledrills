@@ -8,8 +8,12 @@ package com.ngc.battledrills.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 /**
  *
@@ -83,5 +87,18 @@ public class ConvenienceUtils {
             ioe.printStackTrace();
         }
         return successful;
+    }
+
+    public static long localDateTimeToSeconds(LocalDateTime ldt) {
+        if (ldt == null) {
+            return -1;
+        } else {
+            ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
+            return ldt.atZone(zoneId).toEpochSecond();
+        }
+    }
+
+    public static String durationToHHmmss(Duration duration) {
+        return DurationFormatUtils.formatDuration(duration.toMillis(), "HH:mm:ss", true);
     }
 }

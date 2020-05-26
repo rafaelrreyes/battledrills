@@ -1,0 +1,32 @@
+@import "~CSS/index";
+
+.reports-nav {
+	.drill-type-dropdown {
+		margin: 0.5em;
+	}
+
+	.drill-name-dropdown {
+		margin: 0.5em;
+	}
+
+	.generate-button {
+		margin: 0.5em;
+	}
+}
+
+/* Mobile Styles */
+@media only screen and (max-width: 820px) {
+	.reports-nav {
+		.drill-type-dropdown {
+			margin: 0.5em auto;
+		}
+
+		.drill-name-dropdown {
+			margin: 0.5em auto;
+		}
+
+		.generate-button {
+			margin: 0.5em auto;
+		}
+	}
+}

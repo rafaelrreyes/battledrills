@@ -2,10 +2,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./Spinner.scss";
 
-export const Spinner = (props) => {
-	let { size } = props;
+export const Spinner = ({ size }) => {
 	if (size === undefined) {
-		size = `md`;
+		size = `default`;
 	}
 	return (
 		<div className={`spinner-${size}`}>

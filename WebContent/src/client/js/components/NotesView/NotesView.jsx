@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { STATUS_TYPES, isObjectEmpty, NoteTypes, AutogenTypes } from "UTILITIES/";
+import { STATUS_TYPES, isObjectEmpty, NoteTypes, AutogenTypes, iso8061ToReadable } from "UTILITIES/";
 import NotesTextbox from "./NotesTextbox/NotesTextbox";
 import moment from "moment";
 import "./NotesView.scss";
@@ -20,8 +20,8 @@ const renderNotes = (notes) => {
 				<div className="notes-view-header">
 					<span className="notes-view-sender">{user.username ? user.username : "Unknown User"}</span>
 					<span className="notes-view-timestamp">
-						{note.timestampMillis
-							? moment.unix(note.timestampMillis).format("MMMM do, YYYY hh:mm a")
+						{note.timestamp
+							? iso8061ToReadable(note.timestamp, "MMMM Do, YYYY hh:mm a")
 							: "No Date Available"}
 					</span>
 				</div>
@@ -37,33 +37,26 @@ const renderDerivedNoteText = (note) => {
 	}
 	const { type, noteText, user } = note;
 	if (type === NoteTypes.AUTO) {
-			switch(note.autoType) {
-				case AutogenTypes.STATUS_CHANGE:
-					const noteTextLower = noteText.toLowerCase();
-					if ([STATUS_TYPES.IN_PROGRESS, STATUS_TYPES.BLOCKED, STATUS_TYPES.COMPLETED].includes(noteTextLower)) {
-						return (
-							<>
-								{`${user.username} changed status to: `}
-								<span className={`notes-view-automated-label-${noteTextLower}`}>{noteText.replace("-", " ")}</span>
-							</>
-						);
-					}
-				case AutogenTypes.ATTACHMENT_UPLOAD:
+		switch (note.autoType) {
+			case AutogenTypes.STATUS_CHANGE:
+				const noteTextLower = noteText.toLowerCase();
+				if ([STATUS_TYPES.IN_PROGRESS, STATUS_TYPES.BLOCKED, STATUS_TYPES.COMPLETED].includes(noteTextLower)) {
 					return (
 						<>
-							{`${user.username} uploaded attachment: ${noteText}`}
+							{`${user.username} changed status to: `}
+							<span className={`notes-view-automated-label-${noteTextLower}`}>
+								{noteText.replace("-", " ")}
+							</span>
 						</>
 					);
-				case AutogenTypes.ATTACHMENT_DELETE:
-					return (
-						<>
-							{`${user.username} deleted attachment: ${noteText}`}
-						</>
-					);
-				default:
-					break;
-			}
-		
+				}
+			case AutogenTypes.ATTACHMENT_UPLOAD:
+				return <>{`${user.username} uploaded attachment: ${noteText}`}</>;
+			case AutogenTypes.ATTACHMENT_DELETE:
+				return <>{`${user.username} deleted attachment: ${noteText}`}</>;
+			default:
+				break;
+		}
 	}
 	return note.noteText;
 };

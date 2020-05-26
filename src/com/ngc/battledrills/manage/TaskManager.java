@@ -93,7 +93,7 @@ public class TaskManager {
      * @throws ItemNotFoundException
      * @return Task
      */
-    public static Task changeTaskStatus(String taskId, User user, Status newStatus) throws ItemNotFoundException {
+    public static Task changeTaskStatus(String taskId, User user, String newStatus) throws ItemNotFoundException {
 
         if (StringUtils.isBlank(taskId)) {
             throw new InvalidParameterException("Unable to change task status - taskId parameter cannot be blank");

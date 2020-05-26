@@ -1,19 +1,21 @@
 import React from "react";
 import store from "REDUX/store";
-import { showModal, closeModal, updateActiveDrills, setActiveBillet, setAllStatuses } from "REDUX/index";
-import { getCurrentView, getUser, getRole, getActiveDrills } from "REDUX/index";
-import { ModalContentTypes } from "CORE/index";
-import { MaterialIconNames, API, ValidatorReasonCodes, Routes } from "UTILITIES/index";
+import { showModal, closeModal, updateActiveDrills, setActiveBillet, setAllStatuses } from "REDUX";
+import { getCurrentView, getUser, getRole, getActiveDrills } from "REDUX";
+import { ModalContentTypes } from "CORE";
+import { MaterialIconNames, API, ValidatorReasonCodes, Routes, DrillTypes } from "UTILITIES";
 
-export const openCreateDrillModal = () => {
+export const openCreateDrillModal = (drillType) => {
 	store.dispatch(
 		showModal(ModalContentTypes.NEW_DRILL, {
-			title: `Create a Drill`,
+			title: `Create ${drillType === DrillTypes.CUSTOM ? "Custom" : "Default"} Drill`,
 			icon: MaterialIconNames.CREATE,
+			drillType,
 			action: (data) => {
 				const requestBody = {
 					type: data.type,
 					name: data.name,
+					start: data.startDrill,
 					user: getUser(store.getState()),
 					// location has these defaults if not submitted
 					location: {
@@ -30,11 +32,6 @@ export const openCreateDrillModal = () => {
 						createDrillUpdate(response.name);
 						createDrillUpdateMyDrillsView();
 						createDrillUpdateStatusView();
-
-						// "startDrill" toggle checkmark was selected when drill was created
-						if (data.startDrill) {
-							API.startDrill(response.name, (res) => {});
-						}
 
 						store.dispatch(closeModal());
 					},
@@ -60,7 +57,7 @@ export const createDrillUpdate = (drillName) => {
 
 // should only fire if the view is on "My Drills" and a new drill is created
 export const createDrillUpdateMyDrillsView = () => {
-	if (getCurrentView(store.getState()) === Routes.MY_REPORT) {
+	if (getCurrentView(store.getState()) === Routes.MY_DRILLS) {
 		const role = getRole(store.getState()).toUpperCase();
 		API.getOwnerBillet(role, {}, (data) => {
 			store.dispatch(setActiveBillet(data));
@@ -125,6 +122,10 @@ export const getTypeError = (reasonCode) => {
 		case ValidatorReasonCodes.NULL:
 			return {
 				isError: null
+			};
+		case ValidatorReasonCodes.DROPDOWN_DEFAULT:
+			return {
+				isError: false
 			};
 		case ValidatorReasonCodes.EMPTY:
 			return {

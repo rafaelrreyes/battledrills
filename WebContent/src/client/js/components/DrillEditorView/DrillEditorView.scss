@@ -5,26 +5,112 @@
 	flex-direction: row;
 	justify-content: left;
 	align-items: center;
-	height: 5em;
+	margin: 0.25em 0;
 
 	.drill-editor-commands {
 		display: flex;
+		height: fit-content;
+		flex-wrap: wrap;
 		align-items: center;
 		@include body-3;
 
 		div.editor-button {
 			display: flex;
 			align-items: center;
-			padding: 1em;
+			padding: 0.25em 0.5em;
 			background-color: $blue-grey-700;
 			cursor: pointer;
-			margin: 0 0.5em 0 0.5em;
+			margin: 0.25em 0.25em 0.25em 0.25em;
+			position: relative;
+			transition: 0.1s;
+			white-space: nowrap;
+
+			.editor-button-label {
+				margin-left: 0.5em;
+				cursor: pointer;
+			}
 
 			&:hover {
-				color: $cyan-700;
+				background-color: $cyan-700;
+			}
+		}
 
-				i {
-					color: $cyan-700;
+		.disabled {
+			background-color: $grey-700 !important;
+			color: $grey-400;
+			pointer-events: none;
+
+			i {
+				color: $grey-400;
+			}
+		}
+
+		.link-style-container {
+			display: flex;
+			align-items: center;
+			background-color: $blue-grey-500;
+			padding: 0.65em;
+			margin: 0.25em 0.5em;
+
+			.link-style-label {
+				display: flex;
+				align-items: center;
+				margin-left: 0.5em;
+				margin-right: 0.5em;
+			}
+
+			.link-style-dropdown-container {
+				position: relative;
+
+				.link-style-button {
+					cursor: pointer;
+					background-color: $blue-grey-700;
+					padding: 0.5em;
+					margin-right: 0.5em;
+					transition: 0.1s;
+
+					&:hover {
+						background-color: $cyan-700;
+					}
+				}
+
+				.link-style-options-container {
+					position: absolute;
+					left: 0;
+					z-index: 2147483647; // max
+					box-shadow: 0 0.312em 0.625em rgba($black, 0.75);
+
+					.link-style-options {
+						position: relative;
+						list-style: none;
+						background: #455a64;
+						z-index: 99999999999;
+						margin: 0;
+						padding: 0;
+						text-align: left;
+
+						.link-style-item {
+							padding: 0.5em;
+							cursor: pointer;
+							margin: 0;
+							transition: 0.1s;
+							display: flex;
+							align-items: center;
+							justify-content: left;
+
+							.link-style-item-label {
+								margin-left: 0.5em;
+							}
+
+							&:hover {
+								background-color: $cyan-700;
+							}
+						}
+
+						.selected {
+							background-color: $cyan-700;
+						}
+					}
 				}
 			}
 		}

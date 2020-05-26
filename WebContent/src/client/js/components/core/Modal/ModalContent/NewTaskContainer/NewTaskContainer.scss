@@ -5,13 +5,8 @@
 	flex-direction: column;
 	align-items: center;
 
-	.new-task-header {
-		@include heading-5;
-	}
-
 	.new-task-form {
-		margin-top: 0.5em;
-		width: 30em;
+		width: 15em;
 
 		.new-task-role {
 			display: flex;
@@ -25,5 +20,10 @@
 				margin-right: 0.5em;
 			}
 		}
+	}
+
+	.confirmation-message {
+		@include body-2;
+		margin-top: 1em;
 	}
 }

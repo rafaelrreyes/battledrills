@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { TaskActionsMenu, AttachmentsView } from "COMPONENTS/";
-import { Input, INPUT_SIZES, INPUT_TYPES, Button, ButtonSizes, ButtonTypes } from "CORE/";
-import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER, deleteTask } from "UTILITIES/";
+import { TaskActionsMenu, AttachmentsView } from "COMPONENTS";
+import { Input, InputSizes, InputTypes, Button, ButtonSizes, ButtonTypes, Icon } from "CORE";
+import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER, deleteTask } from "UTILITIES";
 import "./DetailedViewContainer.scss";
 
 // views
-import { NotesView } from "../index";
+import { NotesView } from "../";
 
 // redux
 import {
@@ -111,7 +111,7 @@ const DetailedViewContainer = () => {
 		return (
 			<span>
 				<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={showActionsButton}>
-					<i className="material-icons">{MaterialIconNames.COMMANDS}</i>Actions
+					<Icon>{MaterialIconNames.COMMANDS}</Icon>Actions
 				</Button>
 				{renderActionsMenu()}
 			</span>
@@ -134,13 +134,14 @@ const DetailedViewContainer = () => {
 		if (editDescription) {
 			return (
 				<Input
-					inputType={INPUT_TYPES.REGULAR}
-					inputSize={INPUT_SIZES.FILL}
-					defaultValue={description}
+					inputType={InputTypes.REGULAR}
+					inputSize={InputSizes.FILL}
+					initValue={description}
 					onChange={onDescriptionChange}
 					submit={toggleEditDescription}
 					focus={true}
 					placeholder="Description"
+					initValue={description}
 					maxlength={MAX_TASK_DESCRIPTION_LENGTH}
 				/>
 			);
@@ -152,7 +153,7 @@ const DetailedViewContainer = () => {
 	const renderDeleteButton = () => {
 		return (
 			<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={onDeleteTask}>
-				<i className="material-icons">{MaterialIconNames.DELETE}</i>Delete
+				<Icon>{MaterialIconNames.DELETE}</Icon>
 			</Button>
 		);
 	};
@@ -165,21 +166,31 @@ const DetailedViewContainer = () => {
 		setNewDescription(value);
 	};
 
+	const renderSaveButton = () => {
+		// only allow saving if description has changed
+		let disabled = description === newDescription;
+		return (
+			<i
+				className={`material-icons edit-description-icon ${disabled && editDescription ? "disabled" : ""}`}
+				onClick={toggleEditDescription}
+			>
+				{editDescription ? MaterialIconNames.SAVE : MaterialIconNames.EDIT}
+			</i>
+		);
+	};
+
 	return (
 		<div className="detailed-view">
 			<div className="alt-card-title">Task Information</div>
 			<div className="alt-card-content">
 				<div className="data-flex-container">
 					<div className="detailed-task-description-container">
-						<i className="material-icons edit-description-icon" onClick={toggleEditDescription}>
-							{editDescription ? MaterialIconNames.SAVE : MaterialIconNames.EDIT}
-						</i>
+						{renderSaveButton()}
 						{editDescription ? (
-							<i className="material-icons cancel-edit-description-icon" onClick={cancelEditDescription}>
+							<Icon className="cancel-edit-description-icon" onClick={cancelEditDescription}>
 								{MaterialIconNames.BLOCK}
-							</i>
+							</Icon>
 						) : null}
-
 						<span className="detailed-task-description">{renderDescription()}</span>
 					</div>
 					{currentView !== Routes.COMPLETED_DIAGRAM && (

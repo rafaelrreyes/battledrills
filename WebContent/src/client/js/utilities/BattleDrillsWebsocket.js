@@ -1,5 +1,7 @@
 import {
 	newDrillCreated,
+	drillStarted,
+	drillStopped,
 	drillsReordered,
 	drillDeleted,
 	newNoteAdded,
@@ -11,7 +13,7 @@ import {
 	taskDeleted
 } from "./WebsocketActions";
 
-import { dispatchToastNotification } from "CORE/";
+import { dispatchToastNotification } from "CORE";
 
 export const WebsocketTypes = {
 	OBJECT_TYPES: {
@@ -26,6 +28,8 @@ export const WebsocketTypes = {
 	},
 	OPERATION_TYPES: {
 		CREATE: "create",
+		START: "start",
+		STOP: "stop",
 		EDIT: "edit",
 		DELETE: "delete",
 		REORDER: "reorder",
@@ -51,6 +55,8 @@ export const dispatchWebsocket = (json) => {
 	isNewNote(json) && newNoteAdded(json);
 	isTaskStatusUpdate(json) && taskUpdated(json);
 	isNewDrill(json) && newDrillCreated(json);
+	isStartedDrill(json) && drillStarted(json);
+	isStoppedDrill(json) && drillStopped(json);
 	isDeletedDrill(json) && drillDeleted(json);
 	isDrillReorder(json) && drillsReordered(json);
 	isAttachmentUpload(json) && attachmentManipulated(json);
@@ -71,6 +77,24 @@ export const isWebsocketOpened = ({ objectType, operationType }) => {
 export const isNewDrill = ({ objectType, operationType }) => {
 	if (objectType === WebsocketTypes.OBJECT_TYPES.DRILL) {
 		if (operationType === WebsocketTypes.OPERATION_TYPES.CREATE) {
+			return true;
+		}
+	}
+	return false;
+};
+
+export const isStartedDrill = ({ objectType, operationType }) => {
+	if (objectType === WebsocketTypes.OBJECT_TYPES.DRILL) {
+		if (operationType === WebsocketTypes.OPERATION_TYPES.START) {
+			return true;
+		}
+	}
+	return false;
+};
+
+export const isStoppedDrill = ({ objectType, operationType }) => {
+	if (objectType === WebsocketTypes.OBJECT_TYPES.DRILL) {
+		if (operationType === WebsocketTypes.OPERATION_TYPES.STOP) {
 			return true;
 		}
 	}
@@ -163,6 +187,8 @@ export const isToast = ({ objectType, operationType }) => {
 	if (objectType === WebsocketTypes.OBJECT_TYPES.TOAST) {
 		switch (operationType) {
 			case WebsocketTypes.OPERATION_TYPES.CREATE:
+			case WebsocketTypes.OPERATION_TYPES.START:
+			case WebsocketTypes.OPERATION_TYPES.STOP:
 			case WebsocketTypes.OPERATION_TYPES.DELETE:
 			case WebsocketTypes.OPERATION_TYPES.EDIT:
 				return true;

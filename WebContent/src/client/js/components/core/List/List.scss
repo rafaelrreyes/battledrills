@@ -1,0 +1,169 @@
+@import "~CSS/index";
+
+$button-hover-color: $cyan-700;
+%list-component-template {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	width: 100%;
+
+	.list-headers {
+		text-align: left;
+		@include heading-3;
+		display: flex;
+		align-items: center;
+		padding: 0.5em 1em;
+
+		.list-header-delete-filler {
+			width: 25px;
+		}
+
+		.list-header-main {
+			width: 80%;
+		}
+
+		.list-header-actions {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.list-top-level-commands {
+		margin-top: 0.25em;
+		display: flex;
+		align-items: center;
+		justify-content: right;
+
+		.command-button {
+			cursor: pointer;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: 0.1s;
+			padding: 0.15em;
+			margin: 0.25em;
+			background-color: $blue-grey-600;
+
+			&:hover {
+				background-color: $button-hover-color;
+			}
+
+			.command-button-label {
+				@include body-3;
+				margin-left: 0.25em;
+				margin-right: 0.25em;
+				cursor: pointer;
+			}
+		}
+
+		.disable {
+			pointer-events: none;
+			background-color: $grey-700;
+		}
+	}
+
+	.list-title {
+		@include heading-4;
+		overflow-y: auto;
+	}
+
+	.list-table {
+		height: 100%;
+		overflow-y: auto;
+		border-collapse: separate;
+		border-spacing: 0em 0.5em;
+		@include body-2;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		text-align: left;
+
+		.list-items {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+
+			.list-row-item {
+				cursor: pointer;
+				padding: 0.25em;
+				transition: 0.1s;
+				display: flex;
+
+				&:hover {
+					background-color: $button-hover-color;
+					border-color: $button-hover-color;
+				}
+
+				.list-column-item-checkbox {
+					width: 25px;
+				}
+
+				.list-column-item-main {
+					width: 77%;
+					padding: 0.5em 0;
+					display: flex;
+					align-items: center;
+
+					.list-column-item-container {
+						padding-left: 1em;
+					}
+				}
+
+				.list-column-item-commands {
+					display: flex;
+					align-items: center;
+					justify-content: left;
+					padding-right: 0.5em;
+
+					.command-button {
+						padding: 0.25em;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						cursor: pointer;
+						background-color: $grey-800;
+						transition: 0.1s;
+						margin-left: 0.25em;
+
+						.command-button-label {
+							margin: 0 0.15em;
+							cursor: pointer;
+						}
+
+						&:hover {
+							background-color: $grey-700;
+						}
+					}
+				}
+			}
+
+			.selected {
+				background-color: $cyan-700;
+			}
+		}
+	}
+}
+
+.list-component {
+	&-fill {
+		@extend %list-component-template;
+		height: 100%;
+	}
+	&-xl {
+		@extend %list-component-template;
+		height: 25em;
+	}
+	&-lg {
+		@extend %list-component-template;
+		height: 20em;
+	}
+	&-md {
+		@extend %list-component-template;
+		height: 15em;
+	}
+	&-sm {
+		@extend %list-component-template;
+		height: 10em;
+	}
+}

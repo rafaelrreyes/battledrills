@@ -14,7 +14,7 @@ const tabStyles = makeStyles({
 		display: "block",
 		color: "white",
 		fontFamily: "Roboto",
-		fontSize: "1.125em",
+		fontSize: "14px",
 		textTransform: "none"
 	},
 	selected: {

@@ -4,7 +4,7 @@
 	@include body-3;
 
 	display: flex;
-	margin: 0.5em 2em 0.5em 2em;
+	padding: 0.5em 2em;
 	align-items: center;
 
 	.drill-dropdown {
@@ -44,8 +44,8 @@
 				@include heading-3;
 				background-color: $cyan-700;
 				padding: 0 0.5em;
-				margin: 0 0.1em 0.1em 0.1em;
-				height: 2em;
+				margin: 0 0.1em;
+				height: 32px;
 				display: flex;
 				align-items: center;
 				-moz-user-select: none;

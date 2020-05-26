@@ -5,9 +5,9 @@
  */
 package com.ngc.battledrills.data;
 
-import com.ngc.battledrills.data.TaskRepo;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,10 +17,14 @@ import com.ngc.battledrills.comms.Notification;
 import com.ngc.battledrills.comms.Notify;
 import com.ngc.battledrills.comms.NotifyManager;
 import com.ngc.battledrills.comms.NotifyTypes;
-import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.BattleDrillManager;
+import com.ngc.battledrills.data.reports.ReportData;
+import com.ngc.battledrills.exception.DuplicateItemException;
+import com.ngc.battledrills.manage.ReportsManager;
 import com.ngc.battledrills.template.BattleDrillTemplate;
+import com.ngc.battledrills.util.JacksonInjectableValues;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +34,12 @@ import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
-
+import com.ngc.battledrills.util.JsonUtils;
 /**
  *
  * @author admin
  */
+@JsonFilter(JsonUtils.DefinedFilters.NODE_FILTER)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Node {
@@ -46,7 +51,10 @@ public class Node {
         public static final String SELF = "self";
         public static final String TASKS = "tasks";
     }
-
+            
+    @JacksonInject(JacksonInjectableValues.SAVE_AS_TEMPLATE)
+    protected boolean saveAsTemplate = false;
+    
     @JsonManagedReference
     public List<Task> tasks = new ArrayList<>();
 
@@ -151,10 +159,14 @@ public class Node {
     @JsonProperty("tasks")
     public void setTasks(List<Task> tasks)
     {
+        this.tasks = tasks;
+        if (!saveAsTemplate) {
+                    
+        }
         try
         {
             TaskRepo.addTasks(tasks);
-            this.tasks = tasks;
+//            this.tasks = tasks;
         }
         catch(DuplicateItemException d)
         {
@@ -223,7 +235,28 @@ public class Node {
             newTask.parent = this;
             TaskRepo.addTask(newTask);
             this.tasks.add(newTask);
-            
+			
+            // Update report with new task
+            ReportsManager rMgr = ReportsManager.getInstance();
+            Report report = rMgr.getReport(this.getBattleDrillName());
+            // drill is created at this point, report should already be created
+
+            // check if drill started
+            BattleDrillManager bdMgr = BattleDrillManager.getInstance();
+            BattleDrill drill = bdMgr.getByName(this.getBattleDrillName());
+            if (drill.getStartTime() != null) {
+                LocalDateTime startTime = LocalDateTime.now();
+                newTask.getCurrentStatus().setStartTime(startTime);
+                List<Status> statuses = new ArrayList<>();
+                statuses.add(newTask.getCurrentStatus());
+                ReportData data = new ReportData(newTask.getOwner(), newTask.getDescription(), statuses, startTime);
+                if (report.getReportData(newTask.getId()) == null) {
+                    report.setReportData(newTask.getId(), data);
+                    report.setNumTasks(report.getNumTasks() + 1);
+                }
+                
+                rMgr.saveReport(report);
+            }
             // only need to set the coordinates if they are set
             if (!coordinates.isEmpty()) {
                 this.setTasksCoordinates(coordinates);
@@ -339,6 +372,29 @@ public class Node {
         }
     }
 
+    @JsonIgnore
+    public void startAllTasks(LocalDateTime startTime) {
+        ReportsManager rMgr = ReportsManager.getInstance();
+        // drill is created at this point, report should already be created
+        Report report = rMgr.getReport(this.getBattleDrillName());
+        report.setStartTime(startTime);
+
+        tasks.forEach((task) -> {
+            task.getCurrentStatus().setStartTime(startTime);
+            List<Status> statuses = new ArrayList<>();
+            statuses.add(task.getCurrentStatus());
+            ReportData data = new ReportData(task.getOwner(), task.getDescription(), statuses, startTime);
+            if (report.getReportData(task.getId()) == null) {
+                report.setReportData(task.getId(), data);
+            }
+        });
+
+        children.forEach((child) -> {
+            child.startAllTasks(startTime);
+        });
+        rMgr.saveReport(report);
+    }
+
     // Traverse the tree to get the tasks owned by the requested owner/billet
     public List<Task> getTasksByOwner(String owner)
     {
@@ -424,6 +480,11 @@ public class Node {
         {
             tasks.remove(toDelete);
             success = true;
+
+            ReportsManager rMgr = ReportsManager.getInstance();
+            Report report = rMgr.getReport(this.getBattleDrillName());
+            report.deleteReportData(taskId);
+            report.setNumTasks(report.getNumTasks() - 1);
             
             // create notification using user obj
             // send task edit notification

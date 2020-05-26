@@ -6,15 +6,18 @@
 package com.ngc.battledrills.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.InjectableValues;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngc.battledrills.data.BattleDrill;
-import static com.ngc.battledrills.BattleDrillsConfig.DEFAULT_JSON_WRITER;
 import com.ngc.battledrills.manage.BattleDrillManager;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.TaskManager;
 import com.ngc.battledrills.data.Node;
+import com.ngc.battledrills.data.Status;
 import com.ngc.battledrills.data.Task;
 import com.ngc.battledrills.data.TaskRepo;
-import com.ngc.battledrills.data.User;
+import com.ngc.battledrills.util.JsonUtils;
+import com.ngc.battledrills.util.JacksonInjectableValues;
 import java.security.InvalidParameterException;
 import java.util.List;
 import javax.ws.rs.DELETE;
@@ -24,7 +27,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.Consumes;
@@ -44,7 +46,8 @@ public class TaskService {
     {
         try
         {
-            return DEFAULT_JSON_WRITER.writeValueAsString(TaskManager.getTaskMetrics());
+            return JsonUtils.writeValue(TaskManager.getTaskMetrics());
+//            return DEFAULT_JSON_WRITER.writeValueAsString(TaskManager.getTaskMetrics());
         }
         catch(JsonProcessingException j)
         {
@@ -68,7 +71,8 @@ public class TaskService {
             List<Task> tasks = child.getTasks();
             
             Task task = tasks.get(0);
-            return DEFAULT_JSON_WRITER.writeValueAsString(task);
+            return JsonUtils.writeValue(task);
+//            return DEFAULT_JSON_WRITER.writeValueAsString(task);
         }
         return "No tasks found";
     }
@@ -84,7 +88,8 @@ public class TaskService {
         
         try
         {
-            return DEFAULT_JSON_WRITER.writeValueAsString(TaskRepo.getTask(taskId));
+            return JsonUtils.writeValue(TaskRepo.getTask(taskId));
+//            return DEFAULT_JSON_WRITER.writeValueAsString(TaskRepo.getTask(taskId));
         }
         catch(ItemNotFoundException i)
         {
@@ -101,7 +106,8 @@ public class TaskService {
             throw new WebApplicationException("Billet parameter cannot be blank", Response.Status.BAD_REQUEST);
         }
         
-        return DEFAULT_JSON_WRITER.writeValueAsString(TaskRepo.getTasksByBillet(billet));
+        return JsonUtils.writeValue(TaskRepo.getTasksByBillet(billet));
+//        return DEFAULT_JSON_WRITER.writeValueAsString(TaskRepo.getTasksByBillet(billet));
     }
     
     @POST
@@ -210,7 +216,8 @@ public class TaskService {
         
         try
         {
-            return DEFAULT_JSON_WRITER.writeValueAsString(param.getNote());
+            return JsonUtils.writeValue(param.getNote());
+//            return DEFAULT_JSON_WRITER.writeValueAsString(param.getNote());
         }
         catch(JsonProcessingException j)
         {
@@ -224,8 +231,8 @@ public class TaskService {
     @Consumes(MediaType.APPLICATION_JSON)
     public String changeStatus(StatusRestParams params) {
         try {
-            Task changedTask = TaskManager.changeTaskStatus(params.getTaskId(), params.getUser(), params.getCurrentStatus());
-            return DEFAULT_JSON_WRITER.writeValueAsString(changedTask);
+            Task changedTask = TaskManager.changeTaskStatus(params.getTaskId(), params.getUser(), params.getStatus());
+            return JsonUtils.writeValue(changedTask);
         } catch (ItemNotFoundException | InvalidParameterException | JsonProcessingException e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }

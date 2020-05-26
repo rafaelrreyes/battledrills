@@ -31,7 +31,8 @@ public class NotifyManager {
     
     /**
      * Factory helper to create a drill notification based on operationType.
-     * This is when a drill is created
+     * This is when a drill is created or started
+     *
      * @param operationType
      * @param user
      * @param payload

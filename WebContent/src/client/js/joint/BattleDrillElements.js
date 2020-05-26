@@ -1,6 +1,7 @@
 import { ShapesConstants } from "./ShapesHelper";
-import { CoordinateTypes } from "UTILITIES/index";
-import joint from "jointjs/index";
+import { CoordinateTypes } from "UTILITIES";
+import { getLinkStyle, getLinkSmoothness } from "REDUX";
+import joint from "jointjs/";
 import store from "REDUX/store";
 
 export default class BattleDrillElements {
@@ -15,6 +16,9 @@ export default class BattleDrillElements {
 	 * @returns {Object} contributor element object
 	 */
 	addContributorRectangle(data = {}) {
+		if (typeof data.title === "undefined") {
+			return;
+		}
 		const width = data.title.length * ShapesConstants.CONTRIBUTOR_WIDTH_MULTIPLIER + 25;
 		const height = ShapesConstants.CONTRIBUTOR_HEIGHT;
 		const { self_coordinates } = data;
@@ -28,7 +32,8 @@ export default class BattleDrillElements {
 				title: data.title,
 				diagramData: {
 					owner: data.title,
-					coordinateType: CoordinateTypes.SELF
+					coordinateType: CoordinateTypes.SELF,
+					isTemplate: data.isTemplate
 				},
 				// removes the default square
 				body: {
@@ -43,7 +48,6 @@ export default class BattleDrillElements {
 			}
 		}
 
-
 		this.elements.push(contributorRect);
 		return contributorRect;
 	}
@@ -54,7 +58,13 @@ export default class BattleDrillElements {
 	 * @param {Array} tasks
 	 * @returns {Object} tasks element object
 	 */
-	addTaskItemsBlock(ownerNode, tasks = [], tasks_coordinates = { x: 0, y: 0 }, selectedTask = {}) {
+	addTaskItemsBlock(
+		ownerNode,
+		tasks = [],
+		tasks_coordinates = { x: 0, y: 0 },
+		selectedTask = {},
+		isTemplate = false
+	) {
 		if (tasks.length === 0) {
 			return null;
 		}
@@ -72,7 +82,8 @@ export default class BattleDrillElements {
 				},
 				diagramData: {
 					owner: ownerNode.get("attrs").diagramData.owner,
-					coordinateType: CoordinateTypes.TASKS
+					coordinateType: CoordinateTypes.TASKS,
+					isTemplate
 				}
 			}
 		});
@@ -94,18 +105,20 @@ export default class BattleDrillElements {
 	 * @returns {Object} link element object
 	 */
 	createLink(node1, node2) {
+		const linkStyle = getLinkStyle(store.getState()).toLowerCase();
+		const linkSmoothness = getLinkSmoothness(store.getState()).toLowerCase();
 		const link = new joint.shapes.standard.Link({
 			source: node1,
 			target: node2,
-			smooth: false,
 			router: {
-				name: "manhattan",
+				name: linkStyle,
 				args: {
-					startDirections: ["bottom", "left"],
-					endDirections: ["top"]
+					startDirections: ["bottom", "right", "left"],
+					endDirections: ["top", "right", "left"]
 				}
 			}
 		});
+		link.connector(linkSmoothness);
 
 		this.links.push(link);
 		return link;
@@ -117,18 +130,21 @@ export default class BattleDrillElements {
 	 * @param {*} node2
 	 */
 	createTaskLink(node1, node2) {
+		const linkStyle = getLinkStyle(store.getState()).toLowerCase();
+		const linkSmoothness = getLinkSmoothness(store.getState()).toLowerCase();
 		const taskLink = new joint.shapes.standard.Link({
 			source: node1,
 			target: node2,
-			smooth: false,
 			router: {
-				name: "manhattan",
+				name: linkStyle,
 				args: {
-					startDirections: ["right", "bottom"],
-					endDirections: ["top", "left"]
+					startDirections: ["bottom"],
+					endDirections: ["top", "left", "right"]
 				}
 			}
 		});
+
+		taskLink.connector(linkSmoothness);
 
 		// taskLink.attr({
 		//     line: {

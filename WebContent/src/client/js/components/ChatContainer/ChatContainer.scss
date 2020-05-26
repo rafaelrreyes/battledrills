@@ -5,7 +5,7 @@
 	@include body-3;
 
 	.chat-button {
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		right: 10%;
 		background-color: $cyan-900;
@@ -24,7 +24,7 @@
 		box-shadow: 0 0 0.625em rgba(0, 0, 0, 0.5);
 		bottom: 0;
 		right: 0;
-		position: absolute;
+		position: fixed;
 		margin: 0 1em 0 0;
 		padding: 1em;
 		width: 15%;
@@ -82,7 +82,7 @@
 
 	.open-chats-view {
 		display: flex;
-		position: absolute;
+		position: fixed;
 		bottom: 0;
 		right: 18%;
 		z-index: 1500;

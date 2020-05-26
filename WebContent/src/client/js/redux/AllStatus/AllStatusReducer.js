@@ -6,7 +6,7 @@ const initialState = {
 	roles_filter: new Set(["ALL", ...UserConfiguration.DEFINED_ROLES])
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
 	switch (action.type) {
 		case AllStatusConstants.UPDATE_STATUSES:
 			break;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { ProgressBar, StatusIcon, Hyperlink, HyperlinkTypes } from "CORE/index";
-import { MaterialIconNames, STATUS_TYPES, Routes } from "UTILITIES/index";
+import { ProgressBar, StatusIcon, Hyperlink, HyperlinkTypes, Icon } from "CORE";
+import { MaterialIconNames, STATUS_TYPES, Routes } from "UTILITIES";
 import "./AllStatusItemView.scss";
 
 /**
@@ -18,9 +18,9 @@ const AllStatusItemView = ({ drillName, tasks, onTaskLinkClick }) => {
 		<div className="all-status-items-container">
 			<div className="all-status-items">
 				<ProgressBar completedTasks={countCompletedTasks(tasks)} allTasks={tasks.length} />
-				<i className="material-icons task-display-button" onClick={handleTasksListClick}>
+				<Icon className="task-display-button" onClick={handleTasksListClick}>
 					{MaterialIconNames.TASK_LIST}
-				</i>
+				</Icon>
 			</div>
 			{showTasks && (
 				<ul className="all-status-tasks-list">{renderTaskList(drillName, tasks, onTaskLinkClick)}</ul>

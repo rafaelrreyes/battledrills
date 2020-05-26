@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Dropdown, DROPDOWN_SIZES, DROPDOWN_TYPES } from "CORE/index";
-import { Input, INPUT_SIZES, INPUT_TYPES } from "CORE/index";
-import { ArrowTooltip, TooltipTypes } from "CORE/index";
-import { Checkbox, CheckboxPlacement } from "CORE/index";
-import { API, parseAllTypes, undoParsedType, isDropdownValid, isStringValid, isLatLonAltValid } from "UTILITIES/index";
+import { ArrowTooltip, TooltipTypes, TooltipPlacement } from "CORE";
+import { Checkbox, CheckboxPlacement } from "CORE";
+import { Dropdown, DropdownSizes, DropdownTypes, DROPDOWN_DEFAULT } from "CORE";
+import { Input, InputSizes, InputTypes } from "CORE";
+import { Icon } from "CORE";
+import {
+	API,
+	parseAllTypes,
+	undoParsedType,
+	isDropdownValid,
+	isStringValid,
+	isLatLonAltValid,
+	DrillTypes
+} from "UTILITIES";
 import { getTypeError, getNameError, getLatLonAltError } from "./CreateDrillHelper";
 import "./CreateDrillContainer.scss";
 
@@ -33,7 +42,7 @@ export const CreateDrillContainer = (props) => {
 		alt: { isError: false },
 		tilt: { isError: false }
 	});
-	const { icon, title, submit, updateDisableSubmit, updateData, validity } = props;
+	const { drillType, icon, title, submit, updateDisableSubmit, updateData, validity } = props;
 
 	// this is run when "name", "type", "lat", "lon", "alt", "tilt", or "startDrill" receive changes
 	useEffect(() => {
@@ -49,6 +58,7 @@ export const CreateDrillContainer = (props) => {
 			lon: getLatLonAltError(lonReasonCode, "lon"),
 			alt: getLatLonAltError(altReasonCode, "alt")
 		});
+
 		updateData({ name, type: undoParsedType(type), lat, lon, alt, tilt, startDrill });
 	}, [name, type, lat, lon, alt, tilt, startDrill]);
 
@@ -59,16 +69,25 @@ export const CreateDrillContainer = (props) => {
 		const nameError = errors.name.isError === null ? true : errors.name.isError;
 		const typeError = errors.type.isError === null ? true : errors.type.isError;
 
-		updateDisableSubmit(nameError || typeError || errors.lat.isError || errors.lon.isError || errors.alt.isError);
+		if (type === DROPDOWN_DEFAULT) {
+			updateDisableSubmit(true);
+		} else {
+			updateDisableSubmit(
+				nameError || typeError || errors.lat.isError || errors.lon.isError || errors.alt.isError
+			);
+		}
 	}, [errors]);
 
 	// this is run when the component mounts
 	useEffect(() => {
 		API.types({}, (response) => {
-			setTypes(parseAllTypes(response));
+			if (drillType === DrillTypes.CUSTOM) {
+				setTypes(parseAllTypes(response.custom));
+			} else if (drillType === DrillTypes.DEFAULT) {
+				setTypes(parseAllTypes(response.default));
+			}
 		});
-		updateDisableSubmit(true);
-	}, []);
+	}, [drillType]);
 
 	const onDropdownChange = (type) => {
 		setType(type);
@@ -96,91 +115,91 @@ export const CreateDrillContainer = (props) => {
 
 	return (
 		<div className="create-list-container">
-			{icon && <i className="material-icons md-36">{icon}</i>}
+			{icon && <Icon className="md-36">{icon}</Icon>}
 			{title && <div className="modal-title">{title}</div>}
 			<div className="drill-type-dropdown">
 				<ArrowTooltip
 					title={errors.type.isError ? errors.type.message : ""}
-					placement={errors.type.placement}
+					placement={TooltipPlacement.TOP}
 					type={TooltipTypes.ERROR}
 					open={true}
 				>
 					<Dropdown
-						dropdownType={DROPDOWN_TYPES.REGULAR}
-						dropdownSize={DROPDOWN_SIZES.FILL}
+						dropdownType={DropdownTypes.REGULAR}
+						dropdownSize={DropdownSizes.FILL}
 						options={types}
 						onChange={onDropdownChange}
-						defaultOption="Select a drill type*"
-						defaultValid={false}
-						showError={errors.type}
+						firstOption="Select a drill type*"
+						firstValid={false}
+						showError={errors.type.isError}
 					/>
 				</ArrowTooltip>
 			</div>
 			<div className="drill-name-container">
 				<Input
-					inputType={INPUT_TYPES.REGULAR}
-					inputSize={INPUT_SIZES.FILL}
+					inputType={InputTypes.REGULAR}
+					inputSize={InputSizes.FILL}
 					onChange={onNameChange}
 					submit={submit}
 					focus={true}
 					placeholder="Drill Name*"
-					showError={errors.name}
+					error={errors.name}
 				/>
 			</div>
 			<div className="drill-location-container">
 				<div className="latitude-input">
 					<ArrowTooltip
 						title={errors.lat.isError ? errors.lat.message : ""}
-						placement="left"
+						placement={TooltipPlacement.LEFT}
 						type={TooltipTypes.ERROR}
 						open={true}
 					>
 						<Input
-							inputType={INPUT_TYPES.REGULAR}
-							inputSize={INPUT_SIZES.MEDIUM}
+							inputType={InputTypes.REGULAR}
+							inputSize={InputSizes.MEDIUM}
 							onChange={onLatChange}
 							submit={submit}
 							placeholder="Latitude"
-							showError={errors.lat}
+							error={errors.lat}
 						/>
 					</ArrowTooltip>
 				</div>
 				<Input
-					inputType={INPUT_TYPES.REGULAR}
-					inputSize={INPUT_SIZES.MEDIUM}
+					inputType={InputTypes.REGULAR}
+					inputSize={InputSizes.MEDIUM}
 					onChange={onLonChange}
 					submit={submit}
 					placeholder="Longitude"
-					showError={errors.lon}
+					error={errors.lon}
 				/>
 			</div>
 			<div className="drill-location-container">
 				<div className="latitude-input">
 					<ArrowTooltip
 						title={errors.alt.isError ? errors.alt.message : ""}
-						placement="left"
+						placement={TooltipPlacement.LEFT}
 						type={TooltipTypes.ERROR}
 						open={true}
 					>
 						<Input
-							inputType={INPUT_TYPES.REGULAR}
-							inputSize={INPUT_SIZES.MEDIUM}
+							inputType={InputTypes.REGULAR}
+							inputSize={InputSizes.MEDIUM}
 							onChange={onAltChange}
 							submit={submit}
 							placeholder="Altitude"
-							showError={errors.alt}
+							error={errors.alt}
 						/>
 					</ArrowTooltip>
 				</div>
 				<Input
-					inputType={INPUT_TYPES.REGULAR}
-					inputSize={INPUT_SIZES.MEDIUM}
+					inputType={InputTypes.REGULAR}
+					inputSize={InputSizes.MEDIUM}
 					onChange={onTiltChange}
 					submit={submit}
 					placeholder="Tilt"
 				/>
 			</div>
-			<div>
+			<div className="start-drill-container">
 				<Checkbox
 					boxPosition={CheckboxPlacement.LEFT}
 					label="Start drill on creation?"

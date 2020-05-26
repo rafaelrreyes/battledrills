@@ -5,6 +5,7 @@
  */
 package com.ngc.battledrills.data;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,11 +15,13 @@ import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.apache.commons.lang3.StringUtils;
+import com.ngc.battledrills.util.JsonUtils;
 
 /**
  *
  * @author rafae
  */
+@JsonFilter(JsonUtils.DefinedFilters.ATTACHMENT_FILTER)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Attachment {

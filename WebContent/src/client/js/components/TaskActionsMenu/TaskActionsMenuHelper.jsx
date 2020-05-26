@@ -46,7 +46,7 @@ export const changeTaskState = (status, selectedTask) => {
 	const updatedSelectedTask = {
 		taskId: selectedTask.taskId,
 		user,
-		currentStatus: { status }
+		status
 	};
 
 	API.updateTaskStatus(updatedSelectedTask, (response) => {

@@ -14,7 +14,8 @@ import java.util.List;
  */
 public class NotifyTypes {
     //public static final List<String> VALID_OBJECT_TYPES = Arrays.asList("drill", "task", "note", "chat");
-    public static final List<String> VALID_OPERATION_TYPES = Arrays.asList("create", "edit", "delete", "reorder", "read");
+    public static final List<String> VALID_OPERATION_TYPES
+            = Arrays.asList("create", "start", "stop", "edit", "delete", "reorder", "read");
     
     public static class OBJECT_TYPES {
         public static final String DRILL = "drill";
@@ -28,6 +29,8 @@ public class NotifyTypes {
     
     public static class OPERATION_TYPES {
         public static final String CREATE = "create";
+        public static final String START = "start";
+        public static final String STOP = "stop";
         public static final String EDIT = "edit";
         public static final String DELETE = "delete";
         public static final String REORDER = "reorder";

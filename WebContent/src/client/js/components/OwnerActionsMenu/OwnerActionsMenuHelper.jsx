@@ -1,40 +1,68 @@
 import React from "react";
 import store from "REDUX/store";
-import { API, MaterialIconNames } from "UTILITIES/";
-import { ModalContentTypes } from "CORE/";
+import { API, MaterialIconNames, generateRandomId } from "UTILITIES";
+import { ModalContentTypes } from "CORE";
 
 // redux
-import { getUser, getSelectedDrillName, setSelectedDrill, showModal, closeModal } from "REDUX/";
+import {
+	getUser,
+	getSelectedDrillName,
+	setSelectedDrill,
+	addRoleToTemplate,
+	addTaskToTemplate,
+	deleteRoleFromTemplate,
+	showModal,
+	closeModal
+} from "REDUX";
 
-export const getOwnerMenuActions = (owner) => {
+export const getOwnerMenuActions = (isTemplate, owner) => {
 	const selectedDrillName = getSelectedDrillName(store.getState());
 	const user = getUser(store.getState());
 	return [
 		{
 			name: "Add Subordinate",
 			menuAction: () => {
-				addSubordinate(selectedDrillName, owner, user);
+				isTemplate ? addSubordinateTemplate(owner) : addSubordinate(selectedDrillName, owner, user);
 			}
 		},
 		{
 			name: "Add Task",
 			menuAction: () => {
-				addTask(selectedDrillName, owner, user);
+				isTemplate ? addTaskTemplate(owner) : addTask(selectedDrillName, owner, user);
 			}
 		},
 		{
 			name: "Delete",
 			menuAction: () => {
-				deleteOwner(selectedDrillName, owner, user);
+				isTemplate ? deleteRoleTemplate(owner) : deleteRole(selectedDrillName, owner, user);
 			}
 		}
 	];
 };
 
+const addSubordinateTemplate = (parentRole) => {
+	store.dispatch(
+		showModal(ModalContentTypes.NEW_OWNER, {
+			title: `Add New Role`,
+			icon: MaterialIconNames.ACCOUNT,
+			fromTemplate: true,
+			fromPalette: false,
+			parentRole,
+			action: ({ role, parent }) => {
+				store.dispatch(addRoleToTemplate({ role, parent }));
+				store.dispatch(closeModal());
+			}
+		})
+	);
+};
+
 const addSubordinate = (drillName, owner, user) => {
 	store.dispatch(
 		showModal(ModalContentTypes.NEW_OWNER, {
+			title: `Add New Role`,
+			icon: MaterialIconNames.ACCOUNT,
 			fromPalette: false,
+			parentRole: owner,
 			action: (role) => {
 				const requestBody = {
 					owner: role, // retrieved from drop down selection
@@ -43,26 +71,13 @@ const addSubordinate = (drillName, owner, user) => {
 					user
 				};
 
-				API.addSubordinateToOwner(
-					requestBody,
-					() => {
-						// successfully added a subordinate
-						API.getDrillByName(
-							drillName,
-							{},
-							(drill) => {
-								// successfully updated selected drill
-								store.dispatch(setSelectedDrill(drill));
-							},
-							(err) => {
-								console.error(`Error when updating selected drill while adding new subordinate.`);
-							}
-						);
-					},
-					(err) => {
-						console.error(`Error when adding a subordinate role to ${owner}`);
-					}
-				);
+				API.addSubordinateToOwner(requestBody, () => {
+					// successfully added a subordinate
+					API.getDrillByName(drillName, {}, (drill) => {
+						// successfully updated selected drill
+						store.dispatch(setSelectedDrill(drill));
+					});
+				});
 				store.dispatch(closeModal());
 			}
 		})
@@ -72,8 +87,11 @@ const addSubordinate = (drillName, owner, user) => {
 const addTask = (drillName, owner, user) => {
 	store.dispatch(
 		showModal(ModalContentTypes.NEW_TASK, {
+			title: `Add New Task`,
+			icon: MaterialIconNames.TASK,
 			fromPalette: false,
-			action: (description) => {
+			parentRole: owner,
+			action: ({ description }) => {
 				const requestBody = {
 					drillName,
 					description,
@@ -81,27 +99,44 @@ const addTask = (drillName, owner, user) => {
 					user
 				};
 
-				API.addTaskToOwner(
-					requestBody,
-					() => {
-						API.getDrillByName(drillName, {}, (drill) => {
-							store.dispatch(setSelectedDrill(drill));
-						});
-					},
-					(error) => {
-						console.error(error);
-					}
-				);
+				API.addTaskToOwner(requestBody, () => {
+					API.getDrillByName(drillName, {}, (drill) => {
+						store.dispatch(setSelectedDrill(drill));
+					});
+				});
 				store.dispatch(closeModal());
 			}
 		})
 	);
 };
 
-const deleteOwner = (drillName, owner, user) => {
+const addTaskTemplate = (owner) => {
+	store.dispatch(
+		showModal(ModalContentTypes.NEW_TASK, {
+			title: `Add New Task`,
+			icon: MaterialIconNames.TASK,
+			fromTemplate: true,
+			fromPalette: false,
+			action: ({ description }) => {
+				const obj = {
+					task: {
+						taskId: `task-${generateRandomId()}`,
+						description
+					},
+					owner
+				};
+				store.dispatch(addTaskToTemplate(obj));
+				store.dispatch(closeModal());
+			}
+		})
+	);
+};
+
+const deleteRole = (drillName, owner, user) => {
 	store.dispatch(
 		showModal(ModalContentTypes.CONFIRMATION, {
-			title: `Deleting this role will delete all of its subordinates and associated tasks. Are you sure you want to delete ${owner}?`,
+			title: `Delete Role`,
+			description: `Deleting this role will delete all of its subordinates and associated tasks. Are you sure you want to delete ${owner}?`,
 			icon: MaterialIconNames.DELETE,
 			action: () => {
 				const requestBody = {
@@ -109,26 +144,27 @@ const deleteOwner = (drillName, owner, user) => {
 					drillName,
 					user
 				};
-				API.deleteOwner(
-					requestBody,
-					() => {
-						// successfully deleted owner
-						API.getDrillByName(
-							drillName,
-							{},
-							(drill) => {
-								// successfully updated selected drill
-								store.dispatch(setSelectedDrill(drill));
-							},
-							(err) => {
-								console.error(`Error when updating selected drill when deleting role ${owner}.`);
-							}
-						);
-					},
-					(err) => {
-						console.error(`Error when deleting role ${owner}.`);
-					}
-				);
+				API.deleteOwner(requestBody, () => {
+					// successfully deleted owner
+					API.getDrillByName(drillName, {}, (drill) => {
+						// successfully updated selected drill
+						store.dispatch(setSelectedDrill(drill));
+					});
+				});
+				store.dispatch(closeModal());
+			}
+		})
+	);
+};
+
+const deleteRoleTemplate = (owner) => {
+	store.dispatch(
+		showModal(ModalContentTypes.CONFIRMATION, {
+			title: `Delete Role`,
+			description: `Deleting this role will delete all of its subordinates and associated tasks. Are you sure you want to delete ${owner}?`,
+			icon: MaterialIconNames.DELETE,
+			action: () => {
+				store.dispatch(deleteRoleFromTemplate(owner));
 				store.dispatch(closeModal());
 			}
 		})

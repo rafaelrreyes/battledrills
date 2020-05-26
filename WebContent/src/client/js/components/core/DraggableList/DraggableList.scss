@@ -19,7 +19,6 @@
 	.drag-icon {
 		float: left;
 		padding: 0.5em 0.325em 0.5em 0.5em;
-		border-right: 0.125em solid $white-opaque;
 		&:hover {
 			cursor: grab;
 			cursor: -webkit-grab;
@@ -32,8 +31,7 @@
 	.draggable-li {
 		padding: 0.5em;
 		margin: 0 0 0.5em 0;
-		border-radius: 0.5em;
-
+		border-left: 0.125em solid $white-opaque;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;

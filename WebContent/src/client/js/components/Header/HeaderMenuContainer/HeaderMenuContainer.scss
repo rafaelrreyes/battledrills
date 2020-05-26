@@ -6,10 +6,6 @@
 	margin: auto 1em auto auto;
 	display: flex;
 
-	.menu-content {
-		right: 1em;
-	}
-
 	.menu-user-button {
 		display: flex;
 		flex-direction: row;
@@ -20,7 +16,7 @@
 		cursor: pointer;
 
 		.user-label {
-			@include heading-4;
+			@include body-4;
 		}
 
 		&:hover > .menu-icon {
@@ -52,8 +48,6 @@
 }
 
 .menu-icon {
-	color: $white;
-	display: flex !important;
 	cursor: pointer;
 
 	&:hover {

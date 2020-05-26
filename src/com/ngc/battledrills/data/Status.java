@@ -5,32 +5,34 @@
  */
 package com.ngc.battledrills.data;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.HashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
-
+import com.ngc.battledrills.util.JsonUtils;
 /**
  *
  * @author Rafa
  */
 
+@JsonFilter(JsonUtils.DefinedFilters.STATUS_FILTER)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Status {
-    
     private String status = "";
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime startTime = null;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endTime = null;
     
     public Status() {
         this.status = StatusTypes.PENDING;
-        this.startTime = LocalDateTime.now();
     }
     
     public static boolean isDefinedStatus(String status) {
@@ -55,36 +57,20 @@ public class Status {
         return this.status;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
     
-    @JsonProperty("start")
-    public long getStartTimeMillis() {
-        if (this.startTime == null) {
-            return -1;
-        }
-        
-        ZoneId zoneId = ZoneId.systemDefault();
-        long epoch = this.startTime.atZone(zoneId).toEpochSecond();
-        return epoch;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
     
-    @JsonProperty("end")
-    public long getEndTimeMillis() {
-        if (this.endTime == null) {
-            return -1;
-        }
-        
-        ZoneId zoneId = ZoneId.systemDefault();
-        long epoch = this.endTime.atZone(zoneId).toEpochSecond();
-        return epoch;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
     
     @Override

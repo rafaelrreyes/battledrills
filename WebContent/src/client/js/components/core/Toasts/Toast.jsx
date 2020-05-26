@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router";
 import PropTypes from "prop-types";
 import { CSSTransition } from "react-transition-group";
-import { MaterialIconNames, createDesktopNotification } from "UTILITIES/index";
+import { MaterialIconNames, createDesktopNotification } from "UTILITIES";
+import { Icon } from "CORE";
 import notification_important from "IMAGES/notification_important.png";
 import { getToastMessageHtml, getToastMessageString, getNotificationLink, onNotificationClick } from "./ToastHelper";
 import "./Toast.scss";
@@ -42,7 +43,8 @@ export const Toast = ({
 		const options = {
 			body: getToastMessageString({ operationType, objectType, user, taskData, drillName, note, edittedKey }),
 			icon: notification_important,
-			badge: notification_important
+			badge: notification_important,
+			tag: "toastNotification" // tag displays only one desktop notification at a time
 		};
 
 		let notification = createDesktopNotification("Battle Drills", options);
@@ -59,7 +61,7 @@ export const Toast = ({
 		<CSSTransition in={visible} unmountOnExit classNames="example" timeout={{ enter: enterDelay, exit: exitDelay }}>
 			<div className={`toast ${toastType}`}>
 				<span className="toast-message-container">
-					<i className="material-icons toast-icon">{MaterialIconNames.ERROR_OUTLINE}</i>
+					<Icon className="toast-icon">{MaterialIconNames.ERROR_OUTLINE}</Icon>
 					{getToastMessageHtml(notiProps)}
 				</span>
 				<span className="toast-actions">

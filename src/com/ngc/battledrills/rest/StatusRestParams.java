@@ -20,7 +20,7 @@ import com.ngc.battledrills.data.User;
 public class StatusRestParams {
     private String taskId;
     private User user; // user who changed the status, sessionId for now
-    private Status currentStatus;
+    private String status;
         
     public String getTaskId() {
         return this.taskId;
@@ -31,8 +31,8 @@ public class StatusRestParams {
         return this.user;
     }
     
-    public Status getCurrentStatus() {
-        return this.currentStatus;
+    public String getStatus() {
+        return this.status;
     }
     
     public void setTaskId(String taskId) {
@@ -44,8 +44,8 @@ public class StatusRestParams {
         this.user = user;
     }
     
-    public void setCurrentStatus(Status currentStatus) {
-        this.currentStatus = currentStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
     
     @Override
@@ -53,7 +53,7 @@ public class StatusRestParams {
         StringBuilder sb = new StringBuilder();
         sb.append("TaskID: ").append(this.taskId).append(System.lineSeparator());
         sb.append("User: ").append(this.user).append(System.lineSeparator());
-        sb.append("Current Status: ").append(this.currentStatus).append(System.lineSeparator());
+        sb.append("Status: ").append(this.status).append(System.lineSeparator());
         return sb.toString();
     }
 }

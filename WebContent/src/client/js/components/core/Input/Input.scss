@@ -21,13 +21,13 @@ $input-shadow-color-focus: $shadow-color-default;
 $input-shadow-width-hover: $shadow-width-hover;
 $input-shadow-width-focus: $shadow-width-active;
 
-$input-height: 1.75em;
+$input-height: 32px;
 $input-width-fill: 100%;
-$input-width-lg: 14.75em;
-$input-width-md: 11.25em;
-$input-width-sm: 7em;
-$input-width-xs: 5.25em;
-$input-width-xxs: 3.5em;
+$input-width-lg: 236px;
+$input-width-md: 180px;
+$input-width-sm: 112px;
+$input-width-xs: 84px;
+$input-width-xxs: 56px;
 
 input::-moz-focus-inner {
 	border: 0;
@@ -44,6 +44,10 @@ input::-moz-focus-inner {
 	height: $input-height;
 	&:hover {
 		box-shadow: 0 0 $input-shadow-width-hover $input-shadow-color-hover;
+	}
+	[disabled] {
+		color: $input-text-color-disabled;
+		background-color: $input-background-color-disabled;
 	}
 }
 
@@ -65,6 +69,12 @@ input::-moz-focus-inner {
 		color: $input-text-color-disabled;
 		background-color: $input-background-color-disabled;
 	}
+}
+
+// coloring for disabled input container (div)
+[class^="input-flex-container"][disabled] {
+	color: $input-text-color-disabled;
+	background-color: $input-background-color-disabled;
 }
 
 div.input-flex-container {

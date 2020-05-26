@@ -9,7 +9,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,8 @@ public class ChatMessage {
     private String sender = "";
     private String target = "";
     private String message = "";
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime timestamp = null;
     
     public ChatMessage() {
@@ -56,27 +60,12 @@ public class ChatMessage {
         return this.message;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    public void setTimestamp(LocalDateTime timestamp)
-    {
+    public void setTimestamp(LocalDateTime timestamp)    {
         this.timestamp = timestamp;
     }
     
-    @JsonIgnore // Only for internal use - getTimestampMillis is used for communicating with the front end application
-    public LocalDateTime getTimestamp()
-    {
+    public LocalDateTime getTimestamp()    {
         return this.timestamp;
-    }
-    
-    public long getTimestampMillis()
-    {
-        if(this.timestamp == null)
-        {
-            return -1;
-        }
-        ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
-        long epoch = this.timestamp.atZone(zoneId).toEpochSecond();
-        return epoch;
     }
     
     public boolean isValid() {

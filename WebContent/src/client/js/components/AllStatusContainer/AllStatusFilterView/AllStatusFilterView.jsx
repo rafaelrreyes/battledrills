@@ -1,6 +1,6 @@
 import React from "react";
 import { UserConfiguration, MaterialIconNames } from "UTILITIES/index";
-import { Dropdown, DROPDOWN_SIZES, DROPDOWN_TYPES, FilterDropdown } from "CORE/index";
+import { Dropdown, DropdownSizes, DropdownTypes, FilterDropdown } from "CORE/index";
 
 import "./AllStatusFilterView.scss";
 
@@ -52,11 +52,11 @@ const renderFilterOptions = (roles_filter, onDrillsTypeChange, onFilterChange) =
 		<>
 			<span className="drill-dropdown">
 				<Dropdown
-					dropdownType={DROPDOWN_TYPES.REGULAR}
-					dropdownSize={DROPDOWN_SIZES.LARGE}
+					dropdownType={DropdownTypes.REGULAR}
+					dropdownSize={DropdownSizes.LARGE}
 					options={DRILL_FILTER_TYPES}
 					onChange={onDrillsTypeChange}
-					defaultOption={"All Drills"}
+					firstOption={"All Drills"}
 				/>
 			</span>
 			<FilterDropdown

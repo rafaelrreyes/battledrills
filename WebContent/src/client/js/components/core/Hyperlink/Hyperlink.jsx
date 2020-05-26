@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { NavLink } from "react-router-dom";
-import { MaterialIconNames } from "UTILITIES/index";
+import { MaterialIconNames } from "UTILITIES";
+import { Icon } from "CORE";
 import "./Hyperlink.scss";
 
 export const HyperlinkTypes = {
@@ -12,11 +13,7 @@ export const HyperlinkTypes = {
 export const Hyperlink = ({ to, addClass, children, type = HyperlinkTypes.ICON, hyperlinkRef }) => {
 	return (
 		<NavLink activeClassName="active-hyperlink" className={`${addClass}`} exact to={to} ref={hyperlinkRef}>
-			{type === HyperlinkTypes.ICON ? (
-				<i className="material-icons">{MaterialIconNames.LINK}</i>
-			) : (
-				<>{children}</>
-			)}
+			{type === HyperlinkTypes.ICON ? <Icon>{MaterialIconNames.LINK}</Icon> : <>{children}</>}
 		</NavLink>
 	);
 };

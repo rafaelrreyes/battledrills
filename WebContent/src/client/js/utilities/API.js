@@ -19,8 +19,10 @@ export const getAuthToken = () => {
 const BATTLE_DRILLS = "battledrills";
 const BATTLE_DRILL = "battledrill";
 const ATTACHMENT = "attachment";
+const REPORTS = "reports";
 const TASK = "task";
 const METRICS = "metrics";
+const TEMPLATES = "templates";
 
 // Battledrills endpoints
 
@@ -33,7 +35,12 @@ const METRICS = "metrics";
  * @returns Data retrieved if any
  */
 const types = (params, onSuccess, onError) => {
-	const endpoint = `/${BATTLE_DRILLS}/types`;
+	const endpoint = `/${TEMPLATES}`;
+	return get(endpoint, params, onSuccess, onError);
+};
+
+const getTemplate = (params, onSuccess, onError) => {
+	const endpoint = `/${TEMPLATES}/${params.type}`;
 	return get(endpoint, params, onSuccess, onError);
 };
 
@@ -90,9 +97,9 @@ const completed = (params, onSuccess, onError) => {
  *
  * @returns Data retrieved if any
  */
-const startDrill = (name, onSuccess, onError) => {
+const startDrill = (name, params, onSuccess, onError) => {
 	const endpoint = `/${BATTLE_DRILLS}/start/${encodeURIComponent(name)}`;
-	return put(endpoint, {}, onSuccess, onError);
+	return put(endpoint, params, onSuccess, onError);
 };
 
 /**
@@ -103,9 +110,9 @@ const startDrill = (name, onSuccess, onError) => {
  *
  * @returns Data retrieved if any
  */
-const stopDrill = (name, onSuccess, onError) => {
+const stopDrill = (name, params, onSuccess, onError) => {
 	const endpoint = `/${BATTLE_DRILLS}/stop/${encodeURIComponent(name)}`;
-	return put(endpoint, {}, onSuccess, onError);
+	return put(endpoint, params, onSuccess, onError);
 };
 
 /**
@@ -327,6 +334,7 @@ const deleteAttachment = (requestBody, onSuccess, onError) => {
 	const endpoint = `/${ATTACHMENT}`;
 	return del(endpoint, requestBody, onSuccess, onError);
 };
+
 /**
  * Downloads the attachment of a drill or task.
  * @param {Object} params
@@ -383,6 +391,83 @@ const editTask = (requestBody, onSuccess, onError) => {
 };
 
 /**
+ * Saves drill template by type.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const saveTemplateByDrillName = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TEMPLATES}/save`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Saves drill template by object.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const saveTemplate = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TEMPLATES}/save_template`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Creates a new drill template.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const createDrillTemplate = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TEMPLATES}/create`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Deletes a single drill template.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const deleteDrillTemplate = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${TEMPLATES}`;
+	return del(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Deletes multiple drill templates.
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const deleteDrillTemplates = (requestBody, onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/multiple`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
+ * Reverts a drill template
+ * @param {Object} requestBody
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const revertDrillTemplate = (requestBody, onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/revert`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/*
+ * Returns necessary information for generating a report of charts
+ * @param {Object} params
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ */
+const getReport = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${REPORTS}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
  * Wrapper method for AXIOS GET requests.
  * @param {String} endpoint
  * @param {Object} params
@@ -429,7 +514,7 @@ const post = async (endpoint = "", requestBody = {}, success = () => {}, error =
 		if (axios.isCancel(err)) {
 			return;
 		}
-		error(err);
+		error(err.response);
 		throw new Error(
 			`${err} Occurred when performing POST request from: ${endpoint}. Double check if requestBody or endpoint is valid.`
 		);
@@ -492,6 +577,7 @@ const del = async (endpoint, requestBody = {}, success = () => {}, error = () =>
 
 export const API = {
 	types,
+	getTemplate,
 	active,
 	completed,
 	startDrill,
@@ -519,5 +605,12 @@ export const API = {
 	addTaskToOwner,
 	addSubordinateToOwner,
 	deleteOwner,
-	editTask
+	editTask,
+	createDrillTemplate,
+	saveTemplateByDrillName,
+	saveTemplate,
+	deleteDrillTemplate,
+	deleteDrillTemplates,
+	revertDrillTemplate,
+	getReport
 };

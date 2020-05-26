@@ -5,6 +5,7 @@
  */
 package com.ngc.battledrills.template;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ngc.battledrills.data.Node;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,11 +15,13 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
+import com.ngc.battledrills.util.JsonUtils;
 
 /**
  *
  * @author admin
  */
+@JsonFilter(JsonUtils.DefinedFilters.BATTLE_DRILL_TEMPLATE_FILTER)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
 public class BattleDrillTemplate {
@@ -50,7 +53,7 @@ public class BattleDrillTemplate {
     {
         return this.name;
     }
-    
+
     @JsonProperty("data")
     public void setRoot(Node root)
     {

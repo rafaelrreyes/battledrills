@@ -14,11 +14,11 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ngc.battledrills.data.BattleDrill;
 import com.ngc.battledrills.BattleDrillsConfig;
-import static com.ngc.battledrills.BattleDrillsConfig.DEFAULT_JSON_WRITER;
 import com.ngc.battledrills.comms.Notification;
 import com.ngc.battledrills.comms.Notify;
 import com.ngc.battledrills.comms.NotifyManager;
 import com.ngc.battledrills.comms.NotifyTypes;
+import com.ngc.battledrills.data.Report;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.rest.BattleDrillRestParams;
@@ -27,6 +27,8 @@ import com.ngc.battledrills.data.User;
 import com.ngc.battledrills.rest.OrderedDrillsRestParams;
 import com.ngc.battledrills.template.BattleDrillTemplate;
 import com.ngc.battledrills.util.ConvenienceUtils.VmfType;
+import com.ngc.battledrills.util.JsonUtils;
+import com.ngc.battledrills.util.JacksonInjectableValues;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -142,11 +144,11 @@ public class BattleDrillManager {
     {
         // Injectable value tells the battle drill whether this is a brand new drill being created, or if it's just being loaded from a JSON file
         // This is needed because brand new battle drills have sub-components that need to generate their own unique IDs upon creation the first time (ie: task IDs)
-        InjectableValues inject = new InjectableValues.Std().addValue(boolean.class, false);
-            
-        BattleDrill battleDrill = new ObjectMapper().reader(inject)
-        .forType(BattleDrill.class)
-        .readValue(json);
+        InjectableValues.Std inject = new InjectableValues.Std();
+
+        inject.addValue(JacksonInjectableValues.SAVE_AS_TEMPLATE, false);
+        inject.addValue(JacksonInjectableValues.NEW_TASK, false);
+        BattleDrill battleDrill = new ObjectMapper().reader(inject).forType(BattleDrill.class).readValue(json);
         
         return battleDrill;
     }
@@ -250,7 +252,7 @@ public class BattleDrillManager {
                         location.put("latitude", "32.7157");
                         location.put("longitude", "117.1611");
                         User vmf = new User("VMF", "VMF", "VMF");
-                        this.createByType("medevac", battleDrillName, vmf, location);
+                        this.createByType("medevac", battleDrillName, true, vmf, location);
                     }
                     catch(DuplicateItemException d)
                     {
@@ -268,8 +270,7 @@ public class BattleDrillManager {
         }
     }
     
-    public BattleDrill createByType(String type, String name, User user, Map<String, String> location) throws DuplicateItemException
-    {
+    public BattleDrill createByType(String type, String name, boolean start, User user, Map<String, String> location) throws DuplicateItemException    {
         if(activeBattleDrills.containsKey(name))
         {
             throw new DuplicateItemException("Battle drill with name: " + name + " already exists");
@@ -284,25 +285,37 @@ public class BattleDrillManager {
             System.err.println("BattleDrillManager::createByType - Unable to find template with type: " + type);
             return null;
         }
-        
+
         // Clone the template object into a new Battle Drill instance
         try
         {
-            String templateJson = DEFAULT_JSON_WRITER.writeValueAsString(template);
-            InjectableValues inject = new InjectableValues.Std().addValue(boolean.class, true);
-            battleDrill = new ObjectMapper().reader(inject)
-            .forType(BattleDrill.class)
-            .readValue(templateJson);
-            
+            String templateJson = JsonUtils.writeValue(template);
+            InjectableValues.Std inject = new InjectableValues.Std();
+            inject.addValue(JacksonInjectableValues.NEW_TASK, true);
+            inject.addValue(JacksonInjectableValues.SAVE_AS_TEMPLATE, false);
+            battleDrill = new ObjectMapper().reader(inject).forType(BattleDrill.class).readValue(templateJson);
+
             battleDrill.setName(name);
             battleDrill.setCreatorName(user.getRole()); // change this to username later, maybe add another key for role
             battleDrill.setLocation(location);
-            saveBattleDrill(battleDrill, false);
-            
-            //websocket
+
+            ReportsManager rMgr = ReportsManager.getInstance();
+            rMgr.createInitialReport(name, battleDrill.getNumTasks());
+
+            activeBattleDrills.put(battleDrill.getName(), battleDrill);
+            orderedActiveBattleDrills.add(name);
+            saveOrderedDrills();
+
+            if (start) {
+                // startBattleDrill saves to file itself
+                startBattleDrill(name, user);
+            } else {
+                saveBattleDrill(battleDrill, false);
+            }
             Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, name);
             Notify.sendNotificationToAllExcluding(drillNotification);
             Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, drillNotification));
+            System.out.println("Successfully created battle drill: " + battleDrill);
         }
         catch(Exception e)
         {
@@ -310,32 +323,37 @@ public class BattleDrillManager {
             return null;
         }
         
-        if(null != battleDrill)
-        {
-            activeBattleDrills.put(battleDrill.getName(), battleDrill);
-            orderedActiveBattleDrills.add(name);
-            saveOrderedDrills();
-        }
-        
         return battleDrill;
     }
-    
-    public void startBattleDrill(String name) throws ItemNotFoundException
-    {
-        if(activeBattleDrills.containsKey(name) == false)
-        {
+
+    public boolean isBattleDrillStarted(String name) throws ItemNotFoundException {
+        if (activeBattleDrills.containsKey(name) == false) {
+            throw new ItemNotFoundException("Unable to check battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
+        }
+
+        BattleDrill bd = activeBattleDrills.get(name);
+        return null != bd && bd.getStartTime() != null;
+    }
+
+    public LocalDateTime startBattleDrill(String name, User user) throws ItemNotFoundException {
+        if (activeBattleDrills.containsKey(name) == false) {
             throw new ItemNotFoundException("Unable to start battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
         }
         
         BattleDrill bd = activeBattleDrills.get(name);
-        if(null != bd)
-        {
-            bd.start();
+        if (null != bd) {
+            // dont need to set report startTime here because bd.start() calls startAllTasks which sets it
+            LocalDateTime time = bd.start();
+            saveBattleDrill(name, false);
+            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, name);
+            Notify.sendNotificationToAllExcluding(drillNotification);
+            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.START, drillNotification));
+            return time;
         }
+        return null;
     }
     
-    public void stopBattleDrill(String name) throws ItemNotFoundException
-    {
+    public void stopBattleDrill(String name, User user) throws ItemNotFoundException    {
         if(activeBattleDrills.containsKey(name) == false)
         {
             throw new ItemNotFoundException("Unable to stop battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
@@ -344,10 +362,18 @@ public class BattleDrillManager {
         BattleDrill bd = activeBattleDrills.get(name);
         if(null != bd)
         {
-            bd.stop();
+            ReportsManager rMgr = ReportsManager.getInstance();
+            Report rep = rMgr.getReport(name);
+            LocalDateTime endTime = bd.stop();
+            rep.setAllTaskEndTimes(endTime);
+            rep.setEndTime(endTime);
+            rMgr.saveReport(rep);
             try
             {
                 archiveCompletedBattleDrill(bd);
+                Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, name);
+                Notify.sendNotificationToAllExcluding(drillNotification);
+                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.STOP, drillNotification));
             }
             catch(Exception e)
             {
@@ -362,7 +388,8 @@ public class BattleDrillManager {
         activeBattleDrills.remove(bdName);
         orderedActiveBattleDrills.remove(bdName);
         
-        String contents = DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
+//        String contents = DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
+        String contents = JsonUtils.writeValue(battleDrill);
         
         File sourceFile = new File(getFullFilename(bdName, false));
         File destinationFile = new File(getFullFilename(bdName, true));
@@ -441,7 +468,7 @@ public class BattleDrillManager {
     
     public BattleDrill createByType(BattleDrillRestParams params) throws DuplicateItemException       
     {
-        return createByType(params.getType(), params.getName(), params.getUser(), params.getLocation());
+        return createByType(params.getType(), params.getName(), params.getStart(), params.getUser(), params.getLocation());
     }
     
     public void updateBattleDrillOrder(OrderedDrillsRestParams params)
@@ -462,7 +489,8 @@ public class BattleDrillManager {
             ((ObjectNode) drill).set("completed", completedDrills);
 
 
-            String contents = DEFAULT_JSON_WRITER.writeValueAsString(drill);
+//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(drill);
+            String contents = JsonUtils.writeValue(drill);
             String fullname = getOrderedDrillsFilename();
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
@@ -477,7 +505,8 @@ public class BattleDrillManager {
     {
         try
         {
-            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
+            String contents = JsonUtils.writeValue(bd);
+//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
             String fullname = getFullFilename(bd.getName(), isCompleted);
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
@@ -503,7 +532,8 @@ public class BattleDrillManager {
         
         try
         {
-            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
+            String contents = JsonUtils.writeValue(bd);
+//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
             String fullname = getFullFilename(bd.getName(), isCompleted);
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);

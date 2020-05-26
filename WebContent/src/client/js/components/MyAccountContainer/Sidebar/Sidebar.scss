@@ -1,0 +1,14 @@
+@import "~CSS/index";
+
+.my-account {
+	.sidebar {
+		flex: 1 9 auto;
+		display: flex;
+		flex-direction: column;
+		padding: 20px;
+
+		.options {
+			margin: 0 auto;
+		}
+	}
+}

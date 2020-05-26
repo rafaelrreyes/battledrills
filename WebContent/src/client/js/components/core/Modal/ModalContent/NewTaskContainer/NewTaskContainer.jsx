@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Input, INPUT_SIZES, INPUT_TYPES, Dropdown, DROPDOWN_SIZES, DROPDOWN_TYPES } from "CORE/";
-import { getSelectedDrill } from "REDUX/";
+import { Input, InputSizes, InputTypes, Dropdown, DropdownSizes, DropdownTypes, Icon } from "CORE";
+import { getSelectedDrill, getSelectedTemplate } from "REDUX";
 import "./NewTaskContainer.scss";
 
 const MAX_TASK_DESCRIPTION_LENGTH = 150;
 
-const NewTaskContainer = ({ fromPalette = false, updateData, updateDisableSubmit, submit }) => {
+const NewTaskContainer = ({
+	fromTemplate = false,
+	fromPalette = false,
+	updateData,
+	updateDisableSubmit,
+	submit,
+	parentRole = "",
+	title,
+	icon
+}) => {
 	const [description, setDescription] = useState("");
 	const [error, setError] = useState({ isError: false });
 	const [role, setRole] = useState("");
 
-	const { participants } = useSelector(getSelectedDrill);
+	const { participants } = fromTemplate ? useSelector(getSelectedTemplate) : useSelector(getSelectedDrill);
 
 	useEffect(() => {
 		if (fromPalette) {
@@ -22,7 +31,7 @@ const NewTaskContainer = ({ fromPalette = false, updateData, updateDisableSubmit
 				updateData({ description, role });
 			}
 		} else {
-			updateData(description);
+			updateData({ description });
 		}
 	}, [description, role]);
 
@@ -59,14 +68,13 @@ const NewTaskContainer = ({ fromPalette = false, updateData, updateDisableSubmit
 	const renderRoleDropdown = () => {
 		return (
 			<div className="new-task-role">
-				<label className="new-task-label">Assign to role:</label>
 				<Dropdown
-					dropdownType={DROPDOWN_TYPES.REGULAR}
-					dropdownSize={DROPDOWN_SIZES.FILL}
+					dropdownType={DropdownTypes.REGULAR}
+					dropdownSize={DropdownSizes.FILL}
 					options={configureRoleOptions()}
 					onChange={onRoleChange}
-					defaultOption="Select an existing role*"
-					defaultValid={false}
+					firstOption="Add new task to existing role*"
+					firstValid={false}
 				/>
 			</div>
 		);
@@ -74,12 +82,13 @@ const NewTaskContainer = ({ fromPalette = false, updateData, updateDisableSubmit
 
 	return (
 		<div className="new-task-container">
-			<span className="new-task-header">New Task</span>
+			{icon && <Icon className="md-36">{icon}</Icon>}
+			{title && <div className="modal-title">{title}</div>}
 			<div className="new-task-form">
 				{fromPalette && renderRoleDropdown()}
 				<Input
-					inputType={INPUT_TYPES.REGULAR}
-					inputSize={INPUT_SIZES.FILL}
+					inputType={InputTypes.REGULAR}
+					inputSize={InputSizes.FILL}
 					onChange={onDescriptionChange}
 					focus={true}
 					placeholder="Description"
@@ -88,6 +97,10 @@ const NewTaskContainer = ({ fromPalette = false, updateData, updateDisableSubmit
 					maxlength={MAX_TASK_DESCRIPTION_LENGTH}
 				/>
 			</div>
+			<span className="confirmation-message">
+				{(role !== "" || parentRole !== "") &&
+					`Are you sure you want to add this task to ${role || parentRole}?`}
+			</span>
 		</div>
 	);
 };

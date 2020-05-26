@@ -9,10 +9,10 @@
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	@include body-3;
 }
 
 .menu-option {
-	@include body-3;
 	padding: 0.5em 1em;
 	cursor: pointer;
 	display: flex;

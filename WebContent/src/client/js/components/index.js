@@ -27,13 +27,13 @@ export { default as NotesView } from "./NotesView/NotesView";
 export { default as NotificationContainer } from "./NotificationContainer/NotificationContainer";
 export { default as NotificationView } from "./NotificationView/NotificationView";
 
-// Own Reports Views
+// My Drills Views
 export { default as OwnReportsContainer } from "./OwnReportsContainer/OwnReportsContainer";
 export { default as OwnReportsDrills } from "./OwnReportsDrills/OwnReportsDrills";
 export { default as OwnReportsTaskItem } from "./OwnReportsTaskItem/OwnReportsTaskItem";
 export { default as OwnReportsStatistics } from "./OwnReportsStatistics/OwnReportsStatistics";
 
-// All Reports Views
+// Status Views
 export { default as AllStatusContainer } from "./AllStatusContainer/AllStatusContainer";
 export { default as AllStatusTableView } from "./AllStatusContainer/AllStatusTableView/AllStatusTableView";
 export { default as AllStatusItemView } from "./AllStatusContainer/AllStatusItemView/AllStatusItemView";
@@ -47,3 +47,12 @@ export { default as ChatItemView } from "./ChatContainer/ChatItemView/ChatItemVi
 // Attachment Views
 export { default as AttachmentsView } from "./AttachmentsView/AttachmentsView";
 export { default as AttachmentsListView } from "./AttachmentsView/AttachmentsListView/AttachmentsListView";
+
+// Template Views
+export { default as TemplateEditorContainer } from "./TemplateEditorContainer/TemplateEditorContainer";
+
+// Reports Views
+export { default as ReportsContainer } from "./ReportsContainer/ReportsContainer";
+
+// My Account Views
+export { default as MyAccountContainer } from "./MyAccountContainer/MyAccountContainer";

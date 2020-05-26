@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.ngc.battledrills.data.User;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +22,12 @@ import java.util.Map;
 public class BattleDrillRestParams {
     private String type = ""; 
     private String name = "";
+    private boolean start = false;
     private User user;
     private Map<String, String> location = new HashMap<>();
 
-    private BattleDrillRestParams(){}
+    public BattleDrillRestParams() {
+    }
     
     public String getType()
     {
@@ -36,6 +37,10 @@ public class BattleDrillRestParams {
     public String getName()
     {
         return name;
+    }
+
+    public boolean getStart() {
+        return start;
     }
     
     @JsonProperty("user")
@@ -57,7 +62,11 @@ public class BattleDrillRestParams {
     {
         this.name = name;
     }
-    
+
+    public void setStart(boolean start) {
+        this.start = start;
+    }
+
     @JsonProperty("user")
     public void setUser(User user)
     {
@@ -74,6 +83,7 @@ public class BattleDrillRestParams {
         StringBuilder sb = new StringBuilder();
         sb.append("Type: ").append(type).append(System.lineSeparator());
         sb.append("Name: ").append(name).append(System.lineSeparator());
+        sb.append("Start: ").append(start).append(System.lineSeparator());
         sb.append("User: ").append(user).append(System.lineSeparator());
         sb.append("Location: (").append("Latitude: ").append(location.get("latitude"))
           .append(", Longitude: ").append(location.get("longitude")).append(")").append(System.lineSeparator());

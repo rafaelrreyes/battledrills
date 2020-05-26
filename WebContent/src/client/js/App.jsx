@@ -2,19 +2,22 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { hot } from "react-hot-loader/root";
-import { Header, Main, Footer, ModalContainer } from "COMPONENTS/";
-import { WS, SUPPORTED_WS_EVENT_TYPES, dispatchWebsocket } from "UTILITIES/";
-import { setUser } from "REDUX/index";
+import { useLocalStorage } from "HOOKS";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { Header, Main, Footer, ModalContainer } from "COMPONENTS";
+import { WS, SUPPORTED_WS_EVENT_TYPES, dispatchWebsocket } from "UTILITIES";
+import { setUser } from "REDUX";
 
 //css
 import "./App.scss";
 
 const App = () => {
 	const dispatch = useDispatch();
+	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", { username: "WO", role: "WO" });
 	let websocket;
 
 	useEffect(() => {
-		dispatch(setUser({ username: "WO", role: "WO" }));
+		dispatch(setUser(loggedInUser));
 		// set up WS subscriber here
 		setupWebsocket();
 	}, []);
@@ -40,15 +43,22 @@ const App = () => {
 		});
 	};
 
+	// only thing changed is zindex for tooltip
+	// if we do themes via material ui later, can set the colors here
+	// https://material-ui.com/customization/default-theme/
+	const theme = createMuiTheme({
+		zIndex: {
+			tooltip: 2147483647
+		}
+	});
+
 	return (
-		<>
-			<div className="app-wrapper-div">
-				<Header />
-				<Main />
-				<Footer />
-			</div>
+		<MuiThemeProvider theme={theme}>
+			<Header />
+			<Main />
+			<Footer />
 			<ModalContainer />
-		</>
+		</MuiThemeProvider>
 	);
 };
 

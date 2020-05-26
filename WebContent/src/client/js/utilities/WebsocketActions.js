@@ -19,6 +19,8 @@ import {
 	createDrillUpdateMyDrillsView,
 	createDrillUpdateStatusView
 } from "CORE/Modal/ModalContent/index";
+import { getCurrentView } from "REDUX/index";
+import { Routes } from "./Constants";
 
 export const newDrillCreated = (websocketReponse) => {
 	const { drillName } = websocketReponse;
@@ -26,6 +28,103 @@ export const newDrillCreated = (websocketReponse) => {
 	createDrillUpdate(drillName);
 	createDrillUpdateMyDrillsView();
 	createDrillUpdateStatusView();
+};
+
+export const drillStarted = (websocketReponse) => {
+	const { drillName } = websocketReponse;
+	const selectedDrill = getSelectedDrillName(store.getState());
+	if (drillName === selectedDrill) {
+		API.getDrillByName(drillName, {}, (response) => {
+			store.dispatch(setSelectedDrill(response));
+		});
+	}
+};
+
+export const drillStopped = (websocketReponse) => {
+	const { drillName } = websocketReponse;
+	const selectedDrill = getSelectedDrillName(store.getState());
+	const location = getCurrentView(store.getState());
+	// drill was completed while on overview or status view
+	switch (location) {
+		case Routes.OVERVIEW:
+		case Routes.STATUS:
+			API.all(
+				{},
+				(response) => {
+					// moves drill to completed side
+					store.dispatch(updateAllDrills(response));
+				},
+				(err) => {
+					console.error(err);
+				}
+			);
+			break;
+		case Routes.MY_DRILLS:
+			// drill completed on my_drills view
+			const role = getRole(store.getState()).toUpperCase();
+			API.getOwnerBillet(
+				role,
+				{},
+				(response) => {
+					let drills = [];
+					for (var key in response) {
+						drills.push({
+							[key]: response[key]
+						});
+					}
+					store.dispatch(setActiveBillet(drills));
+				},
+				(err) => {
+					console.error(err);
+				}
+			);
+			break;
+		case Routes.ACTIVE_DIAGRAM:
+			// drill completed on active_diagram view
+			// completed drill was selected, auto select first of remaining drills
+			if (drillName === selectedDrill) {
+				API.all(
+					{},
+					(res) => {
+						// select first in list of active drills
+						if (res.active.length > 0) {
+							API.getDrillByName(res.active[0], {}, (response) => {
+								store.dispatch(setSelectedDrill(response));
+							});
+						} else {
+							store.dispatch(resetSelectedDrill());
+						}
+						store.dispatch(updateAllDrills(res));
+					},
+					(err) => {
+						console.error(err);
+					}
+				);
+			} else {
+				API.all(
+					{},
+					(res) => {
+						store.dispatch(updateAllDrills(res));
+					},
+					(err) => {
+						console.error(err);
+					}
+				);
+			}
+			break;
+		case Routes.COMPLETED_DIAGRAM:
+			// drill completed on completed_diagram view
+			API.all(
+				{},
+				(res) => {
+					store.dispatch(updateAllDrills(res));
+				},
+				(err) => {
+					console.error(err);
+				}
+			);
+			break;
+	}
 };
 
 export const drillsReordered = (websocketReponse) => {

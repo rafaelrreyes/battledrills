@@ -1,9 +1,18 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { DetailedViewContainer, OwnReportsDrills, OwnReportsStatistics } from "../index";
-import { API, MaterialIconNames, Routes } from "UTILITIES/index";
-import { getSelectedDrill, getActiveBillet, getRole, getSelectedTask } from "REDUX/index";
-import { setActiveBillet, setUser, resetSelectedTask, setCurrentView } from "REDUX/index";
+import { DetailedViewContainer, OwnReportsDrills, OwnReportsStatistics } from "../";
+import { API, MaterialIconNames, Routes } from "UTILITIES";
+import { Icon } from "CORE";
+import {
+	setActiveBillet,
+	setUser,
+	resetSelectedTask,
+	setCurrentView,
+	getSelectedDrill,
+	getActiveBillet,
+	getRole,
+	getSelectedTask
+} from "REDUX";
 import "./OwnReportsContainer.scss";
 
 const OwnReportsContainer = () => {
@@ -16,7 +25,7 @@ const OwnReportsContainer = () => {
 	const role = useSelector(getRole);
 
 	useEffect(() => {
-		dispatch(setCurrentView(Routes.MY_REPORT)); // only do this on mount
+		dispatch(setCurrentView(Routes.MY_DRILLS)); // only do this on mount
 	}, []);
 
 	useEffect(() => {
@@ -47,7 +56,7 @@ const OwnReportsContainer = () => {
 						dispatch(resetSelectedTask());
 					}}
 				>
-					<i className="material-icons">{MaterialIconNames.ARROW_RIGHT}</i>
+					<Icon>{MaterialIconNames.ARROW_RIGHT}</Icon>
 				</div>
 				<DetailedViewContainer selectedDrill={selectedDrill} />
 			</>
@@ -60,8 +69,10 @@ const OwnReportsContainer = () => {
 				<div className="drill-reports-main">
 					<div className="drill-reports-left">
 						<OwnReportsStatistics drills={billet} role={role} />
-						<div className="drill-owner-table">
-							<OwnReportsDrills drills={billet} />
+						<div>
+							<div className="drill-owner-table">
+								<OwnReportsDrills drills={billet} />
+							</div>
 						</div>
 					</div>
 					{renderDetailedView()}

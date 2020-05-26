@@ -21,8 +21,11 @@ public class DrillNotification extends Notification {
     private Map<String, ArrayList<String>> orderedBattleDrills = new HashMap<>();
     
     /**
-     * This is when a drill is created
-     * Since each DrillNotification operation is a different constructor, the constructor handles giving the operationType.
+     * This is when a drill is created or started/stopped
+     *
+     * Since each DrillNotification operation is a different constructor, the constructor handles giving the
+     * operationType.
+     *
      * @param operationType
      * @param user
      * @param payload

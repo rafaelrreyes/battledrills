@@ -6,14 +6,14 @@ $modal-close-icon-padding: 0.25em;
 $modal-background-color: $blue-grey-800;
 $modal-border-color: $cyan-300;
 $modal-border-width: 0.125em;
-$modal-max-height: 26em;
+$modal-max-height: -moz-fit-content;
 $modal-max-width: 34.125em;
 $modal-top-margin: 15%;
 
 $modal-outer-padding: 2.25em;
 $modal-inner-padding: 1.75em;
-$modal-title-top-padding: 1em;
-$modal-title-bottom-padding: 1.75em;
+$modal-title-top-padding: 0.25em;
+$modal-title-bottom-padding: 0.5em;
 $modal-title-side-padding: 1em;
 
 $modal-button-margin: 1em;
@@ -102,6 +102,8 @@ $modal-message-error-text-color: $dark-text-primary;
 
 .modal-description {
 	@include body-3;
+	width: 75%;
+	text-align: left;
 }
 
 .version-text {

@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import PropTypes from "prop-types";
 import "./Dropdown.scss";
 
-export const DROPDOWN_SIZES = {
+export const DropdownSizes = {
 	XXSMALL: "xxs",
 	XSMALL: "xs",
 	SMALL: "sm",
@@ -11,110 +11,125 @@ export const DROPDOWN_SIZES = {
 	FILL: "fill"
 };
 
-export const DROPDOWN_TYPES = {
+export const DropdownTypes = {
 	REGULAR: "regular",
 	GREY: "grey"
 };
 
+export const DROPDOWN_DEFAULT = "*";
+
 const getDropdownClass = (size, type, showError) => {
 	let returnClassname = "c2pc-dropdown-";
-	if (type === DROPDOWN_TYPES.GREY) {
+	if (type === DropdownTypes.GREY) {
 		returnClassname = "c2pc-dropdown-grey-";
 	}
-	if (showError.isError) {
+	if (showError) {
 		returnClassname = "c2pc-dropdown-error-";
 	}
 	if (
-		size === DROPDOWN_SIZES.XXSMALL ||
-		size === DROPDOWN_SIZES.XSMALL ||
-		size === DROPDOWN_SIZES.SMALL ||
-		size === DROPDOWN_SIZES.MEDIUM ||
-		size === DROPDOWN_SIZES.LARGE ||
-		size === DROPDOWN_SIZES.FILL
+		size === DropdownSizes.XXSMALL ||
+		size === DropdownSizes.XSMALL ||
+		size === DropdownSizes.SMALL ||
+		size === DropdownSizes.MEDIUM ||
+		size === DropdownSizes.LARGE ||
+		size === DropdownSizes.FILL
 	) {
 		return returnClassname + size;
 	}
-	return returnClassname + DROPDOWN_SIZES.MEDIUM;
+	return returnClassname + DropdownSizes.MEDIUM;
 };
 
-export class Dropdown extends Component {
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			value: props.defaultOption ? props.defaultOption : "Select an option"
-		};
-	}
-
-	onChange = (e) => {
-		this.setState(
-			{
-				value: e.target.value
-			},
-			() => {
-				this.props.onChange(this.state.value);
-			}
-		);
-	};
-
-	renderOptions = () => {
-		const { options } = this.props;
-		return options.map((option, index) => {
-			return (
-				<option key={index} value={option}>
-					{option}
-				</option>
-			);
-		});
-	};
-
-	render = () => {
-		const { value } = this.state;
-		// extract self-defined props and the rest put into tooltipProps to spread on <select>
-		// tooltipProps is used for the tooltips to work for components correctly
-		const {
+// extract self-defined props and the rest put into tooltipProps to spread on <select>
+// tooltipProps is used for the tooltips to work for components correctly
+// forwardRef needed for tooltips with functional components
+export const Dropdown = forwardRef(
+	(
+		{
 			dropdownSize,
 			dropdownType,
-			showError,
-			defaultValid,
-			defaultOption,
+			showError = false,
+			firstValid = true,
+			firstOption = "Select an option",
+			defaultSelect = DROPDOWN_DEFAULT,
 			onChange,
 			options,
-			...toolTipProps
-		} = this.props;
+			groups,
+			...tooltipProps
+		},
+		ref
+	) => {
+		const [value, setValue] = useState(firstOption);
+
+		const onDropdownChange = (e) => {
+			setValue(e.target.value);
+			onChange(e.target.value);
+		};
+
+		useEffect(() => {
+			if (defaultSelect !== undefined) {
+				setValue(defaultSelect);
+			}
+		}, [defaultSelect]);
+
+		const renderOptions = () => {
+			return options.map((option, index) => {
+				// if options items are arrays, then they are grouped
+				if (Array.isArray(option)) {
+					return (
+						<optgroup key={groups[index] + index} className="c2pc-dropdown-opt-label" label={groups[index]}>
+							{option.map((groupOption) => {
+								return (
+									<option key={groupOption + index} value={groupOption}>
+										{groupOption}
+									</option>
+								);
+							})}
+						</optgroup>
+					);
+				} else {
+					return (
+						<option key={option + index} value={option}>
+							{option}
+						</option>
+					);
+				}
+			});
+		};
+
 		// defaults to 'medium' size and 'regular' type
 		return (
 			<select
-				{...toolTipProps}
+				ref={ref}
+				{...tooltipProps}
 				required
 				value={value}
-				onChange={this.onChange}
+				onChange={onDropdownChange}
 				className={getDropdownClass(dropdownSize, dropdownType, showError)}
 			>
-				<option value={defaultValid ? defaultOption : ""}>{defaultOption}</option>
-				{this.renderOptions()}
+				<option value={DROPDOWN_DEFAULT} disabled={!firstValid}>
+					{firstOption}
+				</option>
+				{renderOptions()}
 			</select>
 		);
-	};
-}
-
-Dropdown.defaultProps = {
-	showError: false,
-	defaultValid: true,
-	defaultOption: "Select an option"
-};
+	}
+);
 
 Dropdown.propTypes = {
 	options: PropTypes.array.isRequired,
 	onChange: PropTypes.func.isRequired,
-	defaultOption: PropTypes.string,
+	groups: PropTypes.array,
+	firstOption: PropTypes.string,
+	firstValid: PropTypes.bool,
+	showError: PropTypes.bool,
+	defaultSelect: PropTypes.string,
 	dropdownSize: PropTypes.oneOf([
-		DROPDOWN_SIZES.XXSMALL,
-		DROPDOWN_SIZES.XSMALL,
-		DROPDOWN_SIZES.SMALL,
-		DROPDOWN_SIZES.MEDIUM,
-		DROPDOWN_SIZES.LARGE,
-		DROPDOWN_SIZES.FILL
+		DropdownSizes.XXSMALL,
+		DropdownSizes.XSMALL,
+		DropdownSizes.SMALL,
+		DropdownSizes.MEDIUM,
+		DropdownSizes.LARGE,
+		DropdownSizes.FILL
 	]),
-	dropdownType: PropTypes.oneOf([DROPDOWN_TYPES.GREY, DROPDOWN_TYPES.REGULAR])
+	dropdownType: PropTypes.oneOf([DropdownTypes.GREY, DropdownTypes.REGULAR])
 };

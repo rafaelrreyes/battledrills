@@ -1,0 +1,43 @@
+@import "~CSS/index";
+
+.template-editor-task-view {
+	flex: 1;
+	background-color: $blue-grey-800;
+	box-sizing: border-box;
+	padding: 0.5em 0.5em 0 0.5em;
+	display: flex;
+	flex-flow: column;
+	position: relative;
+
+	i {
+		cursor: pointer;
+
+		&:hover {
+			color: $cyan-700;
+		}
+	}
+
+	.templates-button {
+		position: absolute;
+		font-size: 0.8em;
+		left: 1em;
+	}
+
+	.task-description-container {
+		display: flex;
+		justify-content: left;
+		align-items: center;
+		margin: 0 1em 1em;
+
+		.disabled {
+			pointer-events: none;
+			color: $grey-600;
+		}
+
+		.task-description {
+			flex: 1;
+			margin-left: 0.5em;
+			text-align: left;
+		}
+	}
+}

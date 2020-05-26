@@ -2,8 +2,7 @@
 	font-family: "Roboto";
 	font-style: normal;
 	font-weight: 400;
-	src: local("Roboto"), local("Roboto-Regular"),
-		url(../lib/fonts/Roboto-Regular.woff) format("woff");
+	src: local("Roboto"), local("Roboto-Regular"), url(../lib/fonts/Roboto-Regular.woff) format("woff");
 }
 
 @font-face {

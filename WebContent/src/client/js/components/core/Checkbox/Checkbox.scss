@@ -6,18 +6,25 @@
 	cursor: pointer;
 	display: flex;
 	align-items: center;
-	justify-content: center;
 	height: 100%;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: inherit;
+	padding: 0 0.5em;
 
 	.checkbox-label-right {
 		margin-left: 0.25em;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.checkbox-label-left {
 		margin-right: 0.25em;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	input {

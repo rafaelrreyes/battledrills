@@ -1,6 +1,6 @@
 import React from "react";
 import store from "REDUX/store";
-import { addToast, setSelectedDrill } from "REDUX/";
+import { addToast, setSelectedDrill } from "REDUX";
 import {
 	API,
 	Routes,
@@ -15,9 +15,12 @@ import {
 	isAttachmentDelete,
 	isTaskDescriptionEdit,
 	isTaskDelete,
-	NoteTypes
+	NoteTypes,
+	isStartedDrill,
+	isStoppedDrill,
+	isCreatedAndStartedDrill
 } from "UTILITIES/";
-import { Button, ButtonSizes, ButtonTypes } from "CORE/";
+import { Button, ButtonSizes, ButtonTypes } from "CORE";
 
 import "./ToastHelper.scss";
 
@@ -39,35 +42,8 @@ const ToastFactory = {
 		return {
 			...websocketResponse,
 			toastType: ToastConstants.GENERIC,
-			message: getPlainToastMessage(websocketResponse)
+			message: getToastMessageString(websocketResponse)
 		};
-	}
-};
-
-const getPlainToastMessage = (websocketResponse) => {
-	const { drillName, user } = websocketResponse;
-
-	if (isNewDrill(websocketResponse)) {
-		return `New drill created by ${user.role}: ${drillName}`;
-	}
-
-	if (isTaskStatusUpdate(websocketResponse)) {
-		const { taskData } = websocketResponse;
-		const { taskDescription, currentStatus } = taskData;
-		return `${user.role} changed status of task "${taskDescription}" to: ${currentStatus.replace("-", " ")}`;
-	}
-
-	if (isNewNote(websocketResponse)) {
-		const { note } = websocketResponse;
-		return note.type === NoteTypes.USER ? `Note added by user ${note.user}: ${note.noteText}` : `${note.noteText}`;
-	}
-
-	if (isDrillReorder(websocketResponse)) {
-		return `Drills reordered`;
-	}
-
-	if (isDeletedDrill(websocketResponse)) {
-		return `Drill deleted: ${drillName}`;
 	}
 };
 
@@ -122,6 +98,14 @@ export const getToastMessageString = (props) => {
 		return `New drill created by ${user.role}: ${drillName}`;
 	}
 
+	if (isStartedDrill(props)) {
+		return `${user.role} started the drill: ${drillName}`;
+	}
+
+	if (isStoppedDrill(props)) {
+		return `${user.role} stopped the drill: ${drillName}`;
+	}
+
 	if (isNewNote(props)) {
 		const { note } = props;
 		return note.type === NoteTypes.USER
@@ -162,7 +146,7 @@ export const getToastMessageString = (props) => {
 
 	if (isTaskDelete(props)) {
 		const { drillName } = props;
-		return `${user.role} deleted a task from drill ${drillName}`
+		return `${user.role} deleted a task from drill ${drillName}`;
 	}
 };
 
@@ -171,6 +155,8 @@ export const getNotificationLink = (props) => {
 		isTaskStatusUpdate(props) ||
 		isNewNote(props) ||
 		isNewDrill(props) ||
+		isStartedDrill(props) ||
+		isStoppedDrill(props) ||
 		isAttachmentUpload(props) ||
 		isAttachmentDelete(props) ||
 		isTaskDescriptionEdit(props)
@@ -197,20 +183,33 @@ export const getNotificationLink = (props) => {
  */
 export const onNotificationClick = (props) => {
 	const { drillName, setVisible, history } = props;
-	if (isTaskStatusUpdate(props) || isNewNote(props) || isNewDrill(props) || isTaskDescriptionEdit(props)) {
+
+	if (
+		isTaskStatusUpdate(props) ||
+		isNewNote(props) ||
+		isNewDrill(props) ||
+		isTaskDescriptionEdit(props) ||
+		isStartedDrill
+	) {
 		const { taskData } = props;
 
 		// this stuff is run after the navigation to /active_diagram because of the request being async
 		API.getDrillByName(drillName, {}, (response) => {
 			store.dispatch(setSelectedDrill(response));
 			// if the toast is for notes/task updates then select the task
-			if (!isNewDrill(props)) {
+			if (isTaskStatusUpdate(props) || isNewNote(props)) {
 				selectTask(taskData);
 			}
 			// this is called for popup toasts, make them disappear when clicking "View"
 			// in the Notification window, toggleNotificationList is sent as setVisible
 			setVisible(false);
 			history.push(Routes.ACTIVE_DIAGRAM);
+		});
+	} else if (isStoppedDrill(props)) {
+		API.getDrillByName(drillName, {}, (response) => {
+			store.dispatch(setSelectedDrill(response));
+			setVisible(false);
+			history.push(Routes.COMPLETED_DIAGRAM);
 		});
 	}
 };

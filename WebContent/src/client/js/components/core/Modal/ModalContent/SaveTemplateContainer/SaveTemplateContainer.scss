@@ -1,0 +1,22 @@
+@import "~CSS/index";
+
+.save-template-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.save-template-header {
+		@include heading-5;
+	}
+
+	.save-template-form {
+		margin-top: 0.5em;
+
+		.save-template-type-field {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0.5em 0 0.5em 0;
+		}
+	}
+}

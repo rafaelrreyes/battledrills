@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import "./NotificationViewItem.scss";
-import { getNotificationLink, getToastMessageHtml } from "CORE/index";
-import { MaterialIconNames, secondsToDateMinimal } from "UTILITIES/index";
+import { getNotificationLink, getToastMessageHtml } from "CORE";
+import { MaterialIconNames, iso8061ToReadable } from "UTILITIES";
 
 const NotificationViewItem = ({
 	toastId,
@@ -20,9 +20,7 @@ const NotificationViewItem = ({
 	edittedKey
 }) => {
 	const [expanded, setExpanded] = useState(false);
-
 	const history = useHistory();
-
 	const onNotificationClick = () => {
 		setExpanded(!expanded);
 	};
@@ -32,7 +30,9 @@ const NotificationViewItem = ({
 			<span
 				className={`${expanded ? "notification-view-item-message-expanded" : "notification-view-item-message"}`}
 			>
-				<span className="notification-view-item-timestamp">{secondsToDateMinimal(timestamp)} - </span>
+				<span className="notification-view-item-timestamp">
+					{iso8061ToReadable(timestamp, "MM/DD/YY HH:mm")} -{" "}
+				</span>
 				{getToastMessageHtml({
 					operationType,
 					objectType,
@@ -45,7 +45,6 @@ const NotificationViewItem = ({
 					edittedKey
 				})}
 			</span>
-
 			<span className="notification-view-item-commands">
 				{getNotificationLink({
 					operationType,

@@ -9,7 +9,8 @@
 			"REDUX/*": ["src/client/js/redux/*"],
 			"CORE/*": ["src/client/js/components/core/*"],
 			"COMPONENTS/*": ["src/client/js/components/*"],
-			"HOOKS/*": ["src/client/js/hooks/*"]
+			"HOOKS/*": ["src/client/js/hooks/*"],
+			"FONTS/*": ["src/client/lib/fonts"]
 		}
 	},
 	"exclude": ["node_modules", "dist"]

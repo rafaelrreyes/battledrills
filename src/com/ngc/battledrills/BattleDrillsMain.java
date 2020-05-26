@@ -7,7 +7,6 @@ package com.ngc.battledrills;
 
 import com.ngc.battledrills.data.BattleDrill;
 import com.ngc.battledrills.manage.BattleDrillManager;
-import static com.ngc.battledrills.BattleDrillsConfig.DEFAULT_JSON_WRITER;
 import com.ngc.battledrills.comms.Notification;
 import com.ngc.battledrills.comms.Notify;
 import com.ngc.battledrills.comms.NotifyManager;
@@ -24,8 +23,13 @@ import com.ngc.battledrills.data.User;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.AttachmentManager;
 import com.ngc.battledrills.manage.TaskManager;
+import com.ngc.battledrills.rest.BattleDrillRestParams;
 import com.ngc.battledrills.rest.NoteRestParams;
 import com.ngc.battledrills.rest.OrderedDrillsRestParams;
+import com.ngc.battledrills.util.JsonUtils;
+import com.ngc.battledrills.rest.ReportsRestParams;
+import com.ngc.battledrills.rest.ReportsService;
+import com.ngc.battledrills.rest.StatusRestParams;
 import com.ngc.battledrills.vmf.VmfManager;
 import java.io.File;
 import java.util.ArrayList;
@@ -92,8 +96,54 @@ public class BattleDrillsMain {
         //testOrderDrills();
         //testCreateDrillWithLocation();
 //        testSetTaskStatus();
-
+        testReports();
         
+    }
+
+    public static void testReports() {
+        BattleDrillManager bMgr = BattleDrillManager.getInstance();
+
+        ReportsService service = new ReportsService();
+        BattleDrillService bdService = new BattleDrillService();
+        //System.out.println(bMgr.getByName("IEDD1", false));
+        try {
+//            User user = new User("sessionId", "CO", "Dustin");
+//            BattleDrill bd = bMgr.getByName("dustin_test");
+//            if (null == bd) {
+//                BattleDrillRestParams p = new BattleDrillRestParams();
+//                p.setLocation(getTestLocation());
+//                p.setName("dustin_test");
+//                p.setUser(user);
+//                p.setType("tactical_maneuver");
+//                bdService.createByType(p);
+//                bd = bMgr.getByName("dustin_test");
+//            }
+//            bdService.startBattleDrill(bd.getName());
+//            Thread.sleep(2000);
+//            Node root = bd.getRoot();
+//            Node child = root.getChildNodes().get(0);
+//            List<Task> tasks = child.getTasks();
+//            Task task = tasks.get(0);
+//            String taskId = task.getId();
+//
+//            TaskService taskService = new TaskService();
+//            StatusRestParams srp = new StatusRestParams();
+//            Status s = new Status();
+//            s.setStatus("completed");
+//            srp.setCurrentStatus(s);
+//            srp.setTaskId(taskId);
+//            srp.setUser(user);
+//            String taskString = taskService.changeStatus(srp);
+//            bdService.stopBattleDrill(bd.getName());
+//            System.out.println(taskString);
+
+            System.out.println("_________________________________________________________ START TEST ___________________________________________________________");
+            ReportsRestParams params = new ReportsRestParams();
+            params.setDrillName("WCD1");
+            service.getReports(params);
+        } catch (Exception e) {
+            System.err.println("Dustin - unable to test: " + e);
+        }
     }
     
     private static void testSetTaskStatus() {
@@ -106,12 +156,8 @@ public class BattleDrillsMain {
         try {
             Task testTask = TaskRepo.getTask(testTaskId); // print out default status
             System.out.println("Task: " + testTask.toString());
-            // new Status object
-            
-            Status newStatus = new Status();
-            newStatus.setStatus(Status.StatusTypes.COMPLETED);
 //            System.out.println("New Status: " + newStatus.toString());
-            TaskManager.changeTaskStatus(testTaskId, user, newStatus);
+            TaskManager.changeTaskStatus(testTaskId, user, Status.StatusTypes.COMPLETED);
             
             // print out new task
 //            System.out.println("New Task: " + TaskRepo.getTask(testTaskId));
@@ -138,7 +184,7 @@ public class BattleDrillsMain {
         try {
             System.out.println(getTestLocation());
             User user = new User("sessionId", "XO", "Dustin");
-            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "assassination 1", user, getTestLocation());
+            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "assassination 1", false, user, getTestLocation());
             System.out.println("Test Battle Drill with location: " + bd.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -154,7 +200,7 @@ public class BattleDrillsMain {
         try
         {
             User user = new User("sessionId", "CO", "Dustin");
-            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "dianatestload3", user, getTestLocation());
+            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "dianatestload3", false, user, getTestLocation());
             System.out.println("Diana battle drill: " + bd);
         }
         catch(Exception e)
@@ -168,7 +214,8 @@ public class BattleDrillsMain {
     {
         try
         {
-            String data = DEFAULT_JSON_WRITER.writeValueAsString(TaskManager.getTaskMetrics());
+//            String data = DEFAULT_JSON_WRITER.writeValueAsString(TaskManager.getTaskMetrics());
+            String data = JsonUtils.writeValue(TaskManager.getTaskMetrics());
             System.out.println(data);
         }
         catch(Exception e)
@@ -202,14 +249,12 @@ public class BattleDrillsMain {
         TemplateManager tmgr = TemplateManager.getInstance();
         try
         {
-            
-
-            List<String> types = tmgr.getTypes();
+            Map<String, Object> types = tmgr.getTypes();
             System.out.println("DIANA TYPES: ");
             System.out.println(types);
             
             User user = new User("sessionId", "CO", "Dustin");
-            mgr.createByType("ied_discovered", "dianatest2", user, getTestLocation());
+            mgr.createByType("ied_discovered", "dianatest2", false, user, getTestLocation());
                     
             List<String> names = mgr.getActiveDrillNames().get("active");
             System.out.println("Diana names");
@@ -298,7 +343,8 @@ public class BattleDrillsMain {
                 
                 TaskService tService = new TaskService();
                 NoteRestParams params = new NoteRestParams(note, task.getId());
-                String diana = DEFAULT_JSON_WRITER.writeValueAsString(params);
+                String diana = JsonUtils.writeValue(params);
+//                String diana = DEFAULT_JSON_WRITER.writeValueAsString(params);
                 System.out.println("DIANA REST PARAMS");
                 System.out.println(diana);
                 tService.addNote(params);
@@ -322,7 +368,7 @@ public class BattleDrillsMain {
         try
         {
             User user = new User("sessionId", "CO", "Dustin");
-            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest1", user, getTestLocation());
+            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest1", false, user, getTestLocation());
             Node root = bd.getRoot();
             Node child = root.getChildNodes().get(0);
             
@@ -401,7 +447,7 @@ public class BattleDrillsMain {
             //System.out.println(template);
             User user = new User("sessionId", "CO", "Dustin");
             System.out.println("_________________________________________________________ START TEST ___________________________________________________________");
-            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest3", user, getTestLocation());
+            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest3", false, user, getTestLocation());
             
             /*int diana = 0;
             if(diana < 1)
@@ -436,9 +482,9 @@ public class BattleDrillsMain {
             System.out.println(bdManager.getAllDrillNames());
             System.out.println("______________________________ ADD DRILLS _____________________________");
             User user = new User("sessionId", "CO", "Dustin");
-            bdManager.createByType("ied_discovered", "dustinTest1", user, getTestLocation());
-            bdManager.createByType("ied_discovered", "dustinTest2", user, getTestLocation());
-            bdManager.createByType("ied_discovered", "dustinTest3", user, getTestLocation());
+            bdManager.createByType("ied_discovered", "dustinTest1", false, user, getTestLocation());
+            bdManager.createByType("ied_discovered", "dustinTest2", false, user, getTestLocation());
+            bdManager.createByType("ied_discovered", "dustinTest3", false, user, getTestLocation());
             System.out.println(bdManager.getAllDrillNames());
             
             ArrayList<String> active = new ArrayList<String>();

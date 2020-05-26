@@ -1,9 +1,9 @@
-import React, { Component, Fragment } from "react";
+import React, { forwardRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { InputErrorIcon } from "./InputErrorIcon";
 import "./Input.scss";
 
-export const INPUT_SIZES = {
+export const InputSizes = {
 	XXSMALL: "xxs",
 	XSMALL: "xs",
 	SMALL: "sm",
@@ -12,7 +12,7 @@ export const INPUT_SIZES = {
 	FILL: "fill"
 };
 
-export const INPUT_TYPES = {
+export const InputTypes = {
 	REGULAR: "regular",
 	GREY: "grey",
 	ERROR: "error"
@@ -21,137 +21,132 @@ export const INPUT_TYPES = {
 const getInputClass = (size, type) => {
 	let returnClassname = "c2pc-input-";
 	switch (type) {
-		case INPUT_TYPES.GREY:
+		case InputTypes.GREY:
 			returnClassname = "c2pc-input-grey-";
 			break;
-		case INPUT_TYPES.ERROR:
+		case InputTypes.ERROR:
 			returnClassname = "c2pc-input-error-";
 			break;
 	}
 	if (
-		size === INPUT_SIZES.XXSMALL ||
-		size === INPUT_SIZES.XSMALL ||
-		size === INPUT_SIZES.SMALL ||
-		size === INPUT_SIZES.MEDIUM ||
-		size === INPUT_SIZES.LARGE ||
-		size === INPUT_SIZES.FILL
+		size === InputSizes.XXSMALL ||
+		size === InputSizes.XSMALL ||
+		size === InputSizes.SMALL ||
+		size === InputSizes.MEDIUM ||
+		size === InputSizes.LARGE ||
+		size === InputSizes.FILL
 	) {
 		return returnClassname + size;
 	}
-	return returnClassname + INPUT_SIZES.MEDIUM;
+	return returnClassname + InputSizes.MEDIUM;
 };
 
-const getInputDivClass = (size, type, showError) => {
+const getInputDivClass = (size, type, error) => {
 	let returnClassname = "input-flex-container-";
 	switch (type) {
-		case INPUT_TYPES.GREY:
+		case InputTypes.GREY:
 			returnClassname = "input-flex-container-grey-";
 			break;
 	}
-	if (showError) {
+	if (error.isError) {
 		returnClassname = "input-flex-container-error-";
 	}
 	if (
-		size === INPUT_SIZES.XXSMALL ||
-		size === INPUT_SIZES.XSMALL ||
-		size === INPUT_SIZES.SMALL ||
-		size === INPUT_SIZES.MEDIUM ||
-		size === INPUT_SIZES.LARGE ||
-		size === INPUT_SIZES.FILL
+		size === InputSizes.XXSMALL ||
+		size === InputSizes.XSMALL ||
+		size === InputSizes.SMALL ||
+		size === InputSizes.MEDIUM ||
+		size === InputSizes.LARGE ||
+		size === InputSizes.FILL
 	) {
 		return returnClassname + size;
 	}
-	return returnClassname + INPUT_SIZES.MEDIUM;
+	return returnClassname + InputSizes.MEDIUM;
 };
 
-export class Input extends Component {
-	constructor(props) {
-		super(props);
+const errorDefault = {
+	isError: false,
+	tooltipAttached: true
+};
 
-		const { defaultValue } = this.props;
-		this.state = {
-			value: defaultValue ? defaultValue : ""
+export const Input = forwardRef(
+	(
+		{
+			inputType,
+			inputSize,
+			focus = false,
+			placeholder = "",
+			onChange,
+			submit,
+			error = errorDefault,
+			initValue = "",
+			disabled = false
+		},
+		ref
+	) => {
+		const [value, setValue] = useState(initValue);
+
+		useEffect(() => {
+			setValue(initValue);
+		}, [initValue]);
+
+		const onInputChange = (e) => {
+			setValue(e.target.value);
+			onChange(e.target.value);
 		};
-	}
 
-	onChange = (e) => {
-		this.setState(
-			{
-				value: e.target.value
-			},
-			() => {
-				this.props.onChange(this.state.value);
+		// hacky way to set box shadow on a div when the input inside is focused
+		// selector :focus-within on the div to set boxShadow works, but not for IE or Edge
+		const onFocus = (e) => {
+			e.target.parentNode.style.boxShadow = "0 0 0.3125em rgba(255, 255, 255, 0.35)";
+		};
+
+		const onBlur = (e) => {
+			e.target.parentNode.style.boxShadow = null;
+		};
+
+		const onKeyPress = (e) => {
+			if (e.key === "Enter" && submit) {
+				submit();
 			}
-		);
-	};
+		};
 
-	// hacky way to set box shadow on a div when the input inside is focused
-	// selector :focus-within on the div to set boxShadow works, but not for IE or Edge
-	onFocus = (e) => {
-		e.target.parentNode.style.boxShadow = "0 0 0.3125em rgba(255, 255, 255, 0.35)";
-	};
-
-	onBlur = (e) => {
-		e.target.parentNode.style.boxShadow = null;
-	};
-
-	onKeyPress = (e) => {
-		if (e.key === "Enter" && this.props.submit) {
-			this.props.submit();
-		}
-	};
-
-	render = () => {
-		const { inputType, inputSize, focus, placeholder, showError, defaultValue } = this.props;
-		const { value } = this.state;
 		// defaults to 'medium' size and 'regular' type
 		return (
-			<div className={getInputDivClass(inputSize, inputType, showError.isError)}>
+			<div className={getInputDivClass(inputSize, inputType, error)} ref={ref} disabled={disabled}>
 				<input
 					className={getInputClass(inputSize, inputType)}
-					value={typeof value !== "undefined" || value === "" ? value : defaultValue}
-					onChange={this.onChange}
-					onKeyPress={this.onKeyPress}
+					value={typeof value !== "undefined" || value === "" ? value : initValue}
+					onChange={onInputChange}
+					onKeyPress={onKeyPress}
 					autoFocus={focus}
-					onFocus={(e) => {
-						this.onFocus(e);
-					}}
-					onBlur={(e) => {
-						this.onBlur(e);
-					}}
+					onFocus={onFocus}
+					onBlur={onBlur}
 					placeholder={placeholder}
+					disabled={disabled}
 				/>
-				{showError.isError && (
+				{error.isError && (
 					<InputErrorIcon
-						errorMessage={showError.message}
-						placement={showError.placement}
-						tooltipAttached={showError.tooltipAttached}
+						errorMessage={error.message}
+						placement={error.placement}
+						tooltipAttached={error.tooltipAttached}
 					/>
 				)}
 			</div>
 		);
-	};
-}
-
-Input.defaultProps = {
-	focus: false,
-	placeholder: "",
-	showError: {
-		isError: false,
-		tooltipAttached: true
 	}
-};
+);
 
 Input.propTypes = {
 	onChange: PropTypes.func.isRequired,
 	focus: PropTypes.bool,
 	inputSize: PropTypes.oneOf([
-		INPUT_SIZES.XXSMALL,
-		INPUT_SIZES.XSMALL,
-		INPUT_SIZES.SMALL,
-		INPUT_SIZES.MEDIUM,
-		INPUT_SIZES.LARGE,
-		INPUT_SIZES.FILL
+		InputSizes.XXSMALL,
+		InputSizes.XSMALL,
+		InputSizes.SMALL,
+		InputSizes.MEDIUM,
+		InputSizes.LARGE,
+		InputSizes.FILL
 	]),
-	inputType: PropTypes.oneOf([INPUT_TYPES.GREY, INPUT_TYPES.REGULAR, INPUT_TYPES.ERROR])
+	inputType: PropTypes.oneOf([InputTypes.GREY, InputTypes.REGULAR, InputTypes.ERROR])
 };

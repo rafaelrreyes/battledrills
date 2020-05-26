@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactDOM from "react-dom";
-import joint from "jointjs/index";
+import $ from "jquery";
 import Shapes from "../../joint/Shapes";
-import BattleDrillDiagram from "../../joint/BattleDrillDiagram";
 import "./DiagramViewContainer.scss";
+
+import joint from "jointjs/index";
 import "./joint.css";
-import { getSelectedDrill, getSelectedTask, editCoordinates } from "REDUX/";
+import { getSelectedDrill, getSelectedTask, editCoordinates } from "REDUX";
 import { API } from "UTILITIES/index";
 
 const DEFAULTS = {
@@ -15,7 +16,7 @@ const DEFAULTS = {
 	WINDOW_HEIGHT: 1080 // works for now
 };
 
-const DiagramViewContainer = () => {
+const DiagramViewContainer = ({ battleDrillDiagram, graph }) => {
 	const diagramViewElement = useRef(null);
 	const [width, setWidth] = useState(DEFAULTS.WINDOW_WIDTH); // can set the width/height of the paper and graph in later features
 	const [height, setHeight] = useState(DEFAULTS.WINDOW_HEIGHT);
@@ -25,9 +26,6 @@ const DiagramViewContainer = () => {
 	const selectedDrill = useSelector(getSelectedDrill);
 	const selectedTask = useSelector(getSelectedTask);
 	const dispatch = useDispatch();
-
-	const graph = new joint.dia.Graph();
-	const battleDrillDiagram = new BattleDrillDiagram(graph);
 
 	let paper;
 
@@ -51,6 +49,19 @@ const DiagramViewContainer = () => {
 		if (selectedDrill !== null || typeof selectedDrill !== "undefined") {
 			battleDrillDiagram.createBattleDrill(selectedDrill, selectedTask);
 		}
+
+		return () => {
+			// TODO
+			console.log("unbinding all events");
+			paper.off("element:mouseenter");
+			paper.off("blank:pointerup");
+		};
+	}, [selectedDrill, selectedTask]);
+
+	useEffect(() => {
+		if (selectedDrill !== null || typeof selectedDrill !== "undefined") {
+			battleDrillDiagram.createBattleDrill(selectedDrill, selectedTask);
+		}
 	}, [selectedDrill, selectedTask]);
 
 	useEffect(() => {
@@ -61,6 +72,45 @@ const DiagramViewContainer = () => {
 
 	const setupEventHandlers = () => {
 		let tempPosition;
+		let lastElementInteracted = null;
+
+		paper.on("element:mouseenter", (element) => {
+			// hide the icon of the last visited owner element
+			if (lastElementInteracted !== null) {
+				const editOwnerIcon = lastElementInteracted.$box.find("span.owner-title").find("i.edit-owner-icon");
+				editOwnerIcon.css("display", "none");
+			}
+
+			// set the current element being hovered over to the current
+			lastElementInteracted = element;
+
+			// get the dom element of the current
+			const editOwnerIcon = element.$box.find("span.owner-title").find("i.edit-owner-icon");
+
+			// show the edit icon on hover
+			editOwnerIcon.css("display", "inline");
+
+			// on hover, enable pointer events
+			editOwnerIcon.hover(() => {
+				editOwnerIcon.css("display", "inline");
+				element.$box.find("div.owner-container").css("pointer-events", "auto");
+			});
+		});
+
+		// hide the edit icon when leaving element
+		paper.on("element:mouseleave", (element) => {
+			const editOwnerIcon = element.$box.find("span.owner-title").find("i.edit-owner-icon");
+			editOwnerIcon.css("display", "none");
+			element.$box.find("div.owner-container").css("pointer-events", "auto");
+		});
+
+		// hide the edit of last element hovered if clicking on the blank area of diagram
+		paper.on("blank:pointerup", () => {
+			if (lastElementInteracted !== null) {
+				const editOwnerIcon = lastElementInteracted.$box.find("span.owner-title").find("i.edit-owner-icon");
+				editOwnerIcon.css("display", "none");
+			}
+		});
 
 		paper.on("element:pointerdblclick", (element) => {
 			if (typeof activeElement.model === "undefined") {
@@ -104,6 +154,28 @@ const DiagramViewContainer = () => {
 			tempPosition = position;
 		});
 
+		paper.on("element:mouseenter", (element) => {
+			const elementClass = element.$box.attr("class");
+			if (elementClass === "action-items-container") {
+				element.$box.css("z-index", 999999);
+				element.$box.children().css("z-index", 999999);
+			} else {
+				element.$box.css("z-index", 999999);
+				element.$box.children().css("z-index", 999999);
+			}
+		});
+
+		paper.on("element:mouseleave", (element) => {
+			const elementClass = element.$box.attr("class");
+			if (elementClass === "action-items-container") {
+				element.$box.css("z-index", 2);
+				element.$box.children().css("z-index", 2);
+			} else {
+				element.$box.css("z-index", 3);
+				element.$box.children().css("z-index", 3);
+			}
+		});
+
 		// using x and y parameters here refers to the pointer, which we do not want. we want the position of the element
 		// which does not have exclusive variables for x and y, unless you extract them from a transform string which is too hacky.
 		paper.on("element:pointerup", (element) => {
@@ -129,7 +201,7 @@ const DiagramViewContainer = () => {
 
 	return (
 		<div className="diagram-view-div">
-			<div className="diagram" id="diagram" ref={diagramViewElement} />
+			<div className="diagramz" id="diagram" ref={diagramViewElement} />
 		</div>
 	);
 };

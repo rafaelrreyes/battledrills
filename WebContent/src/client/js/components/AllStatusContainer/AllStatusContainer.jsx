@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { API, selectTask, Routes } from "UTILITIES/index";
+import { DROPDOWN_DEFAULT } from "CORE";
+import { API, selectTask, Routes } from "UTILITIES";
 import {
 	getAllStatus,
 	getRolesFilter,
@@ -10,18 +11,18 @@ import {
 	setRolesFilters,
 	deleteRoleFilter,
 	setCurrentView
-} from "REDUX/index";
+} from "REDUX";
 
-import { AllStatusTableView, AllStatusFilterView, AllStatusFooterView } from "../index";
+import { AllStatusTableView, AllStatusFilterView, AllStatusFooterView } from "..";
 import "./AllStatusContainer.scss";
-import { setSelectedDrill } from "REDUX/index";
+import { setSelectedDrill } from "REDUX";
 
 const DEFAULT_MAX_COLUMNS = 5;
 
 const AllStatusContainer = () => {
 	const [displayIndex, setDisplayIndex] = useState(0);
 	const [activePageIndex, setActivePageIndex] = useState(1);
-	const [drillsType, setDrillsType] = useState("All Drills");
+	const [drillsType, setDrillsType] = useState(DROPDOWN_DEFAULT);
 	const dispatch = useDispatch();
 
 	// redux selectors
@@ -101,7 +102,7 @@ const AllStatusContainer = () => {
 		const { active, completed } = drills;
 		let uppercasedDrillsType = drillsType.toUpperCase();
 		let filteredDrills = [];
-		if (uppercasedDrillsType === "ALL DRILLS") {
+		if (uppercasedDrillsType === DROPDOWN_DEFAULT) {
 			filteredDrills = [...active, ...completed];
 		} else if (uppercasedDrillsType === "ACTIVE") {
 			filteredDrills = active;

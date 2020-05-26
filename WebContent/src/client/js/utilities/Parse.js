@@ -2,7 +2,7 @@ const acronyms = ["ied", "vbied", "svbied"];
 
 export const parseAllTypes = (types) => {
 	let parsedTypes = [];
-	types.forEach((type, index) => {
+	types.forEach((type) => {
 		let words = type.split("_");
 		words.forEach((word, i) => {
 			if (acronyms.includes(word)) {
@@ -17,6 +17,9 @@ export const parseAllTypes = (types) => {
 };
 
 export const parseType = (type) => {
+	if (type === null || type === undefined) {
+		return null;
+	}
 	let words = type.split("_");
 	words.forEach((word, i) => {
 		if (acronyms.includes(word)) {

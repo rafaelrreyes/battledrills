@@ -22,17 +22,34 @@
 	/* Make sure events are propagated to the JointJS element so, e.g. dragging works.*/
 	pointer-events: none;
 	-webkit-user-select: none;
-	z-index: 2;
+	z-index: 3;
 	width: 100%;
 	text-align: left;
 
 	.owner-title {
-		@include heading-3;
+		@include heading-4;
 		color: $black;
 	}
 
 	.edit-owner-icon {
-		font-size: 1.25em;
+		position: absolute;
+		display: none;
+		font-size: 0.85em;
+		line-height: 1.35em;
+		color: $black;
+		cursor: pointer;
+		pointer-events: all;
+
+		&:hover {
+			color: $cyan-700;
+		}
+	}
+
+	.template-edit-owner-icon {
+		position: absolute;
+		display: inline-flex;
+		line-height: 1.5em;
+		font-size: 0.85em;
 		color: $black;
 		cursor: pointer;
 		pointer-events: all;

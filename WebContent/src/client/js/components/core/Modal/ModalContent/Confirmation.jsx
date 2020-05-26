@@ -1,11 +1,11 @@
 import React, { Component } from "react";
+import { Icon } from "CORE";
 import PropTypes from "prop-types";
 
-const Confirmation = (props) => {
-	const { icon, title, description } = props;
+const Confirmation = ({ icon, title, description }) => {
 	return (
 		<>
-			{icon && <i className="material-icons md-36">{icon}</i>}
+			{icon && <Icon className="md-36">{icon}</Icon>}
 			{title && <div className="modal-title">{title}</div>}
 			{description && <div className="modal-description">{description}</div>}
 		</>

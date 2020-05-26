@@ -1,11 +1,14 @@
 @import "~CSS/index";
 
 .link-button {
-	@include heading-5;
+	@include body-4;
 	text-decoration: none;
-	background-color: $blue-grey-800;
 	color: $white;
-	padding: 0.5em;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	height: 100%;
+	margin: auto 0.5em;
 
 	&:focus,
 	&:visited,
@@ -13,14 +16,14 @@
 	&:active {
 		text-decoration: none;
 	}
-
-	&:hover {
-		background: $cyan-700;
-		color: $white;
-	}
 }
 
 .active-link {
-	background-color: $grey-100;
-	color: $black;
+	box-sizing: border-box;
+	border-bottom: 2px solid $cyan-700;
+	border-top: 2px solid transparent;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	color: $cyan-700;
 }

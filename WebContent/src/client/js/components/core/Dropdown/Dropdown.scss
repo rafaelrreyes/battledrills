@@ -21,13 +21,16 @@ $dropdown-shadow-color-focus: $shadow-color-default;
 $dropdown-shadow-width-hover: $shadow-width-hover;
 $dropdown-shadow-width-focus: $shadow-width-active;
 
-$dropdown-height: 2em;
+$dropdown-opt-label-color: $grey-900;
+$dropdown-opt-label-bg-color: $grey-400;
+
+$dropdown-height: 32px;
 $dropdown-width-fill: 100%;
-$dropdown-width-lg: 14.75em;
-$dropdown-width-md: 11.25em;
-$dropdown-width-sm: 7em;
-$dropdown-width-xs: 5.25em;
-$dropdown-width-xxs: 3.5em;
+$dropdown-width-lg: 236px;
+$dropdown-width-md: 180px;
+$dropdown-width-sm: 112px;
+$dropdown-width-xs: 84px;
+$dropdown-width-xxs: 56px;
 
 select::-moz-focus-inner {
 	border: 0;
@@ -44,7 +47,6 @@ select option[value=""] {
 	height: $dropdown-height;
 	border: solid $dropdown-border-width $dropdown-border-color-hover;
 	padding: 0 0.25em;
-	@include body-3;
 	&:hover:enabled,
 	&:focus:enabled {
 		box-shadow: 0 0 $dropdown-shadow-width-hover $dropdown-shadow-color-hover;
@@ -53,6 +55,11 @@ select option[value=""] {
 		color: $dropdown-text-color-disabled;
 		background-color: $dropdown-background-color-disabled;
 	}
+}
+
+select > optgroup.c2pc-dropdown-opt-label {
+	color: $dropdown-opt-label-color;
+	background-color: $dropdown-opt-label-bg-color;
 }
 
 select.c2pc-dropdown {

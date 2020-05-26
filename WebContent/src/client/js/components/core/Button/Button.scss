@@ -21,13 +21,13 @@ $button-shadow-width-hover: $shadow-width-hover;
 $button-shadow-width-focus: $shadow-width-hover;
 $button-shadow-width-active: $shadow-width-active;
 
-$button-height: 2em;
+$button-height: 32px;
 $button-width-fill: 100%;
-$button-width-lg: 14.75em;
-$button-width-md: 11.25em;
-$button-width-sm: 7em;
-$button-width-xs: 5.25em;
-$button-width-xxs: 3.5em;
+$button-width-lg: 236px;
+$button-width-md: 180px;
+$button-width-sm: 112px;
+$button-width-xs: 84px;
+$button-width-xxs: 56px;
 
 button::-moz-focus-inner {
 	border: 0;
@@ -156,17 +156,5 @@ button.label {
 	&-center {
 		@extend %button-template;
 		justify-content: center;
-	}
-}
-
-button.label-size {
-	&-sm {
-		@include body-2;
-	}
-	&-md {
-		@include body-3;
-	}
-	&-lg {
-		@include body-4;
 	}
 }

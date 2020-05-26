@@ -1,3 +1,5 @@
+import { DROPDOWN_DEFAULT } from "CORE";
+
 export const ValidatorReasonCodes = {
 	NON_ALPHANUMERIC: "non_alphanumeric",
 	NON_NUMERIC: "non-numeric",
@@ -6,7 +8,8 @@ export const ValidatorReasonCodes = {
 	OUT_OF_RANGE: "out_of_range",
 	EMPTY: "empty",
 	NULL: "null",
-	VALID: "valid"
+	VALID: "valid",
+	DROPDOWN_DEFAULT: "*"
 };
 
 export const isMaxCharacters = (text, max) => {
@@ -43,6 +46,8 @@ export const isAlphaNumeric = (text) => {
 export const isDropdownValid = (dropdown) => {
 	if (dropdown === "") {
 		return ValidatorReasonCodes.EMPTY;
+	} else if (dropdown === DROPDOWN_DEFAULT) {
+		return ValidatorReasonCodes.DROPDOWN_DEFAULT;
 	} else if (!dropdown) {
 		return ValidatorReasonCodes.NULL;
 	} else {

@@ -6,8 +6,8 @@
 package com.ngc.battledrills.comms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import static com.ngc.battledrills.BattleDrillsConfig.DEFAULT_JSON_WRITER;
 import com.ngc.battledrills.rest.BattleDrillsWebsocketService;
+import com.ngc.battledrills.util.JsonUtils;
 
 /**
  *
@@ -18,8 +18,8 @@ public class Notify {
     
     public static void sendNotification(Notification notification) {
         try {
-            System.out.println(DEFAULT_JSON_WRITER.writeValueAsString(notification));
-            BattleDrillsWebsocketService.broadcast(DEFAULT_JSON_WRITER.writeValueAsString(notification));
+//            BattleDrillsWebsocketService.broadcast(DEFAULT_JSON_WRITER.writeValueAsString(notification));
+            BattleDrillsWebsocketService.broadcast(JsonUtils.writeValue(notification));
         } catch (JsonProcessingException e ) {
             System.err.println("Error when attempting to broadcast websocket");
         }
@@ -27,7 +27,7 @@ public class Notify {
     
     public static void sendNotificationToSessionId(Notification notification) {
         try {
-            BattleDrillsWebsocketService.broadcastToSessionId(notification.getUser(), DEFAULT_JSON_WRITER.writeValueAsString(notification));
+            BattleDrillsWebsocketService.broadcastToSessionId(notification.getUser(), JsonUtils.writeValue(notification));
         } catch (JsonProcessingException e ) {
             System.err.println("Error when attempting to broadcast websocket to specific sessionId");
         }
@@ -35,7 +35,7 @@ public class Notify {
     
     public static void sendNotificationToAllExcluding(Notification notification) {
         try {
-            BattleDrillsWebsocketService.broadcastToAllExcluding(notification.getUser(), DEFAULT_JSON_WRITER.writeValueAsString(notification));
+            BattleDrillsWebsocketService.broadcastToAllExcluding(notification.getUser(), JsonUtils.writeValue(notification));
         } catch (JsonProcessingException e ) {
             System.err.println("Error when attempting to broadcast websocket to all except one sessionId");
         }

@@ -5,6 +5,8 @@
  */
 package com.ngc.battledrills.data;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,7 +14,9 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.ngc.battledrills.comms.Notification;
 import com.ngc.battledrills.comms.Notify;
 import com.ngc.battledrills.comms.NotifyManager;
@@ -25,7 +29,6 @@ import com.ngc.battledrills.util.BattleDrillConstants;
 import java.security.InvalidParameterException;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,21 +38,26 @@ import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
-
+import com.ngc.battledrills.util.JsonUtils;
 /**
  *
  * @author admin
  */
+@JsonFilter(JsonUtils.DefinedFilters.BATTLE_DRILL_FILTER)
 @JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BattleDrill extends BattleDrillTemplate {
     private String name;
     private String creatorName;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime startTime = null;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endTime = null;
     private Map<String, String> location = new HashMap<>();
     private List<Attachment> attachments = new ArrayList<>();
-    
+
     public BattleDrill(){}
 
     @JsonProperty("attachments")
@@ -134,15 +142,11 @@ public class BattleDrill extends BattleDrillTemplate {
         this.creatorName = creatorName;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    public void setStartTime(LocalDateTime startTime)
-    {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    public void setEndTime(LocalDateTime endTime)
-    {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
     
@@ -189,27 +193,21 @@ public class BattleDrill extends BattleDrillTemplate {
         root.getTasksForAllOwners(tasksXOwner);
         return tasksXOwner;
     }
-    
-    public long getStartTimeMillis()
-    {
-        if(startTime == null)
-        {
-            return -1;
-        }
-        ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
-        long epoch = startTime.atZone(zoneId).toEpochSecond();
-        return epoch;
+
+    @JsonIgnore
+    public int getNumTasks() {
+        Map<String, List<Task>> allTasks = getTasksXOwner();
+        int count = 0;
+        count = allTasks.values().stream().map((task) -> task.size()).reduce(count, Integer::sum);
+        return count;
     }
     
-    public long getEndTimeMillis()
-    {
-        if(endTime == null)
-        {
-            return -1;
-        }
-        ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
-        long epoch = endTime.atZone(zoneId).toEpochSecond();
-        return epoch;
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+    
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
     
     @JsonProperty("duration")
@@ -229,7 +227,7 @@ public class BattleDrill extends BattleDrillTemplate {
             return Duration.between(startTime, endTime).getSeconds();
         }
     }
-    
+
     // @return a boolean value indicating whether or not the task was found and deleted.  A false value indicates the task was not found in this battle drill
     public boolean deleteTask(String taskId, User user)
     {
@@ -467,20 +465,15 @@ public class BattleDrill extends BattleDrillTemplate {
         return this.location;
     }
     
-    public void start() throws ItemNotFoundException
-    {
-       startTime = LocalDateTime.now();
-       Node rootNode = this.getRoot();
-       
-       BattleDrillManager mgr = BattleDrillManager.getInstance();
-       mgr.saveBattleDrill(this.getName(), false);
+    public LocalDateTime start() {
+        startTime = LocalDateTime.now();
+        root.startAllTasks(startTime);
+        return startTime;
     }
     
-    public void stop() throws ItemNotFoundException
-    {
+    public LocalDateTime stop() {
         endTime = LocalDateTime.now();
-        BattleDrillManager mgr = BattleDrillManager.getInstance();
-        mgr.saveBattleDrill(this.getName(), false);
+        return endTime;
     }
     
     @Override
@@ -493,8 +486,8 @@ public class BattleDrill extends BattleDrillTemplate {
         sb.append("Location: (").append("Latitude: ").append(location.get("latitude"))
           .append(", Longitude: ").append(location.get("longitude")).append(")").append(System.lineSeparator());
         sb.append("Permission: ").append(this.getPermission()).append(System.lineSeparator());
-        sb.append("Start time: ").append(this.getStartTimeMillis()).append(System.lineSeparator());
-        sb.append("End Time: ").append(this.getEndTimeMillis()).append(System.lineSeparator());
+        sb.append("Start time: ").append(this.getStartTime()).append(System.lineSeparator());
+        sb.append("End Time: ").append(this.getEndTime()).append(System.lineSeparator());
         sb.append("Duration: ").append(this.getElapsedTimeInSeconds()).append(System.lineSeparator());
         sb.append("--------------------------- TREE ------------------------------------").append(System.lineSeparator());
         sb.append(this.getRoot()).append(System.lineSeparator());

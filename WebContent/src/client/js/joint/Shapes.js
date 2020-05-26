@@ -1,11 +1,11 @@
+import React from "react";
+import ReactDOM from "react-dom";
 import joint from "jointjs/index";
 import $ from "jquery";
 import _ from "lodash";
 import { getTaskItemStyle, getLiElement } from "./BattleDrillHelper";
-import { STATUS_TYPES, selectTask } from "UTILITIES/index";
-import { TaskActionsMenu, OwnerActionsMenu } from "COMPONENTS/index";
-import ReactDOM from "react-dom";
-import React from "react";
+import { STATUS_TYPES, selectTask, selectTaskTemplate } from "UTILITIES";
+import { TaskActionsMenu, OwnerActionsMenu } from "COMPONENTS";
 
 joint.shapes.html = {};
 
@@ -22,12 +22,8 @@ joint.shapes.html.OwnerBlock = joint.shapes.standard.Rectangle.extend({
 });
 
 joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
-	template: [
-		'<div class="owner-container">', 
-		'<div><span class="owner-title"></span></div>', 
-		'</div>'
-	].join(""),
-	initialize: function() {
+	template: ['<div class="owner-container">', '<div><span class="owner-title"></span></div>', "</div>"].join(""),
+	initialize: function () {
 		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 		this.$box = $(_.template(this.template)());
 
@@ -35,21 +31,17 @@ joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
 		// Remove the box when the model gets removed from the graph.
 		this.model.on("remove", this.removeBox, this);
 	},
-	updateBox: function() {
+	updateBox: function () {
 		var bbox = this.model.getBBox();
 		let owner = this.model.get("attrs").title;
+		let isTemplate = this.model.get("attrs").diagramData.isTemplate;
 
-		// TODO
-		this.$box.hover(() => { 
-			console.log("hovering");
-		}, () => {
-			console.log("unhoveringed");
-		});
+		let editIconClass = isTemplate ? "template-edit-owner-icon" : "edit-owner-icon";
 
 		this.$box
 			.find("span.owner-title")
-			.html(`${owner}<i class="material-icons edit-owner-icon">edit</i><div class="filler-div"></div>`);
-	
+			.html(`${owner}<i class="material-icons ${editIconClass}">edit</i><div class="filler-div"></div>`);
+
 		this.$box.find("i").on("click", (event) => {
 			const dropdownAlreadyOpen = ReactDOM.unmountComponentAtNode(event.target.nextSibling);
 			if (dropdownAlreadyOpen) {
@@ -57,28 +49,30 @@ joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
 			}
 			ReactDOM.render(
 				<OwnerActionsMenu
+					isTemplate={isTemplate}
 					closeMenu={() => {
-						ReactDOM.unmountComponentAtNode(event.target.nextSibling);
+						if (typeof event.target !== "undefined") {
+							ReactDOM.unmountComponentAtNode(event.target.nextSibling);
+						}
 					}}
 					owner={owner}
 				/>,
 				event.target.nextSibling
 			);
 		});
-
 		this.$box.css({
 			width: bbox.width,
 			left: bbox.x,
 			top: bbox.y
 		});
 	},
-	render: function() {
+	render: function () {
 		joint.dia.ElementView.prototype.render.apply(this, arguments);
 		this.paper.$el.prepend(this.$box);
 		this.updateBox();
 		return this;
 	},
-	removeBox: function(evt) {
+	removeBox: function (evt) {
 		this.$box.remove();
 	}
 });
@@ -98,76 +92,98 @@ joint.shapes.html.ActionBlock = joint.shapes.standard.Rectangle.extend({
 joint.shapes.html.ActionView = joint.dia.ElementView.extend({
 	template: [
 		'<div class="action-items-container">',
-		'<div class="draggable-tasks"><i class="material-icons">drag_indicator</i></div>',
+		'<div class="draggable-tasks"><i class="material-icons">open_with</i></div>',
 		'<ul class="action-items"></ul>',
 		"</div>"
 	].join(""),
 
-	initialize: function() {
+	initialize: function () {
 		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 		this.$box = $(_.template(this.template)());
 
-		this.$box.find("ul").on(
-			"click",
-			_.bind((event) => {
-				const tasks = this.model.get("attrs").list;
-				let taskId = getLiElement(event.target).getAttribute("taskId");
+		const isTemplate = this.model.get("attrs").diagramData.isTemplate;
+		if (isTemplate) {
+			this.$box.find("ul").on(
+				"click",
+				_.bind((event) => {
+					const tasks = this.model.get("attrs").list;
+					let taskId = getLiElement(event.target).getAttribute("taskId");
 
-				// probably a better way to do this
-				// 6 cases where you dont want to select the task based on what's clicked
-				if (
-					event.target.classList.contains("task-option-icon") ||
-					event.target.classList.contains("menu-option") ||
-					event.target.classList.contains("menu-option-icon")
-				) {
-					return;
-				} else if (
-					event.target.classList.contains("in-progress-icon") ||
-					event.target.classList.contains("blocked-icon") ||
-					event.target.classList.contains("completed-icon")
-				) {
-					// need this check to know that the dropdown icon was selected, not the icon in the list/diagram
-					if (event.target.parentElement.classList.contains("menu-option-icon")) {
-						return;
-					}
-				}
+					tasks.forEach((task) => {
+						if (task.taskId === taskId) {
+							selectTaskTemplate(task);
+							return;
+						}
+					});
+				}, this)
+			);
+		} else {
+			this.$box.find("ul").on(
+				"click",
+				_.bind((event) => {
+					const tasks = this.model.get("attrs").list;
+					let taskId = getLiElement(event.target).getAttribute("taskId");
 
-				// is there a faster way to search for the selected task
-				tasks.forEach((task) => {
-					if (task.taskId === taskId) {
-						selectTask(task);
+					// probably a better way to do this
+					// 6 cases where you dont want to select the task based on what's clicked
+					if (
+						event.target.classList.contains("task-option-icon") ||
+						event.target.classList.contains("menu-option") ||
+						event.target.classList.contains("menu-option-icon")
+					) {
 						return;
+					} else if (
+						event.target.classList.contains("in-progress-icon") ||
+						event.target.classList.contains("blocked-icon") ||
+						event.target.classList.contains("completed-icon")
+					) {
+						// need this check to know that the dropdown icon was selected, not the icon in the list/diagram
+						if (event.target.parentElement.classList.contains("menu-option-icon")) {
+							return;
+						}
 					}
-				});
-			}, this)
-		);
+
+					// is there a faster way to search for the selected task
+					tasks.forEach((task) => {
+						if (task.taskId === taskId) {
+							selectTask(task);
+							return;
+						}
+					});
+				}, this)
+			);
+		}
 
 		this.model.on("change", this.updateBox, this);
 		// Remove the box when the model gets removed from the graph.
 		this.model.on("remove", this.removeBox, this);
 	},
-	render: function() {
+	render: function () {
 		joint.dia.ElementView.prototype.render.apply(this, arguments);
 		this.paper.$el.prepend(this.$box);
 		this.updateBox();
 		return this;
 	},
-	updateBox: function() {
+	updateBox: function () {
 		var bbox = this.model.getBBox();
 		// Example of updating the HTML with a data stored in the cell model.
 
 		// Create action items HTML
 		var tasks = this.model.get("attrs").list;
 		let selectedTask = this.model.get("attrs").selectedTask;
+		const isTemplate = this.model.get("attrs").diagramData.isTemplate;
 
 		var tasksHTML = _.map(tasks, (task) => {
-			return getTaskItemStyle(task, selectedTask);
+			return getTaskItemStyle(task, selectedTask, isTemplate);
 		});
 
-		let allTasksCompleted = tasks.filter((task) => task.currentStatus.status !== STATUS_TYPES.COMPLETED);
+		// not a template, show completed items
+		if (!isTemplate) {
+			let allTasksCompleted = tasks.filter((task) => task.currentStatus.status !== STATUS_TYPES.COMPLETED);
 
-		if (allTasksCompleted.length === 0) {
-			this.$box.find("ul").addClass("all-completed");
+			if (allTasksCompleted.length === 0) {
+				this.$box.find("ul").addClass("all-completed");
+			}
 		}
 
 		this.$box
@@ -215,10 +231,10 @@ joint.shapes.html.ActionView = joint.dia.ElementView.extend({
 			width: bbox.width,
 			left: bbox.x,
 			top: bbox.y
-			// transform: 'rotate(' + (this.model.get('angle') || 0) + 'deg)'
+			// transform: "rotate(" + (this.model.get("angle") || 15) + "deg)"
 		});
 	},
-	removeBox: function(evt) {
+	removeBox: function (evt) {
 		this.$box.remove();
 	}
 });

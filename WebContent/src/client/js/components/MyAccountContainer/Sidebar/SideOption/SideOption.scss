@@ -1,0 +1,23 @@
+@import "~CSS/index";
+
+.sidebar {
+	.side-option {
+		@include body-4;
+		display: flex;
+		flex-direction: row;
+		cursor: pointer;
+		padding: 8px 24px;
+		background-color: $grey-700;
+
+		.side-text {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			padding-left: 8px;
+		}
+
+		&:hover {
+			background-color: $blue-grey-800;
+		}
+	}
+}

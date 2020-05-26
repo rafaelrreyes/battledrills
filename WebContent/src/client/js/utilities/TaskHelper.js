@@ -1,18 +1,21 @@
 import store from "REDUX/store";
-import { 
-	getSelectedTask, 
-	setSelectedTask, 
+import {
+	getSelectedTask,
+	setSelectedTask,
 	setSelectedDrill,
-	resetSelectedTask, 
-	getUser, 
-	getCurrentView, 
-	showModal, 
-	closeModal, 
+	resetSelectedTask,
+	getUser,
+	getCurrentView,
+	showModal,
+	closeModal,
 	getSelectedDrillName,
-	setActiveBillet
-} from "REDUX/";
-import { API, Routes, MaterialIconNames } from "UTILITIES/";
-import { ModalContentTypes } from "CORE/";
+	setActiveBillet,
+	getSelectedTaskTemplate,
+	setSelectedTaskTemplate,
+	getTaskTemplate
+} from "REDUX";
+import { API, Routes, MaterialIconNames } from "UTILITIES";
+import { ModalContentTypes } from "CORE";
 
 export const selectTask = (task) => {
 	// used to check if the newly selected drill is the same as the currently selected
@@ -29,8 +32,22 @@ export const selectTask = (task) => {
 	});
 };
 
-export const deleteTask = (taskId) => {
+export const selectTaskTemplate = (task) => {
+	const currentSelectedTaskTemplate = getSelectedTaskTemplate(store.getState());
 
+	if (currentSelectedTaskTemplate !== null && task.taskId === currentSelectedTaskTemplate.taskId) {
+		return;
+	}
+
+	const taskFound = getTaskTemplate(store.getState(), task.taskId);
+	store.dispatch(setSelectedTaskTemplate(taskFound));
+	// API.getTaskById(task.taskId, {}, (response) => {
+	// 	const selectedTaskTemplate = { ...response, selected: true };
+	// 	store.dispatch(setSelectedTaskTemplate(selectedTaskTemplate));
+	// });
+};
+
+export const deleteTask = (taskId) => {
 	const user = getUser(store.getState());
 	const currentView = getCurrentView(store.getState());
 	const selectedDrillName = getSelectedDrillName(store.getState());

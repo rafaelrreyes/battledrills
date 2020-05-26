@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { UserConfiguration, MaterialIconNames } from "UTILITIES/index";
-import { ChatItemView, Input, INPUT_SIZES, INPUT_TYPES } from "../index";
+import { ChatItemView, Input, InputSizes, InputTypes } from "../index";
 import { addChat, toggleChatDisplay, swapChats, updateChat, removeChat, getUser } from "REDUX/index";
 
 import "./ChatContainer.scss";
@@ -65,8 +65,8 @@ const ChatContainer = () => {
 					<ul className="contacts-list">{getContacts()}</ul>
 					<div className="contacts-list-search-input">
 						<Input
-							inputType={INPUT_TYPES.REGULAR}
-							inputSize={INPUT_SIZES.FILL}
+							inputType={InputTypes.REGULAR}
+							inputSize={InputSizes.FILL}
 							onChange={onContactSearchChange}
 							submit={() => {}}
 							focus={false}

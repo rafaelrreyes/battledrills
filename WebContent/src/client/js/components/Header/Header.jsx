@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useLocation } from "react-router";
-import { LinkButton } from "CORE/index";
-import { Routes } from "UTILITIES/index";
+
+import { LinkButton, Icon, TooltipPlacement } from "CORE";
+import { Routes, MaterialIconNames, MobileViewMaxWidth } from "UTILITIES";
+import { useWindowDimensions } from "HOOKS";
 import { default as HeaderMenuContainer } from "./HeaderMenuContainer/HeaderMenuContainer";
-import { default as MenuItem } from "./MenuItem/MenuItem";
+import { default as HeaderDropdown } from "./HeaderDropdown/HeaderDropdown";
 import "./Header.scss";
+import HeaderOptions from "./HeaderOptions/HeaderOptions";
+
+const getHeaderTab = (name, icon, isMobile) => {
+	return (
+		<>
+			{isMobile ? (
+				<Icon tooltip={name} tooltipPlacement={TooltipPlacement.BOTTOM}>
+					{icon}
+				</Icon>
+			) : (
+				name
+			)}
+		</>
+	);
+};
 
 const Header = () => {
+	const [isMobile, setIsMobile] = useState(false);
 	const [activeDiagram, setActiveDiagram] = useState(false);
 	const [diagramName, setDiagramName] = useState("Diagram");
+	const { width } = useWindowDimensions();
 	const history = useHistory();
 	const location = useLocation();
 
@@ -39,24 +58,41 @@ const Header = () => {
 		}
 	}, [location]);
 
+	useEffect(() => {
+		if (width <= MobileViewMaxWidth) {
+			setIsMobile(true);
+		} else {
+			setIsMobile(false);
+		}
+	}, [width]);
+
 	return (
 		<div className="header">
 			<div className="header-flex-container">
 				<div className="nav-title">Battle Drills</div>
-				<LinkButton addClass="link-1" to={Routes.MAIN}>
-					Overview
+				<LinkButton to={Routes.OVERVIEW}>
+					{getHeaderTab("Overview", MaterialIconNames.DASHBOARD, isMobile)}
 				</LinkButton>
-				<LinkButton addClass="link-2" to={Routes.MY_REPORT}>
-					My Drills
+				<LinkButton to={Routes.MY_DRILLS}>
+					{getHeaderTab("My Drills", MaterialIconNames.DESCRIPTION, isMobile)}
 				</LinkButton>
-				<LinkButton addClass="link-3" to={Routes.STATUS}>
-					Status
+				<LinkButton to={Routes.STATUS}>
+					{getHeaderTab("Status", MaterialIconNames.LINE_STYLE, isMobile)}
 				</LinkButton>
-				<span className="link-4">
-					<MenuItem options={diagramOptions} active={activeDiagram}>
-						{diagramName}
-					</MenuItem>
-				</span>
+				<LinkButton to={Routes.REPORTS}>
+					{getHeaderTab("Reports", MaterialIconNames.INSERT_CHART_OUTLINED, isMobile)}
+				</LinkButton>
+				{/* TODO should only be available to admin roles */}
+				<LinkButton to={Routes.TEMPLATE_EDITOR}>
+					{getHeaderTab("Template Editor", MaterialIconNames.EDIT, isMobile)}
+				</LinkButton>
+				<LinkButton to={Routes.MY_ACCOUNT}>
+					{getHeaderTab("My Account", MaterialIconNames.PERSON, isMobile)}
+				</LinkButton>
+				<HeaderDropdown options={diagramOptions} active={activeDiagram}>
+					{getHeaderTab(diagramName, MaterialIconNames.ACCOUNT_TREE, isMobile)}
+				</HeaderDropdown>
+				<HeaderOptions />
 				<HeaderMenuContainer />
 			</div>
 		</div>

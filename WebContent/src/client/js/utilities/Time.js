@@ -1,26 +1,20 @@
 import moment from "moment-timezone";
 
-export const secondsToDate = (seconds) => {
-	let temp = moment.unix(parseInt(seconds)).local();
-	let date = temp.tz(moment.tz.guess(true)).format("MM/DD/YYYY HH:mm:ss z");
-
-	return date;
-};
-
-export const secondsToDateMinimal = (seconds) => {
-	let temp = moment.unix(parseInt(seconds)).local();
-	return temp.tz(moment.tz.guess(true)).format("MM/DD/YY HH:mm");
+export const iso8061ToReadable = (dateISO, format) => {
+	if (dateISO) {
+		let temp = moment(dateISO);
+		let date = temp.tz(moment.tz.guess(true)).format(format);
+		return date;
+	}
+	return null;
 };
 
 export const getElapsedTime = (start, end) => {
-	let startUnix = moment.unix(parseInt(start)).format("HH:mm:ss");
-	let endUnix = moment.unix(parseInt(end)).format("HH:mm:ss");
-
-	if (end === -1) {
-		endUnix = moment.unix(parseInt(moment().valueOf() / 1000)).format("HH:mm:ss");
+	if (!end) {
+		end = moment();
 	}
 
-	let elapsedTime = moment.utc(moment(endUnix, "HH:mm:ss").diff(moment(startUnix, "HH:mm:ss"))).format("HH:mm:ss");
+	let elapsedTime = moment.utc(moment(end).diff(moment(start))).format("HH:mm:ss");
 	return elapsedTime;
 };
 
@@ -29,4 +23,9 @@ export const getStartTime = (startTime) => {
 	let now = moment.unix(parseInt(moment().valueOf() / 1000)).format("HH:mm:ss");
 	let diff = moment.utc(moment(now, "HH:mm:ss").diff(moment(start, "HH:mm:ss")));
 	return diff;
+};
+
+export const secondsToHHmmss = (seconds) => {
+	// need *1000 because .utc() takes in milliseconds
+	return moment.utc(seconds * 1000).format("HH:mm:ss");
 };

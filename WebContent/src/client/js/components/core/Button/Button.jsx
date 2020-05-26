@@ -22,13 +22,7 @@ export const LabelAlignment = {
 	CENTER: "center"
 };
 
-export const LabelSizes = {
-	SMALL: "sm",
-	MEDIUM: "md",
-	LARGE: "lg"
-};
-
-const getButtonClass = (size, type, alignment = LabelAlignment.CENTER, labelSize = LabelSizes.MEDIUM) => {
+const getButtonClass = (size, type, alignment = LabelAlignment.CENTER) => {
 	let returnClassname = `c2pc-button-`;
 	if (type === ButtonTypes.GREY) {
 		returnClassname = "c2pc-button-grey-";
@@ -41,20 +35,16 @@ const getButtonClass = (size, type, alignment = LabelAlignment.CENTER, labelSize
 		size === ButtonSizes.LARGE ||
 		size === ButtonSizes.FILL
 	) {
-		return returnClassname + size + ` label-${alignment} label-size-${labelSize}`;
+		return returnClassname + size + ` label-${alignment}`;
 	}
 
 	return returnClassname + ButtonSizes.MEDIUM;
 };
 
-export const Button = ({ children, onClick, isDisabled, buttonSize, buttonType, alignLabel, labelSize }) => {
+export const Button = ({ children, onClick, isDisabled, buttonSize, buttonType, alignLabel }) => {
 	// defaults to 'medium' size and 'regular' type
 	return (
-		<button
-			disabled={isDisabled}
-			onClick={onClick}
-			className={getButtonClass(buttonSize, buttonType, alignLabel, labelSize)}
-		>
+		<button disabled={isDisabled} onClick={onClick} className={getButtonClass(buttonSize, buttonType, alignLabel)}>
 			{children}
 		</button>
 	);

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { MaterialIconNames, STATUS_TYPES } from "UTILITIES/index";
+import { MaterialIconNames, STATUS_TYPES } from "UTILITIES";
 import "./StatusIcon.scss";
 
 const DEFAULT_ICON_SIZE = 20;

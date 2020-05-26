@@ -51,7 +51,7 @@ Toasts.propTypes = {
 				}),
 				id: PropTypes.string,
 				type: PropTypes.string,
-				timestampMillis: PropTypes.number
+				timestamp: PropTypes.number
 			})
 		})
 	)

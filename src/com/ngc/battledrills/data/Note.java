@@ -5,26 +5,32 @@
  */
 package com.ngc.battledrills.data;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import com.ngc.battledrills.util.JsonUtils;
 
 /**
  *
  * @author admin
  */
+@JsonFilter(JsonUtils.DefinedFilters.NOTE_FILTER)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Note {
     private String noteText = "";
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime timestamp = null;
     private User user; // role for right now
     private String id = "";
@@ -116,27 +122,12 @@ public class Note {
         this.autoType = autoType;
     }
     
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    public void setTimestamp(LocalDateTime timestamp)
-    {
+    public void setTimestamp(LocalDateTime timestamp)    {
         this.timestamp = timestamp;
     }
     
-    @JsonIgnore // Only for internal use - getTimestampMillis is used for communicating with the front end application
-    public LocalDateTime getTimestamp()
-    {
+    public LocalDateTime getTimestamp()    {
         return timestamp;
-    }
-    
-    public long getTimestampMillis()
-    {
-        if(timestamp == null)
-        {
-            return -1;
-        }
-        ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
-        long epoch = timestamp.atZone(zoneId).toEpochSecond();
-        return epoch;
     }
     
     public void setUser(User user)

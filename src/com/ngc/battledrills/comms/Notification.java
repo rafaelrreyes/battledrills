@@ -5,9 +5,12 @@
  */
 package com.ngc.battledrills.comms;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.ngc.battledrills.data.User;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  *
@@ -17,6 +20,8 @@ public abstract class Notification {
     private String objectType = "";
     private String operationType = "";
     private User user;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private final LocalDateTime timestamp;
     
     public Notification(String objectType, String operationType, User user) {
@@ -38,13 +43,7 @@ public abstract class Notification {
         return this.user;
     }
     
-    public long getTimestamp() {
-        if(this.timestamp == null)
-        {
-            return -1;
-        }
-        ZoneId zoneId = ZoneId.systemDefault(); // or: ZoneId.of("Europe/Oslo");
-        long epoch = this.timestamp.atZone(zoneId).toEpochSecond();
-        return epoch;
+    public LocalDateTime getTimestamp() {
+        return timestamp;
     }
 }

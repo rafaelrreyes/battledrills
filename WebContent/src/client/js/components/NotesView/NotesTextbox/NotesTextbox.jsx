@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { isMaxCharacters, isTextEmpty } from "UTILITIES/index";
-import { Textbox } from "CORE/index";
-import { API, MaterialIconNames } from "UTILITIES/index";
+import { Textbox, Icon } from "CORE";
+import { API, MaterialIconNames, isMaxCharacters, isTextEmpty } from "UTILITIES";
 
-import { editSelectedTaskNotes } from "REDUX/index";
+import { editSelectedTaskNotes } from "REDUX";
 
-const maxCharacters = 100;
+const MAX_CHARACTERS_ALLOWED = 100;
 
 const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 	const [note, setNote] = useState("");
@@ -23,13 +22,13 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 	};
 
 	const checkCharacterLimit = () => {
-		if (isMaxCharacters(note, maxCharacters)) {
+		if (isMaxCharacters(note, MAX_CHARACTERS_ALLOWED)) {
 			return "error-character-limit";
 		}
 	};
 
 	const onSubmitTaskNote = () => {
-		if (isMaxCharacters(note, maxCharacters + 1) || isTextEmpty(note)) {
+		if (isMaxCharacters(note, MAX_CHARACTERS_ALLOWED + 1) || isTextEmpty(note)) {
 			return;
 		}
 		const requestPayload = {
@@ -62,12 +61,14 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 				<button
 					className="no-button"
 					onClick={onSubmitTaskNote}
-					disabled={isMaxCharacters(note, maxCharacters + 1) || isTextEmpty(note)}
+					disabled={isMaxCharacters(note, MAX_CHARACTERS_ALLOWED + 1) || isTextEmpty(note)}
 				>
-					<i className="material-icons md-24 notes-send-icon">{MaterialIconNames.SEND}</i>
+					<Icon className="md-24 notes-send-icon">{MaterialIconNames.SEND}</Icon>
 				</button>
 			</div>
-			<div className={`character-limit ${checkCharacterLimit()}`}>{note.length}/100</div>
+			<div className={`character-limit ${checkCharacterLimit()}`}>
+				{note.length}/{`${MAX_CHARACTERS_ALLOWED}`}
+			</div>
 		</div>
 	);
 };

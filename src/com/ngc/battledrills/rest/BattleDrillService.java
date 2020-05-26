@@ -8,12 +8,12 @@ package com.ngc.battledrills.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ngc.battledrills.data.BattleDrill;
 import com.ngc.battledrills.manage.BattleDrillManager;
-import static com.ngc.battledrills.BattleDrillsConfig.DEFAULT_JSON_WRITER;
 import com.ngc.battledrills.data.Node;
 import com.ngc.battledrills.data.User;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.manage.TemplateManager;
+import com.ngc.battledrills.util.JsonUtils;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -39,13 +39,16 @@ public class BattleDrillService {
     public String getBattleDrillNames(@QueryParam("type") String type) throws JsonProcessingException {
         BattleDrillManager manager = BattleDrillManager.getInstance();
         if (type == null) {
-            return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
+            return JsonUtils.writeValue(manager.getAllDrillNames());
+//            return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
         }
         switch (type) {
             case "active":
-                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getActiveDrillNames());
+                return JsonUtils.writeValue(manager.getActiveDrillNames());
+//                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getActiveDrillNames());
             case "completed":
-                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getCompletedDrillNames());         
+                return JsonUtils.writeValue(manager.getCompletedDrillNames());
+//                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getCompletedDrillNames());         
             default:
                 throw new WebApplicationException("Drill type is unknown", Response.Status.BAD_REQUEST);
         }
@@ -60,7 +63,8 @@ public class BattleDrillService {
         }
 
         BattleDrillManager manager = BattleDrillManager.getInstance();
-        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getByName(name));
+        return JsonUtils.writeValue(manager.getByName(name));
+//        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getByName(name));
     }
 
     @DELETE
@@ -72,7 +76,8 @@ public class BattleDrillService {
         
         BattleDrillManager manager = BattleDrillManager.getInstance();
         manager.deleteBattleDrill(name, user); // not validated for allowed requestors as of now, but can later
-        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
+        return JsonUtils.writeValue(manager.getAllDrillNames());
+//        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
     }
     
     @GET
@@ -93,32 +98,26 @@ public class BattleDrillService {
 
         try {
             Node subtree = bd.getSubtreeByOwner(owner);
-            return DEFAULT_JSON_WRITER.writeValueAsString(subtree);
+            return JsonUtils.writeValue(subtree);
+//            return DEFAULT_JSON_WRITER.writeValueAsString(subtree);
         } catch (JsonProcessingException j) {
             System.err.println("Unable to subtree by owner: " + j);
             throw new WebApplicationException("Unable to get subtree by owner", Response.Status.BAD_REQUEST);
         }
     }
 
-    @GET
-    @Path("/types")
-    public String getTypes() throws JsonProcessingException {
-        TemplateManager manager = TemplateManager.getInstance();
-        List<String> types = manager.getTypes();
-        return DEFAULT_JSON_WRITER.writeValueAsString(types);
-    }
-
     @PUT
     @Path("/start/{name}")
-    public String startBattleDrill(@PathParam("name") String name) throws JsonProcessingException {
-        if (StringUtils.isBlank(name)) {
-            throw new WebApplicationException("Name parameter cannot be blank", Response.Status.BAD_REQUEST);
+    @Consumes(MediaType.APPLICATION_JSON)
+    public String startBattleDrill(@PathParam("name") String name, User user) throws JsonProcessingException {
+        if (StringUtils.isBlank(name) && user.isEmpty()) {
+            throw new WebApplicationException("Name and User parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
 
         try {
             BattleDrillManager manager = BattleDrillManager.getInstance();
-            manager.startBattleDrill(name);
-            return DEFAULT_JSON_WRITER.writeValueAsString(manager.getByName(name));
+            manager.startBattleDrill(name, user);
+            return JsonUtils.writeValue(manager.getByName(name));
         } catch (ItemNotFoundException b) {
             throw new WebApplicationException(b, Response.Status.BAD_REQUEST);
         }
@@ -126,14 +125,14 @@ public class BattleDrillService {
 
     @PUT
     @Path("/stop/{name}")
-    public String stopBattleDrill(@PathParam("name") String name) throws JsonProcessingException {
-        if (StringUtils.isBlank(name)) {
-            throw new WebApplicationException("Name parameter cannot be blank", Response.Status.BAD_REQUEST);
+    public String stopBattleDrill(@PathParam("name") String name, User user) throws JsonProcessingException {
+        if (StringUtils.isBlank(name) && user.isEmpty()) {
+            throw new WebApplicationException("Name and User parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
         try {
             BattleDrillManager manager = BattleDrillManager.getInstance();
-            manager.stopBattleDrill(name);
-            return DEFAULT_JSON_WRITER.writeValueAsString(manager.getByName(name));
+            manager.stopBattleDrill(name, user);
+            return JsonUtils.writeValue(manager.getByName(name));
         } catch (ItemNotFoundException b) {
             throw new WebApplicationException(b, Response.Status.BAD_REQUEST);
         }
@@ -172,7 +171,8 @@ public class BattleDrillService {
         BattleDrillManager manager = BattleDrillManager.getInstance();
         try {
             BattleDrill battleDrill = manager.createByType(params);
-            return DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
+            return JsonUtils.writeValue(battleDrill);
+//            return DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
         } catch (DuplicateItemException | JsonProcessingException e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { MaterialIconNames } from "UTILITIES/index";
+import React, { useState, useEffect, useRef } from "react";
+import { MaterialIconNames } from "UTILITIES";
+import { Icon } from "../";
 import "./Checkbox.scss";
 
 export const CheckboxPlacement = {
@@ -14,9 +15,14 @@ export const Checkbox = ({
 	initChecked = false
 }) => {
 	const [checked, setChecked] = useState(initChecked);
-
+	const initialRender = useRef(true);
 	useEffect(() => {
-		onChangeHandler(checked);
+		// dont call onchangehandler on initial render
+		if (initialRender.current) {
+			initialRender.current = false;
+		} else {
+			onChangeHandler(checked);
+		}
 	}, [checked]);
 
 	return (
@@ -48,8 +54,8 @@ export const Checkbox = ({
 
 const getCheckmarkIcon = (checked) => {
 	if (checked) {
-		return <i className="material-icons md-24">{MaterialIconNames.CHECK_BOX}</i>;
+		return <Icon className="md-24">{MaterialIconNames.CHECK_BOX}</Icon>;
 	} else {
-		return <i className="material-icons md-24">{MaterialIconNames.CHECK_BOX_OUTLINE_BLANK}</i>;
+		return <Icon className="md-24">{MaterialIconNames.CHECK_BOX_OUTLINE_BLANK}</Icon>;
 	}
 };

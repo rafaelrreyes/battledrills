@@ -1,36 +1,41 @@
 @import "~CSS/index";
 
-$spinner-size-extra-extra-small: 1em;
-$spinner-size-extra-small: 2em;
-$spinner-size-small: 3em;
-$spinner-size-medium: 4em;
-$spinner-size-large: 5em;
-$spinner-size-extra-large: 6em;
+$spinner-size-extra-extra-small: 16px;
+$spinner-size-extra-small: 24px;
+$spinner-size-small: 32px;
+$spinner-size-default: 48px;
+$spinner-size-medium: 64px;
+$spinner-size-large: 80px;
+$spinner-size-extra-large: 96px;
 
-$transform-origin-extra-extra-small: 0.5em;
-$transform-origin-extra-small: 1em;
-$transform-origin-small: 1.5em;
-$transform-origin-medium: 2em;
-$transform-origin-large: 2.5em;
-$transform-origin-extra-large: 3em;
+$transform-origin-extra-extra-small: 8px;
+$transform-origin-extra-small: 12px;
+$transform-origin-small: 16px;
+$transform-origin-default: 24px;
+$transform-origin-medium: 32px;
+$transform-origin-large: 40px;
+$transform-origin-extra-large: 48px;
 
-$div-top-left-extra-extra-small: 0.1em;
-$div-top-left-extra-small: 1.5625em;
-$div-top-left-small: 2.34375em;
-$div-top-left-medium: 3.125em;
-$div-top-left-large: 3.90625em;
-$div-top-left-extra-large: 4.6875em;
+$div-top-left-extra-extra-small: 12.5px;
+$div-top-left-extra-small: 19px;
+$div-top-left-small: 25px;
+$div-top-left-default: 37.5px;
+$div-top-left-medium: 50px;
+$div-top-left-large: 62.5px;
+$div-top-left-extra-large: 75px;
 
-$div-height-width-extra-extra-small: 0.1em;
-$div-height-width-extra-small: 0.1875em;
-$div-height-width-small: 0.28125em;
-$div-height-width-medium: 0.375em;
-$div-height-width-large: 0.46875em;
-$div-height-width-extra-large: 0.5625em;
+$div-height-width-extra-extra-small: 1.5px;
+$div-height-width-extra-small: 2.25px;
+$div-height-width-small: 3px;
+$div-height-width-default: 4.5px;
+$div-height-width-medium: 6px;
+$div-height-width-large: 7.5px;
+$div-height-width-extra-large: 9px;
 
 %spinner-template {
 	display: inline-block;
 	position: relative;
+	vertical-align: middle;
 }
 
 %div-after-template {
@@ -58,6 +63,11 @@ $div-height-width-extra-large: 0.5625em;
 		width: $spinner-size-small;
 		height: $spinner-size-small;
 	}
+	&-default {
+		@extend %spinner-template;
+		width: $spinner-size-default;
+		height: $spinner-size-default;
+	}
 	&-md {
 		@extend %spinner-template;
 		width: $spinner-size-medium;
@@ -77,28 +87,29 @@ $div-height-width-extra-large: 0.5625em;
 
 // ^ is for classes beginning with "spin-div"
 // $ is for classes ending in "xes"
-[class^="spin-div"][class$="xes"] {
+[class^="spin-div"] {
 	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+[class^="spin-div"][class$="xes"] {
 	transform-origin: $transform-origin-extra-extra-small $transform-origin-extra-extra-small;
 }
 [class^="spin-div"][class$="xs"] {
-	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	transform-origin: $transform-origin-extra-small $transform-origin-extra-small;
 }
 [class^="spin-div"][class$="sm"] {
-	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	transform-origin: $transform-origin-small $transform-origin-small;
 }
+[class^="spin-div"][class$="default"] {
+	transform-origin: $transform-origin-default $transform-origin-default;
+}
 [class^="spin-div"][class$="md"] {
-	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	transform-origin: $transform-origin-medium $transform-origin-medium;
 }
 [class^="spin-div"][class$="lg"] {
-	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	transform-origin: $transform-origin-large $transform-origin-large;
 }
 [class^="spin-div"][class$="xl"] {
-	animation: spinner 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 	transform-origin: $transform-origin-extra-large $transform-origin-extra-large;
 }
 
@@ -122,6 +133,13 @@ $div-height-width-extra-large: 0.5625em;
 	height: $div-height-width-small;
 	top: $div-top-left-small;
 	left: $div-top-left-small;
+}
+[class^="spin-div"][class$="default"]:after {
+	@extend %div-after-template;
+	width: $div-height-width-default;
+	height: $div-height-width-default;
+	top: $div-top-left-default;
+	left: $div-top-left-default;
 }
 [class^="spin-div"][class$="md"]:after {
 	@extend %div-after-template;

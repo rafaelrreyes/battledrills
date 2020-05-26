@@ -5,19 +5,23 @@ import {
 	CreateDrillContainer,
 	Version,
 	Confirmation,
-	Settings,
 	NewOwnerContainer,
-	NewTaskContainer
-} from "./ModalContent/index";
-import { getModalContentType, getModalContentData, closeModal } from "REDUX/index";
+	NewTaskContainer,
+	CreateTemplateContainer,
+	SaveTemplateContainer,
+	ManageTemplatesContainer
+} from "./ModalContent/";
+import { getModalContentType, getModalContentData, closeModal } from "REDUX";
 
 export const ModalContentTypes = {
 	NEW_DRILL: "NEW_DRILL",
 	VERSION: "VERSION",
 	CONFIRMATION: "CONFIRMATION",
-	SETTINGS: "SETTINGS",
 	NEW_OWNER: "NEW_OWNER",
-	NEW_TASK: "NEW_TASK"
+	NEW_TASK: "NEW_TASK",
+	CREATE_TEMPLATE: "CREATE_TEMPLATE",
+	SAVE_TEMPLATE: "SAVE_TEMPLATE",
+	MANAGE_TEMPLATES: "MANAGE_TEMPLATES"
 };
 
 export const ModalContainer = () => {
@@ -27,6 +31,16 @@ export const ModalContainer = () => {
 	const dispatch = useDispatch();
 	const contentData = useSelector(getModalContentData);
 	const contentType = useSelector(getModalContentType);
+
+	const close = () => {
+		// if cancel action is specified, do that instead, can be whatever developer specifies
+		if (contentData.hasOwnProperty("cancelAction") && contentData.cancelAction) {
+			contentData.cancelAction();
+		} else {
+			dispatch(closeModal());
+			setDisableSubmit(false);
+		}
+	};
 
 	const submitModal = () => {
 		if (!disableSubmit && contentData.hasOwnProperty("action") && contentData.action) {
@@ -55,6 +69,7 @@ export const ModalContainer = () => {
 						title={contentData.title}
 						icon={contentData.icon}
 						validity={validity}
+						drillType={contentData.drillType}
 						submit={submitModal} //this is for submitting on "enter" key press
 					/>
 				);
@@ -68,20 +83,11 @@ export const ModalContainer = () => {
 						description={contentData.description}
 					/>
 				);
-			case ModalContentTypes.SETTINGS:
-				return (
-					<Settings
-						title={contentData.title}
-						icon={contentData.icon}
-						description={contentData.description}
-						updateData={updateData}
-					/>
-				);
 			case ModalContentTypes.NEW_OWNER:
 				return (
 					<NewOwnerContainer
+						{...contentData}
 						updateData={updateData}
-						fromPalette={contentData.fromPalette}
 						updateDisableSubmit={updateDisableSubmit}
 						submit={submitModal}
 					/>
@@ -89,12 +95,35 @@ export const ModalContainer = () => {
 			case ModalContentTypes.NEW_TASK:
 				return (
 					<NewTaskContainer
+						{...contentData}
 						updateData={updateData}
-						fromPalette={contentData.fromPalette}
 						updateDisableSubmit={updateDisableSubmit}
 						submit={submitModal}
 					/>
 				);
+			case ModalContentTypes.CREATE_TEMPLATE:
+				return (
+					<CreateTemplateContainer
+						title={contentData.title}
+						updateData={updateData}
+						templates={contentData.templates}
+						updateDisableSubmit={updateDisableSubmit}
+						icon={contentData.icon}
+						submit={submitModal}
+					/>
+				);
+			case ModalContentTypes.SAVE_TEMPLATE:
+				return (
+					<SaveTemplateContainer
+						defaultValue={contentData.defaultValue}
+						updateData={updateData}
+						updateDisableSubmit={updateDisableSubmit}
+						icon={contentData.icon}
+						submit={submitModal}
+					/>
+				);
+			case ModalContentTypes.MANAGE_TEMPLATES:
+				return <ManageTemplatesContainer title={contentData.title} icon={contentData.icon} />;
 			default:
 				return (
 					<Confirmation
@@ -118,10 +147,7 @@ export const ModalContainer = () => {
 			{contentType !== null && (
 				<Modal
 					disable={disableSubmit}
-					close={() => {
-						dispatch(closeModal());
-						setDisableSubmit(false);
-					}}
+					close={close}
 					submit={submitModal}
 					singleButton={singleButton}
 					acceptText={acceptText}

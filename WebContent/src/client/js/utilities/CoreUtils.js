@@ -1,3 +1,11 @@
+export const deepClone = (obj) => {
+	return JSON.parse(JSON.stringify(obj));
+};
+
+export const generateRandomId = () => {
+	return Math.random().toString(36).substr(2, 9);
+};
+
 export const isContentOverflowed = (element) => {
 	if (element) {
 		if (element.scrollWidth > element.clientWidth) {

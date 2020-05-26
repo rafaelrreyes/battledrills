@@ -1,14 +1,14 @@
 @import "palette";
 
-$material-icon-xxxs-size: 0.75em;
-$material-icon-xxs-size: 0.875em;
-$material-icon-xs-size: 1em;
-$material-icon-sm-size: 1.125em;
-$material-icon-md-size: 1.25em;
-$material-icon-default-size: 1.5em;
-$material-icon-lg-size: 2.25em;
-$material-icon-xl-size: 3em;
-$material-icon-xxl-size: 6em;
+$material-icon-xxxs-size: 12px;
+$material-icon-xxs-size: 14px;
+$material-icon-xs-size: 16px;
+$material-icon-sm-size: 18px;
+$material-icon-md-size: 20px;
+$material-icon-default-size: 24px;
+$material-icon-lg-size: 28px;
+$material-icon-xl-size: 48px;
+$material-icon-xxl-size: 96px;
 
 @mixin icons($size: $material-icon-default-size) {
 	font-size: $size;
@@ -27,6 +27,7 @@ $material-icon-xxl-size: 6em;
 	white-space: nowrap;
 	direction: ltr;
 	color: $white;
+	cursor: pointer;
 	@include icons();
 
 	-webkit-touch-callout: none; /* iOS Safari */
