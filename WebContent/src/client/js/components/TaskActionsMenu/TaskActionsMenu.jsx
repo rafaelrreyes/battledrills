@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getAvailableActions } from "./TaskActionsMenuHelper";
-import { MenuDropdown } from "CORE/index";
-import { API } from "UTILITIES/index";
+import { MenuDropdown } from "CORE";
+import { API } from "UTILITIES";
 import "./TaskActionsMenu.scss";
 
 const TaskActionsMenu = ({ closeMenu, taskId }) => {

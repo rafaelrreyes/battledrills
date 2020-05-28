@@ -2,7 +2,6 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { MaterialIconNames, generateRandomId } from "UTILITIES";
 import { ModalContentTypes, Icon, TooltipPlacement } from "CORE";
-import "./TemplateEditorPaletteView.scss";
 import {
 	showModal,
 	closeModal,
@@ -11,7 +10,7 @@ import {
 	addTaskToTemplate,
 	undoTemplateEdit,
 	redoTemplateEdit,
-	setSelectedTemplate,
+	openBlankTemplate,
 	getPastEdits,
 	getFutureEdits,
 	clearAllFromTemplate,
@@ -20,54 +19,48 @@ import {
 
 import { saveTemplate, promptCurrentEditSave } from "../TemplateEditorHelper";
 
-const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
+import "./TemplateEditorPaletteView.scss";
+
+const TemplateEditorPaletteView = ({ onViewTemplates, onToggleGrid, isGridEnabled = false }) => {
 	const selectedTemplate = useSelector(getSelectedTemplate);
 	const pastEdits = useSelector(getPastEdits);
 	const futureEdits = useSelector(getFutureEdits);
 
 	const dispatch = useDispatch();
 
-	const toggleViewTemplates = () => {
+	const toggleViewTemplatesHandler = () => {
 		onViewTemplates();
+	};
+
+	const openBlankTemplateHandler = () => {
+		dispatch(openBlankTemplate());
+		dispatch(
+			showModal(ModalContentTypes.NEW_OWNER, {
+				title: `Add Root Role`,
+				icon: MaterialIconNames.ACCOUNT,
+				fromTemplate: true,
+				fromPalette: true,
+				action: ({ role, parent }) => {
+					dispatch(addRoleToTemplate({ role, parent }));
+					dispatch(closeModal());
+				}
+			})
+		);
 	};
 
 	const createNewTemplate = () => {
 		if (selectedTemplate !== null && pastEdits.length !== 0) {
 			promptCurrentEditSave(() => {
 				saveTemplate(() => {
-					dispatch(
-						setSelectedTemplate({
-							type: `template-${generateRandomId()}`,
-							participants: [],
-							data: {}
-						})
-					);
+					openBlankTemplateHandler();
 				});
 			});
 		} else {
-			dispatch(
-				setSelectedTemplate({
-					type: `template-${generateRandomId()}`,
-					participants: [],
-					data: {}
-				})
-			);
-			dispatch(
-				showModal(ModalContentTypes.NEW_OWNER, {
-					title: `Add Root Role`,
-					icon: MaterialIconNames.ACCOUNT,
-					fromTemplate: true,
-					fromPalette: true,
-					action: ({ role, parent }) => {
-						dispatch(addRoleToTemplate({ role, parent }));
-						dispatch(closeModal());
-					}
-				})
-			);
+			openBlankTemplateHandler();
 		}
 	};
 
-	const addRole = () => {
+	const addRoleHandler = () => {
 		dispatch(
 			showModal(ModalContentTypes.NEW_OWNER, {
 				title: `Add New Role`,
@@ -82,7 +75,7 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 		);
 	};
 
-	const addTask = () => {
+	const addTaskHandler = () => {
 		dispatch(
 			showModal(ModalContentTypes.NEW_TASK, {
 				title: `Add New Task`,
@@ -104,15 +97,15 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 		);
 	};
 
-	const undo = () => {
+	const undoHandler = () => {
 		dispatch(undoTemplateEdit());
 	};
 
-	const redo = () => {
+	const redoHandler = () => {
 		dispatch(redoTemplateEdit());
 	};
 
-	const clearAll = () => {
+	const clearAllHandler = () => {
 		dispatch(clearAllFromTemplate());
 		dispatch(resetSelectedTaskTemplate());
 	};
@@ -121,10 +114,14 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 		saveTemplate();
 	};
 
+	const gridButtonHandler = () => {
+		onToggleGrid();
+	};
+
 	const renderUndoButton = () => {
 		const disabled = pastEdits.length === 0;
 		return (
-			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={undo}>
+			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={undoHandler}>
 				<Icon tooltip="Undo" tooltipPlacement={TooltipPlacement.BOTTOM}>
 					{MaterialIconNames.UNDO}
 				</Icon>
@@ -135,7 +132,7 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 	const renderRedoButton = () => {
 		const disabled = futureEdits.length === 0;
 		return (
-			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={redo}>
+			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={redoHandler}>
 				<Icon tooltip="Redo" tooltipPlacement={TooltipPlacement.BOTTOM}>
 					{MaterialIconNames.REDO}
 				</Icon>
@@ -146,7 +143,7 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 	const renderAddAccountButton = () => {
 		const disabled = selectedTemplate === null;
 		return (
-			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={addRole}>
+			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={addRoleHandler}>
 				<Icon>{MaterialIconNames.ADD}</Icon>
 				<Icon>{MaterialIconNames.ACCOUNT}</Icon>
 				<label className="editor-button-label">Role</label>
@@ -157,7 +154,7 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 	const renderAddTaskButton = () => {
 		const disabled = selectedTemplate === null;
 		return (
-			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={addTask}>
+			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={addTaskHandler}>
 				<Icon>{MaterialIconNames.ADD}</Icon>
 				<Icon>{MaterialIconNames.TASK}</Icon>
 				<label className="editor-button-label">Task</label>
@@ -169,7 +166,7 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 		// can only delete if a template is selected, or if selected template actually has data to clear
 		const disabled = selectedTemplate === null || !selectedTemplate.data.hasOwnProperty("title");
 		return (
-			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={clearAll}>
+			<div className={`editor-button ${disabled ? "disabled" : ""}`} onClick={clearAllHandler}>
 				<Icon tooltip="Delete All" tooltipPlacement={TooltipPlacement.BOTTOM}>
 					{MaterialIconNames.DELETE_FOREVER}
 				</Icon>
@@ -188,25 +185,58 @@ const TemplateEditorPaletteView = ({ diagram, onViewTemplates }) => {
 		);
 	};
 
+	const renderNewTemplateButton = () => {
+		return (
+			<div className="editor-button" onClick={createNewTemplate}>
+				<Icon>{MaterialIconNames.ADD}</Icon>
+				<label className="editor-button-label">New Template</label>
+			</div>
+		);
+	};
+
+	const renderViewTemplatesButton = () => {
+		return (
+			<div className="editor-button" onClick={toggleViewTemplatesHandler}>
+				<Icon tooltip="View Templates" tooltipPlacement={TooltipPlacement.BOTTOM}>
+					{MaterialIconNames.LIST}
+				</Icon>
+			</div>
+		);
+	};
+
+	const renderGridButton = () => {
+		if (isGridEnabled) {
+			return (
+				<div className="editor-button" onClick={gridButtonHandler}>
+					<Icon tooltip="Turn Grid Off" tooltipPlacement={TooltipPlacement.BOTTOM}>
+						{MaterialIconNames.GRID_ON}
+					</Icon>
+				</div>
+			);
+		} else {
+			return (
+				<div className="editor-button" onClick={gridButtonHandler}>
+					<Icon tooltip="Turn Grid On" tooltipPlacement={TooltipPlacement.BOTTOM}>
+						{MaterialIconNames.GRID_OFF}
+					</Icon>
+				</div>
+			);
+		}
+	};
+
 	return (
 		<div className="template-editor-palette-view">
 			<div className="template-editor-palette-commands">
 				{/* // TODO maybe we want to combine "ADD and CREATE into a dropdown or are" */}
-				<div className="editor-button" onClick={createNewTemplate}>
-					<Icon>{MaterialIconNames.ADD}</Icon>
-					<label className="editor-button-label">New Template</label>
-				</div>
+				{renderNewTemplateButton()}
 				{renderAddAccountButton()}
 				{renderAddTaskButton()}
 				{renderUndoButton()}
 				{renderRedoButton()}
 				{renderDeleteAllButton()}
+				{renderGridButton()}
 				{renderSaveButton()}
-				<div className="editor-button" onClick={toggleViewTemplates}>
-					<Icon tooltip="View Templates" tooltipPlacement={TooltipPlacement.BOTTOM}>
-						{MaterialIconNames.LIST}
-					</Icon>
-				</div>
+				{renderViewTemplatesButton()}
 			</div>
 		</div>
 	);

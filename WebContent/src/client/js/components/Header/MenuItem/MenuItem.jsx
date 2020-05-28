@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { MenuDropdown } from "CORE/index";
-import { MaterialIconNames } from "UTILITIES/index";
+import { MenuDropdown, Icon } from "CORE";
+import { MaterialIconNames } from "UTILITIES";
 import "./MenuItem.scss";
 
 const MenuItem = ({ children, options, active }) => {
 	const [showOptions, setShowOptions] = useState(false);
 
-	const onMenuClick = () => {
+	const menuClickHandler = () => {
 		setShowOptions(!showOptions);
 	};
 
@@ -14,14 +14,12 @@ const MenuItem = ({ children, options, active }) => {
 		<>
 			<span
 				className={`header-menu-item ${active ? `active-link` : ``} ${showOptions ? `selected-link` : ``}`}
-				onClick={onMenuClick}
+				onClick={menuClickHandler}
 			>
 				{children}
-				<i className={`material-icons md-18 ${active ? `active-link-icon` : ``}`}>
-					{MaterialIconNames.EXPAND_MORE}
-				</i>
+				<Icon className={`md-18 ${active ? `active-link-icon` : ``}`}>{MaterialIconNames.EXPAND_MORE}</Icon>
 			</span>
-			{showOptions && <MenuDropdown menuOptions={options} closeMenu={onMenuClick}></MenuDropdown>}
+			{showOptions && <MenuDropdown menuOptions={options} closeMenu={menuClickHandler}></MenuDropdown>}
 		</>
 	);
 };

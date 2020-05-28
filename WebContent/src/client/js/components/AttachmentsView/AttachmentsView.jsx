@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { AttachmentsListView } from "COMPONENTS";
+import AttachmentsListView from "./AttachmentsListView/AttachmentsListView";
 import { FileInput, ModalContentTypes, Icon } from "CORE";
 import { getUser, addDrillAttachment, addTaskAttachment, editSelectedTaskNotes, showModal, closeModal } from "REDUX";
 import moment from "moment-timezone";
@@ -10,7 +10,7 @@ import { CancelToken } from "axios";
 // scss
 import "./AttachmentsView.scss";
 
-const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
+const AttachmentsView = ({ selectedObject, type, isCollapsible = false }) => {
 	const dispatch = useDispatch();
 
 	const user = useSelector(getUser);
@@ -21,8 +21,8 @@ const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
 	const [uploadProgress, setUploadProgress] = useState(0);
 	const [source, setSource] = useState(CancelToken.source());
 
-	const [collapsed, setCollapsed] = useState(() => {
-		return collapsible ? true : false;
+	const [isCollapsed, setIsCollapsed] = useState(() => {
+		return isCollapsible ? true : false;
 	});
 
 	useEffect(() => {
@@ -30,12 +30,12 @@ const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
 		setFilename("");
 	}, [selectedObject]);
 
-	const onFileAdded = (file, filename) => {
+	const setFileHandler = (file, filename) => {
 		setFile(file);
 		setFilename(filename);
 	};
 
-	const attemptUpload = () => {
+	const attemptUploadHandler = () => {
 		// check if file exists, overwrite
 
 		const requestBody = {
@@ -46,29 +46,24 @@ const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
 			}
 		};
 
-		API.checkAttachmentExists(
-			requestBody,
-			(data) => {
-				const exists = data;
-				if (exists) {
-					dispatch(
-						showModal(ModalContentTypes.CONFIRMATION, {
-							title: `Attachment "${filename} exists. Do you want to overwrite it?`,
-							icon: MaterialIconNames.ATTACHMENT,
-							action: () => {
-								uploadAttachment(exists);
-								dispatch(closeModal());
-							}
-						})
-					);
-				} else {
-					uploadAttachment(exists);
-				}
-			},
-			() => {
-				// TODO error
+		API.checkAttachmentExists(requestBody, (data) => {
+			// if data exists, overwrite
+			const isOverwrite = data ? true : false;
+			if (isOverwrite) {
+				dispatch(
+					showModal(ModalContentTypes.CONFIRMATION, {
+						title: `Attachment "${filename} exists. Do you want to overwrite it?`,
+						icon: MaterialIconNames.ATTACHMENT,
+						action: () => {
+							uploadAttachment(true);
+							dispatch(closeModal());
+						}
+					})
+				);
+			} else {
+				uploadAttachment(false);
 			}
-		);
+		});
 	};
 
 	const uploadAttachment = (isOverwrite) => {
@@ -140,7 +135,7 @@ const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
 		);
 	};
 
-	const cancelUpload = () => {
+	const cancelUploadHandler = () => {
 		source.cancel("Cancelled upload");
 		setIsUploading(false);
 		setUploadProgress(0);
@@ -150,56 +145,55 @@ const AttachmentsView = ({ selectedObject, type, collapsible = false }) => {
 	};
 
 	const renderUploadProgress = (uploadProgress) => {
-		if (!collapsed) {
-			return uploadProgress !== 0 ? (
+		return (
+			!isCollapsed &&
+			uploadProgress !== 0 && (
 				<div className="upload-progress">
 					<span className="upload-bar" style={{ width: `${uploadProgress}%`, height: `1.5em` }}>
 						<span className="upload-percentage">{`${uploadProgress}%`}</span>
 					</span>
 				</div>
-			) : null;
-		}
+			)
+		);
 	};
 
 	const renderHeader = () => {
-		if (collapsible) {
-			return (
-				<h1
-					className="attachments-header"
-					style={{ cursor: `${collapsible ? "pointer" : "default"}` }}
-					onClick={() => {
-						setCollapsed(!collapsed);
-					}}
-				>
-					<span>Attachments</span>
-					<Icon>{collapsed ? MaterialIconNames.ARROW_DROP_DOWN : MaterialIconNames.ARROW_UP}</Icon>
-				</h1>
-			);
-		}
-
-		return (
+		let header = isCollapsible ? (
+			<h1
+				className="attachments-header"
+				style={{ cursor: `${isCollapsible ? "pointer" : "default"}` }}
+				onClick={() => {
+					setIsCollapsed(!isCollapsed);
+				}}
+			>
+				<span>Attachments</span>
+				<Icon>{isCollapsed ? MaterialIconNames.ARROW_DROP_DOWN : MaterialIconNames.ARROW_UP}</Icon>
+			</h1>
+		) : (
 			<h1 className="attachments-header">
 				<span>Attachments</span>
 			</h1>
 		);
+
+		return header;
 	};
 
 	const renderAttachmentView = () => {
-		if (!collapsed) {
-			return (
+		return (
+			!isCollapsed && (
 				<>
 					<AttachmentsListView attachmentType={type} selectedObject={selectedObject} user={user} />
 					<FileInput
-						onFileAdded={onFileAdded}
+						onFileAdded={setFileHandler}
 						resetDependency={selectedObject}
 						isDisabled={isUploading}
 						isUploading={isUploading}
-						onFileUploaded={attemptUpload}
-						cancelUpload={cancelUpload}
+						onFileUploaded={attemptUploadHandler}
+						onCancelUpload={cancelUploadHandler}
 					/>
 				</>
-			);
-		}
+			)
+		);
 	};
 
 	return (

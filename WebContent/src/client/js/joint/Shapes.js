@@ -4,7 +4,7 @@ import joint from "jointjs/index";
 import $ from "jquery";
 import _ from "lodash";
 import { getTaskItemStyle, getLiElement } from "./BattleDrillHelper";
-import { STATUS_TYPES, selectTask, selectTaskTemplate } from "UTILITIES";
+import { StatusTypes, selectTask, selectTaskTemplate } from "UTILITIES";
 import { TaskActionsMenu, OwnerActionsMenu } from "COMPONENTS";
 
 joint.shapes.html = {};
@@ -179,7 +179,7 @@ joint.shapes.html.ActionView = joint.dia.ElementView.extend({
 
 		// not a template, show completed items
 		if (!isTemplate) {
-			let allTasksCompleted = tasks.filter((task) => task.currentStatus.status !== STATUS_TYPES.COMPLETED);
+			let allTasksCompleted = tasks.filter((task) => task.currentStatus.status !== StatusTypes.COMPLETED);
 
 			if (allTasksCompleted.length === 0) {
 				this.$box.find("ul").addClass("all-completed");

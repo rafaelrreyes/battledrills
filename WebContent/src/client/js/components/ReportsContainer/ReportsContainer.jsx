@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Chart, ExportPDF, DROPDOWN_DEFAULT } from "CORE";
+import { Chart, ExportPDF } from "CORE";
 import { API, Routes, parseType } from "UTILITIES";
 import { getAllDrills, getSelectedDrill } from "REDUX";
-import { updateAllDrills, setCurrentView, setSelectedDrill, resetSelectedDrill } from "REDUX";
+import { updateAllDrills, setCurrentView } from "REDUX";
 import { ReportsSelect } from "./ReportsSelect/ReportsSelect";
 import { createTimeToCompletion, createTaskStatusSummary } from "./ReportsHelper";
 import "./ReportsContainer.scss";
@@ -25,18 +25,12 @@ const ReportsContainer = () => {
 
 	useEffect(() => {
 		dispatch(setCurrentView(Routes.REPORTS));
-		API.all(
-			{},
-			(res) => {
-				dispatch(updateAllDrills(res));
-			},
-			(err) => {
-				console.error(err);
-			}
-		);
+		API.all({}, (res) => {
+			dispatch(updateAllDrills(res));
+		});
 	}, []);
 
-	const saveCharts = (chart) => {
+	const saveChartsHandler = (chart) => {
 		if (chart !== null) {
 			// there is likely a better way to do this
 			// sometimes the chart can be saved in the wrong order so exporting will have charts out of order
@@ -47,7 +41,7 @@ const ReportsContainer = () => {
 		}
 	};
 
-	const onGenerateReport = (drillName, drills) => {
+	const generateReportHandler = (drillName, drills) => {
 		setDrillToGenerate(drillName);
 		setCompareDrills(drills);
 		setCharts([]); // clear array of charts on new generates
@@ -66,7 +60,7 @@ const ReportsContainer = () => {
 				<ReportsSelect
 					selectedDrillName={drillToGenerate}
 					allDrills={allDrills}
-					onGenerateReport={onGenerateReport}
+					onGenerateReport={generateReportHandler}
 				></ReportsSelect>
 				<ExportPDF
 					images={getBase64Images()}
@@ -80,7 +74,7 @@ const ReportsContainer = () => {
 					<Chart
 						render={render}
 						createChart={createTimeToCompletion}
-						saveChart={saveCharts}
+						saveChart={saveChartsHandler}
 						drillName={drillToGenerate}
 						reportType={ReportTypes.TimeToCompletion}
 						compareDrillNames={compareDrills}
@@ -88,7 +82,7 @@ const ReportsContainer = () => {
 					<Chart
 						render={render}
 						createChart={createTaskStatusSummary}
-						saveChart={saveCharts}
+						saveChart={saveChartsHandler}
 						drillName={drillToGenerate}
 						reportType={ReportTypes.TaskStatusSummary}
 					></Chart>

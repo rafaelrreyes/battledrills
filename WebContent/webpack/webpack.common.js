@@ -42,11 +42,12 @@ module.exports = {
 			CSS: path.resolve(__dirname, "../src/client/css/"), // @import "~CSS/..."
 			UTILITIES: path.resolve(__dirname, "../src/client/js/utilities/"), // import * from "UTILITIES/..."
 			REDUX: path.resolve(__dirname, "../src/client/js/redux/"), // import * from "REDUX/..."
-			CORE: path.resolve(__dirname, "../src/client/js/components/core/"), // import * from "CORE/..."
+			CORE: path.resolve(__dirname, "../src/client/js/core/"), // import * from "CORE/..."
 			COMPONENTS: path.resolve(__dirname, "../src/client/js/components/"), // import * from "COMPONENTS/..."
 			HOOKS: path.resolve(__dirname, "../src/client/js/hooks/"), // import * from "HOOKS/..."
 			IMAGES: path.resolve(__dirname, "../src/client/lib/images/"), // import * from "IMAGES/..."
-			FONTS: path.resolve(__dirname, "../src/client/lib/fonts/")
+			FONTS: path.resolve(__dirname, "../src/client/lib/fonts/"),
+			JOINT: path.resolve(__dirname, "../src/client/js/joint/") // import * from "JOINT/..."
 		},
 		extensions: [".js", ".jsx", "*"]
 	},

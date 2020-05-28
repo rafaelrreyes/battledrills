@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatContainer } from "../index";
+import { ChatContainer } from "COMPONENTS";
 import "./Footer.scss";
 
 const Footer = () => (

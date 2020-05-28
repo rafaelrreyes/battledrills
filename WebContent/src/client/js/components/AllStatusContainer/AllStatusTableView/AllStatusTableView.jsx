@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { AllStatusItemView } from "../../index";
+import AllStatusItemView from "./AllStatusItemView";
 import "./AllStatusTableView.scss";
-import { FILTER_DROPDOWN_CONSTANTS } from "CORE/FilterDropdown/FilterDropdown";
+import { FilterDropdownDefaults } from "CORE";
 
 const AllStatusTableView = ({ roles, drills, statuses, onTaskLinkClick }) => {
 	return (
@@ -31,7 +31,7 @@ const renderDrillHeaders = (drills, roles) => {
 
 const renderStatuses = (roles, drills, statuses, onTaskLinkClick) => {
 	return roles.map((role, index) => {
-		if (role !== FILTER_DROPDOWN_CONSTANTS.ALL) {
+		if (role !== FilterDropdownDefaults.ALL) {
 			return (
 				<div key={role + index} className="all-status-role-row">
 					<div className="all-status-role-name">{role}</div>

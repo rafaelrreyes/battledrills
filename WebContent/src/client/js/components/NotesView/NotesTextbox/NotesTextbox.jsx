@@ -13,11 +13,11 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 
 	const dispatch = useDispatch();
 
-	const onTaskNoteChange = (value) => {
+	const taskNoteChangeHandler = (value) => {
 		setNote(value);
 	};
 
-	const resetClearTextState = () => {
+	const resetTextHandler = () => {
 		setClearText(false);
 	};
 
@@ -27,7 +27,7 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 		}
 	};
 
-	const onSubmitTaskNote = () => {
+	const submitHandler = () => {
 		if (isMaxCharacters(note, MAX_CHARACTERS_ALLOWED + 1) || isTextEmpty(note)) {
 			return;
 		}
@@ -36,7 +36,7 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 			user,
 			noteText: note
 		};
-		//submit an API request here to submit the new note, and update reducer using deepTaskUpdate
+
 		API.addTaskNote(requestPayload, (response) => {
 			//create a notification here
 			//clear out the input field
@@ -53,14 +53,14 @@ const NotesTextbox = ({ taskId, user, scrollToBottom }) => {
 				<Textbox
 					focusOnMount={false}
 					placeholder="Enter message"
-					onChange={onTaskNoteChange}
+					onChange={taskNoteChangeHandler}
 					clearText={clearText}
-					enterSubmit={onSubmitTaskNote}
-					resetClearTextState={resetClearTextState}
+					enterSubmit={submitHandler}
+					resetClearTextState={resetTextHandler}
 				/>
 				<button
 					className="no-button"
-					onClick={onSubmitTaskNote}
+					onClick={submitHandler}
 					disabled={isMaxCharacters(note, MAX_CHARACTERS_ALLOWED + 1) || isTextEmpty(note)}
 				>
 					<Icon className="md-24 notes-send-icon">{MaterialIconNames.SEND}</Icon>

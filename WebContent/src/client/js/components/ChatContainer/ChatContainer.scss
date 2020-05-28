@@ -36,6 +36,16 @@
 			flex-direction: row;
 			justify-content: center;
 			position: relative;
+
+			.contacts-list-header {
+				display: flex;
+				align-items: center;
+
+				.contacts-list-header-label {
+					margin-left: 0.25em;
+				}
+			}
+
 			.contacts-view-minimize-button {
 				cursor: pointer;
 				position: absolute;

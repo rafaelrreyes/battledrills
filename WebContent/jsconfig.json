@@ -7,7 +7,7 @@
 			"CSS/*": ["src/client/css/*"],
 			"UTILITIES/*": ["src/client/js/utilities/*"],
 			"REDUX/*": ["src/client/js/redux/*"],
-			"CORE/*": ["src/client/js/components/core/*"],
+			"CORE/*": ["src/client/js/core/*"],
 			"COMPONENTS/*": ["src/client/js/components/*"],
 			"HOOKS/*": ["src/client/js/hooks/*"],
 			"FONTS/*": ["src/client/lib/fonts"]

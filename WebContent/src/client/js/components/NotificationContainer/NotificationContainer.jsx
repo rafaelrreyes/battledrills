@@ -1,7 +1,7 @@
-import { useSelector } from "react-redux";
-import { Toasts } from "../index";
 import React from "react";
-import { getToasts } from "REDUX/index";
+import { useSelector } from "react-redux";
+import { Toasts } from "CORE";
+import { getToasts } from "REDUX";
 
 const NotificationContainer = () => {
 	const toasts = useSelector(getToasts);

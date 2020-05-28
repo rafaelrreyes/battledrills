@@ -53,7 +53,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 		// will add this support later
 		const itemCommands = [
 			{
-				label: "Revert",
+				tooltip: "Revert",
 				type: "revert",
 				icon: MaterialIconNames.UNDO,
 				callback: (type) => {
@@ -94,7 +94,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 						? parseType(selectedTemplate.type)
 						: ""
 				}
-				selectHandler={onTemplateSelect}
+				selectHandler={templateSelectHandler}
 				itemCommands={itemCommands}
 				items={derivedItems}
 			/>
@@ -120,7 +120,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 
 		const itemCommands = [
 			{
-				label: "Delete",
+				tooltip: "Delete",
 				type: "delete",
 				icon: MaterialIconNames.DELETE,
 				callback: (type) => {
@@ -152,7 +152,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 				size={ListSizes.FILL}
 				itemHeader={itemHeader}
 				itemCommands={itemCommands}
-				selectHandler={onTemplateSelect}
+				selectHandler={templateSelectHandler}
 				items={derivedItems}
 				allowDeletion={true}
 				deleteHandler={deleteHandler}
@@ -164,11 +164,11 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 		return selectedTab === TabOptions.DEFAULT ? renderDefaultList() : renderCustomList();
 	};
 
-	const onTabSelect = (value) => {
+	const tabSelectHandler = (value) => {
 		setSelectedTab(value.selectedName);
 	};
 
-	const onTemplateSelect = (id, successfulSelectCallback) => {
+	const templateSelectHandler = (id, successfulSelectCallback) => {
 		// Prompt user if they want to save current changes before selecting new template
 		if (selectedTemplate !== null && pastEdits.length !== 0) {
 			promptCurrentEditSave(() => {
@@ -203,7 +203,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 			<span className="template-editor-tabs">
 				<ScrollableTabs
 					tabValues={[TabOptions.DEFAULT, TabOptions.CUSTOM]}
-					onActiveTabSelected={onTabSelect}
+					onActiveTabSelected={tabSelectHandler}
 					selectedItem={selectedTab}
 					tooltipPlacement={TooltipPlacement.BOTTOM}
 				/>

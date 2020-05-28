@@ -1,6 +1,6 @@
 @import "~CSS/index";
 
-.my-account {
+.account-view {
 	.sidebar {
 		flex: 1 9 auto;
 		display: flex;
@@ -8,6 +8,10 @@
 		padding: 20px;
 
 		.options {
+			margin: 0 auto;
+		}
+
+		.admin-options {
 			margin: 0 auto;
 		}
 	}

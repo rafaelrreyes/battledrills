@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { UserConfiguration, MaterialIconNames } from "UTILITIES/index";
-import { ChatItemView, Input, InputSizes, InputTypes } from "../index";
-import { addChat, toggleChatDisplay, swapChats, updateChat, removeChat, getUser } from "REDUX/index";
+import { UserConfiguration, MaterialIconNames } from "UTILITIES";
+import ChatItemView from "./ChatItemView/ChatItemView";
+import { Icon, Input, InputSizes, InputTypes } from "CORE";
+import { addChat, toggleChatDisplay, swapChats, updateChat, removeChat, getUser, getAllChats } from "REDUX";
 
 import "./ChatContainer.scss";
-import { getAllChats } from "REDUX/index";
 
-const DEFAULT_MAX_CHATS = 3;
 // magic number to find best number of chats/screen
 // may change if we scale the whole textbox instead of just number of boxes
 const SCREEN_WIDTH_CONSTANT = 300;
@@ -31,6 +30,7 @@ const ChatContainer = () => {
 	const [maxChats, setMaxChats] = useState(Math.floor(getWidth() / SCREEN_WIDTH_CONSTANT));
 	const chats = useSelector(getAllChats);
 	const user = useSelector(getUser);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -52,22 +52,25 @@ const ChatContainer = () => {
 			return (
 				<div className="contacts-view">
 					<div className="contacts-list-header-container">
-						<span className="contacts-list-header">Contacts</span>
-						<i
-							className="material-icons contacts-view-minimize-button"
+						<span className="contacts-list-header">
+							<Icon>{MaterialIconNames.CONTACTS}</Icon>
+							<label className="contacts-list-header-label">Contacts</label>
+						</span>
+						<Icon
+							className="contacts-view-minimize-button"
 							onClick={() => {
-								toggleContactsList();
+								toggleContactsListHandler();
 							}}
 						>
 							{MaterialIconNames.REMOVE}
-						</i>
+						</Icon>
 					</div>
 					<ul className="contacts-list">{getContacts()}</ul>
 					<div className="contacts-list-search-input">
 						<Input
 							inputType={InputTypes.REGULAR}
 							inputSize={InputSizes.FILL}
-							onChange={onContactSearchChange}
+							onChange={contactSearchHandler}
 							submit={() => {}}
 							focus={false}
 							placeholder="Search..."
@@ -80,7 +83,7 @@ const ChatContainer = () => {
 				<span
 					className="chat-button"
 					onClick={(e) => {
-						toggleContactsList();
+						toggleContactsListHandler();
 					}}
 				>
 					Chat
@@ -89,11 +92,11 @@ const ChatContainer = () => {
 		}
 	};
 
-	const onContactSearchChange = (value) => {
+	const contactSearchHandler = (value) => {
 		setUserSearchString(value);
 	};
 
-	const toggleContactsList = (e) => {
+	const toggleContactsListHandler = (e) => {
 		setShowContactsList(!showContactsList);
 		setUserSearchString("");
 	};
@@ -118,7 +121,7 @@ const ChatContainer = () => {
 							key={contact}
 							className="contact-item"
 							onClick={(e) => {
-								startNewChat(contact);
+								openNewChatHandler(contact);
 							}}
 						>
 							{contact}
@@ -135,7 +138,7 @@ const ChatContainer = () => {
 						key={contact}
 						className="contact-item"
 						onClick={(e) => {
-							startNewChat(contact);
+							openNewChatHandler(contact);
 						}}
 					>
 						{contact}
@@ -144,18 +147,26 @@ const ChatContainer = () => {
 			});
 	};
 
-	const startNewChat = (targetRole) => {
+	const openNewChatHandler = (targetRole) => {
 		// check if state already includes an open chat for this contact
 		if (chats.find((currentChat) => targetRole.toUpperCase() === currentChat.role.toUpperCase())) {
 			return;
 		}
 
-		// probably needs some work for later
+		// TODO probably needs some work for later
 		dispatch(addChat({ sender: user, target: targetRole }));
 	};
 
-	const toggleSpilloverDropdown = () => {
+	const toggleSpilloverMenuHandler = () => {
 		setDisplayExtraChats(!displayExtraChats);
+	};
+
+	const spilloverItemClickHandler = (chat, index) => {
+		// first we want to remove the chat at the 0 index, and replace it with this guy that was clicked
+		setDisplayExtraChats(!displayExtraChats);
+
+		dispatch(swapChats(index + maxChats, maxChats));
+		dispatch(toggleChatDisplay(chat, true));
 	};
 
 	const renderChatSpillOver = () => {
@@ -166,14 +177,14 @@ const ChatContainer = () => {
 		return (
 			hasExtraChats && (
 				<div className="open-chats-spill-over">
-					<i
-						className="material-icons open-chats-spill-over-button"
+					<Icon
+						className="open-chats-spill-over-button"
 						onClick={() => {
-							toggleSpilloverDropdown();
+							toggleSpilloverMenuHandler();
 						}}
 					>
 						{MaterialIconNames.CHAT_FORUM}
-					</i>
+					</Icon>
 					{displayExtraChats && (
 						<ul className="open-chats-spill-over-dropdown">{renderExtraChatsDropdown(extraChats)}</ul>
 					)}
@@ -190,7 +201,7 @@ const ChatContainer = () => {
 					value={chat.role}
 					key={chat.role + index}
 					onClick={() => {
-						handleSpillOverItemClick(chat, index);
+						spilloverItemClickHandler(chat, index);
 					}}
 				>
 					{chat.role}
@@ -199,14 +210,6 @@ const ChatContainer = () => {
 		});
 
 		return extraChatsHTML;
-	};
-
-	const handleSpillOverItemClick = (chat, index) => {
-		// first we want to remove the chat at the 0 index, and replace it with this guy that was clicked
-		setDisplayExtraChats(!displayExtraChats);
-
-		dispatch(swapChats(index + maxChats, maxChats));
-		dispatch(toggleChatDisplay(chat, true));
 	};
 
 	const renderActiveChats = () => {
@@ -218,13 +221,13 @@ const ChatContainer = () => {
 							key={chat.role}
 							chat={chat}
 							user={user}
-							updateChat={(message) => {
+							onUpdateChat={(message) => {
 								dispatch(updateChat(message));
 							}}
-							toggleChatDisplay={(chat) => {
+							onToggleChat={(chat) => {
 								dispatch(toggleChatDisplay(chat));
 							}}
-							removeChat={(chat) => {
+							onRemoveChat={(chat) => {
 								dispatch(removeChat(chat));
 							}}
 						/>

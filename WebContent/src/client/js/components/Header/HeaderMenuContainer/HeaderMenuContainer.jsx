@@ -1,24 +1,15 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NotificationView } from "COMPONENTS";
-import { MenuDropdown, Icon } from "CORE";
+import { MenuDropdown, Icon, TooltipPlacement } from "CORE";
 import { MaterialIconNames, UserConfiguration } from "UTILITIES";
-import {
-	showModal,
-	setUser,
-	getUser,
-	getRole,
-	markAllRead,
-	getUnreadNotificationsCount,
-	getToasts,
-	removeToast
-} from "REDUX";
+import { setUser, getUser, getRole, markAllRead, getUnreadNotificationsCount, getToasts, removeToast } from "REDUX";
 import { useLocalStorage } from "HOOKS";
 import "./HeaderMenuContainer.scss";
 
-const HeaderMenuContainer = ({}) => {
+const HeaderMenuContainer = () => {
 	const [showUserMenu, setShowUserMenu] = useState(false);
-	const [showNotificationsView, setShowNotificationsViewMenu] = useState(false);
+	const [showNotificationsView, setShowNotificationsView] = useState(false);
 	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", useSelector(getUser));
 
 	const dispatch = useDispatch();
@@ -28,29 +19,40 @@ const HeaderMenuContainer = ({}) => {
 	const unreadNotifications = useSelector(getUnreadNotificationsCount);
 	const toasts = useSelector(getToasts);
 
-	const rolesOptions = (function () {
+	// need to set roles statically using IIFE
+	const getRolesOptions = (function () {
 		let roles = [];
 		let definedRoles = UserConfiguration.DEFINED_ROLES;
 		definedRoles.forEach((role) => {
 			roles.push({
 				name: role,
 				menuAction: () => {
-					onSetUser(role);
+					setUserHandler(role);
 				}
 			});
 		});
 		return roles;
 	})();
 
-	const onToggleNotificationsDisplay = () => {
+	const toggleNotificationDisplayHandler = () => {
 		if (!showNotificationsView) {
 			dispatch(markAllRead());
 		}
-		setShowNotificationsViewMenu(!showNotificationsView);
+		setShowNotificationsView(!showNotificationsView);
 	};
 
-	const onUserIconClicked = () => {
+	const userIconClickHandler = () => {
 		setShowUserMenu(!showUserMenu);
+	};
+
+	const deleteNotificationHandler = (toastId) => {
+		dispatch(removeToast(toastId));
+	};
+
+	const setUserHandler = (role) => {
+		// change later when we have a username
+		setLoggedInUser({ username: role, role });
+		dispatch(setUser({ username: role, role }));
 	};
 
 	const renderNotificationsCounter = () => {
@@ -61,41 +63,51 @@ const HeaderMenuContainer = ({}) => {
 		return null;
 	};
 
-	const onDeleteNotification = (toastId) => {
-		dispatch(removeToast(toastId));
+	const renderNotificationsButton = () => {
+		return (
+			<Icon
+				className={`menu-icon ${showNotificationsView ? "toggled" : ""}`}
+				onClick={toggleNotificationDisplayHandler}
+				tooltip="Notifications"
+				tooltipPlacement={TooltipPlacement.BOTTOM}
+			>
+				{MaterialIconNames.NOTIFICATION}
+			</Icon>
+		);
 	};
 
-	const onSetUser = (role) => {
-		// change later when we have a username
-		setLoggedInUser({ username: role, role });
-		dispatch(setUser({ username: role, role }));
+	const renderNotificationView = () => {
+		return (
+			showNotificationsView && (
+				<NotificationView
+					toasts={toasts}
+					setVisible={toggleNotificationDisplayHandler}
+					deleteNotification={deleteNotificationHandler}
+				/>
+			)
+		);
+	};
+
+	const renderUserAccountMenu = () => {
+		return (
+			<span>
+				<span className="menu-user-button" onClick={userIconClickHandler}>
+					<Icon className="menu-icon">{MaterialIconNames.PERSON}</Icon>
+					<span className="user-label">{role}</span>
+				</span>
+				{showUserMenu && <MenuDropdown menuOptions={getRolesOptions} closeMenu={userIconClickHandler} />}
+			</span>
+		);
 	};
 
 	return (
 		<div className="menu">
 			<span className="menu-notification-container">
-				<Icon
-					className={`menu-icon ${showNotificationsView ? "toggled" : ""}`}
-					onClick={onToggleNotificationsDisplay}
-				>
-					{MaterialIconNames.NOTIFICATION}
-				</Icon>
+				{renderNotificationsButton()}
 				{renderNotificationsCounter()}
-				{showNotificationsView && (
-					<NotificationView
-						toasts={toasts}
-						setVisible={onToggleNotificationsDisplay}
-						deleteNotification={onDeleteNotification}
-					/>
-				)}
+				{renderNotificationView()}
 			</span>
-			<span>
-				<span className="menu-user-button" onClick={onUserIconClicked}>
-					<Icon className="menu-icon">{MaterialIconNames.PERSON}</Icon>
-					<span className="user-label">{role}</span>
-				</span>
-				{showUserMenu && <MenuDropdown menuOptions={rolesOptions} closeMenu={onUserIconClicked} />}
-			</span>
+			{renderUserAccountMenu()}
 		</div>
 	);
 };

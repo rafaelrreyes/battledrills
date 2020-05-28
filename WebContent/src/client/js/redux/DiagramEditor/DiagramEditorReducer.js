@@ -1,5 +1,5 @@
 import { DiagramEditorConstants } from "./DiagramEditorConstants";
-import { LinkStyles, LinkSmoothness, deepClone } from "UTILITIES";
+import { LinkStyles, LinkSmoothness, deepClone, generateRandomId } from "UTILITIES";
 
 import {
 	addRole,
@@ -165,6 +165,18 @@ export default function (state = initialState, action) {
 					...state.selectedTemplate,
 					data: editTaskCoordinates(state.selectedTemplate, payload.role, payload.coordinates)
 				}
+			};
+		case DiagramEditorConstants.OPEN_NEW_TEMPLATE:
+			return {
+				...state,
+				selectedTemplate: {
+					type: `template-${generateRandomId()}`,
+					participants: [],
+					data: {}
+				},
+				selectedTaskTemplate: null,
+				past: [],
+				future: []
 			};
 		default:
 			return state;

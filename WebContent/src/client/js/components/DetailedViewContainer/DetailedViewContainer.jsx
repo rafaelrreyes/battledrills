@@ -3,10 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { TaskActionsMenu, AttachmentsView } from "COMPONENTS";
 import { Input, InputSizes, InputTypes, Button, ButtonSizes, ButtonTypes, Icon } from "CORE";
 import { API, AttachmentTypes, Routes, MaterialIconNames, TASK_DESCRIPTION_PLACEHOLDER, deleteTask } from "UTILITIES";
-import "./DetailedViewContainer.scss";
 
 // views
-import { NotesView } from "../";
+import { NotesView } from "COMPONENTS";
 
 // redux
 import {
@@ -17,14 +16,12 @@ import {
 	setSelectedDrill,
 	setSelectedTask,
 	setActiveBillet
-} from "REDUX/";
+} from "REDUX";
+
+import "./DetailedViewContainer.scss";
 
 const MAX_TASK_DESCRIPTION_LENGTH = 150;
 const DetailedViewContainer = () => {
-	// state
-	const [displayActionButtons, setDisplayActionButtons] = useState(false);
-	const [editDescription, setEditDescription] = useState(false);
-
 	const dispatch = useDispatch();
 
 	// redux selectors
@@ -34,10 +31,13 @@ const DetailedViewContainer = () => {
 	const user = useSelector(getUser);
 	const currentView = useSelector(getCurrentView);
 
+	// state
+	const [displayActionButtons, setDisplayActionButtons] = useState(false);
+	const [editDescription, setEditDescription] = useState(false);
 	const [newDescription, setNewDescription] = useState(description);
 
 	useEffect(() => {
-		cancelEditDescription();
+		cancelEditHandler();
 	}, [selectedTask]);
 
 	const showActionsButton = () => {
@@ -48,7 +48,7 @@ const DetailedViewContainer = () => {
 		setDisplayActionButtons(false);
 	};
 
-	const toggleEditDescription = () => {
+	const toggleEditHandler = () => {
 		if (editDescription) {
 			const requestBody = {
 				owner,
@@ -57,43 +57,37 @@ const DetailedViewContainer = () => {
 				user
 			};
 
-			API.editTask(
-				requestBody,
-				() => {
-					API.getDrillByName(selectedDrillName, {}, (drill) => {
-						dispatch(setSelectedDrill(drill));
-					});
+			API.editTask(requestBody, () => {
+				API.getDrillByName(selectedDrillName, {}, (drill) => {
+					dispatch(setSelectedDrill(drill));
+				});
 
+				API.getTaskById(taskId, {}, (task) => {
+					dispatch(setSelectedTask(task));
+				});
+
+				if (currentView === Routes.MY_REPORT) {
+					API.getOwnerBillet(owner, {}, (data) => {
+						dispatch(setActiveBillet(data));
+					});
+				} else if (currentView === Routes.ACTIVE_DIAGRAM) {
 					API.getTaskById(taskId, {}, (task) => {
 						dispatch(setSelectedTask(task));
 					});
-
-					if (currentView === Routes.MY_REPORT) {
-						API.getOwnerBillet(owner, {}, (data) => {
-							dispatch(setActiveBillet(data));
-						});
-					} else if (currentView === Routes.ACTIVE_DIAGRAM) {
-						API.getTaskById(taskId, {}, (task) => {
-							dispatch(setSelectedTask(task));
-						});
-					}
-				},
-				(error) => {
-					console.error(`Error when editing task: ${taskId}`);
 				}
-			);
+			});
 		}
 		setEditDescription(!editDescription);
 	};
 
-	const cancelEditDescription = () => {
+	const cancelEditHandler = () => {
 		setEditDescription(false);
 		setNewDescription(description);
 	};
 
 	const renderActionsMenu = () => {
-		if (displayActionButtons) {
-			return (
+		return (
+			displayActionButtons && (
 				<TaskActionsMenu
 					className="task-commands"
 					closeMenu={() => {
@@ -101,10 +95,8 @@ const DetailedViewContainer = () => {
 					}}
 					taskId={taskId}
 				/>
-			);
-		}
-
-		return null;
+			)
+		);
 	};
 
 	const renderActionsButton = () => {
@@ -121,7 +113,7 @@ const DetailedViewContainer = () => {
 	const renderAttachments = () => {
 		return (
 			<div className="attachments-container">
-				<AttachmentsView selectedObject={selectedTask} type={AttachmentTypes.TASK} collapsible={true} />
+				<AttachmentsView selectedObject={selectedTask} type={AttachmentTypes.TASK} isCollapsible={true} />
 			</div>
 		);
 	};
@@ -137,8 +129,8 @@ const DetailedViewContainer = () => {
 					inputType={InputTypes.REGULAR}
 					inputSize={InputSizes.FILL}
 					initValue={description}
-					onChange={onDescriptionChange}
-					submit={toggleEditDescription}
+					onChange={descriptionChangeHandler}
+					submit={toggleEditHandler}
 					focus={true}
 					placeholder="Description"
 					initValue={description}
@@ -152,17 +144,17 @@ const DetailedViewContainer = () => {
 
 	const renderDeleteButton = () => {
 		return (
-			<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={onDeleteTask}>
+			<Button buttonSize={ButtonSizes.MEDIUM} buttonType={ButtonTypes.REGULAR} onClick={deleteTaskHandler}>
 				<Icon>{MaterialIconNames.DELETE}</Icon>
 			</Button>
 		);
 	};
 
-	const onDeleteTask = () => {
+	const deleteTaskHandler = () => {
 		deleteTask(taskId);
 	};
 
-	const onDescriptionChange = (value) => {
+	const descriptionChangeHandler = (value) => {
 		setNewDescription(value);
 	};
 
@@ -170,12 +162,9 @@ const DetailedViewContainer = () => {
 		// only allow saving if description has changed
 		let disabled = description === newDescription;
 		return (
-			<i
-				className={`material-icons edit-description-icon ${disabled && editDescription ? "disabled" : ""}`}
-				onClick={toggleEditDescription}
-			>
+			<Icon className={`edit-description-icon ${disabled && editDescription ? "disabled" : ""}`}>
 				{editDescription ? MaterialIconNames.SAVE : MaterialIconNames.EDIT}
-			</i>
+			</Icon>
 		);
 	};
 
@@ -187,7 +176,7 @@ const DetailedViewContainer = () => {
 					<div className="detailed-task-description-container">
 						{renderSaveButton()}
 						{editDescription ? (
-							<Icon className="cancel-edit-description-icon" onClick={cancelEditDescription}>
+							<Icon className="cancel-edit-description-icon" onClick={cancelEditHandler}>
 								{MaterialIconNames.BLOCK}
 							</Icon>
 						) : null}

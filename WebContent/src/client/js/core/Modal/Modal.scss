@@ -1,0 +1,114 @@
+@import "../Button/Button";
+
+$modal-close-icon-color: $white;
+$modal-close-icon-padding: 0.25em;
+
+$modal-background-color: $blue-grey-800;
+$modal-border-color: $cyan-300;
+$modal-border-width: 0.125em;
+$modal-max-height: -moz-fit-content;
+$modal-max-width: 34.125em;
+$modal-top-margin: 15%;
+
+$modal-outer-padding: 2.25em;
+$modal-inner-padding: 1.75em;
+$modal-title-top-padding: 0.25em;
+$modal-title-bottom-padding: 0.5em;
+$modal-title-side-padding: 1em;
+
+$modal-button-margin: 1em;
+
+$modal-message-padding: 2em;
+$modal-message-error-padding-vertical: 0.375em;
+$modal-message-error-background-color: $red-400;
+$modal-message-error-text-color: $dark-text-primary;
+
+.c2pc-modal {
+	background-color: rgba(255, 255, 255, 0.7);
+	display: flex;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1000;
+	align-items: center;
+
+	.modal-content {
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+		align-items: center;
+		align-content: center;
+		justify-content: flex-start;
+		position: relative;
+		background-color: $modal-background-color;
+		margin: $modal-top-margin auto;
+		border: $modal-border-width solid $modal-border-color;
+		max-height: $modal-max-height;
+		max-width: $modal-max-width;
+		width: 100%;
+		text-align: center;
+
+		.modal-close {
+			order: 0;
+			align-self: flex-end;
+			padding: $modal-close-icon-padding;
+			cursor: pointer;
+			color: $modal-close-icon-color;
+		}
+		.modal-data {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		.modal-btns {
+			position: relative;
+			display: flex;
+			justify-content: center;
+			width: $button-width-md * 2;
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 1em;
+			margin-top: 1em;
+			left: 0;
+			right: 0;
+		}
+		.modal-btns > :first-child {
+			margin-right: 0.625em;
+		}
+		.modal-btns > :only-child {
+			margin-right: 0em;
+		}
+		.modal-error-message {
+			color: $modal-message-error-text-color;
+			background-color: $modal-message-error-background-color;
+			padding: $modal-message-error-padding-vertical $modal-message-padding;
+		}
+	}
+}
+
+.modal-icon {
+	padding-top: $modal-outer-padding;
+}
+
+.modal-title {
+	padding: $modal-title-top-padding $modal-title-side-padding $modal-title-bottom-padding $modal-title-side-padding;
+	@include heading-7;
+	word-wrap: break-word;
+	word-break: break-word;
+}
+
+.modal-description {
+	@include body-3;
+	width: 75%;
+	text-align: left;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.version-text {
+	@include body-3;
+}

@@ -6,8 +6,9 @@ import { Routes, MaterialIconNames, MobileViewMaxWidth } from "UTILITIES";
 import { useWindowDimensions } from "HOOKS";
 import { default as HeaderMenuContainer } from "./HeaderMenuContainer/HeaderMenuContainer";
 import { default as HeaderDropdown } from "./HeaderDropdown/HeaderDropdown";
-import "./Header.scss";
 import HeaderOptions from "./HeaderOptions/HeaderOptions";
+
+import "./Header.scss";
 
 const getHeaderTab = (name, icon, isMobile) => {
 	return (
@@ -26,7 +27,7 @@ const getHeaderTab = (name, icon, isMobile) => {
 const Header = () => {
 	const [isMobile, setIsMobile] = useState(false);
 	const [activeDiagram, setActiveDiagram] = useState(false);
-	const [diagramName, setDiagramName] = useState("Diagram");
+	const [diagramName, setDiagramName] = useState("Drills");
 	const { width } = useWindowDimensions();
 	const history = useHistory();
 	const location = useLocation();
@@ -54,7 +55,7 @@ const Header = () => {
 			setDiagramName(location.pathname === Routes.ACTIVE_DIAGRAM ? "Active" : "Completed");
 		} else {
 			setActiveDiagram(false);
-			setDiagramName("Diagram");
+			setDiagramName("Drills");
 		}
 	}, [location]);
 
@@ -84,10 +85,10 @@ const Header = () => {
 				</LinkButton>
 				{/* TODO should only be available to admin roles */}
 				<LinkButton to={Routes.TEMPLATE_EDITOR}>
-					{getHeaderTab("Template Editor", MaterialIconNames.EDIT, isMobile)}
+					{getHeaderTab("Templates", MaterialIconNames.EDIT, isMobile)}
 				</LinkButton>
 				<LinkButton to={Routes.MY_ACCOUNT}>
-					{getHeaderTab("My Account", MaterialIconNames.PERSON, isMobile)}
+					{getHeaderTab("Account", MaterialIconNames.PERSON, isMobile)}
 				</LinkButton>
 				<HeaderDropdown options={diagramOptions} active={activeDiagram}>
 					{getHeaderTab(diagramName, MaterialIconNames.ACCOUNT_TREE, isMobile)}

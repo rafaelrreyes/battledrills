@@ -102,3 +102,9 @@ export const redoTemplateEdit = () => {
 		type: DiagramEditorConstants.REDO_LAST_TEMPLATE_EDIT
 	};
 };
+
+export const openBlankTemplate = () => {
+	return {
+		type: DiagramEditorConstants.OPEN_NEW_TEMPLATE
+	};
+};

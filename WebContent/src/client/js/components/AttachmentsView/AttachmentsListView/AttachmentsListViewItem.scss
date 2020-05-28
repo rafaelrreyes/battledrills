@@ -1,0 +1,36 @@
+@import "~CSS/index";
+
+.attachment {
+	padding: 0.25em;
+	display: flex;
+	justify-content: space-between;
+
+	.attachment-flex {
+		display: flex;
+		align-items: center;
+
+		.attachment-label {
+			margin-left: 0.5em;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: inline-block;
+		}
+	}
+
+	.attachment-buttons {
+		cursor: pointer;
+		i {
+			&:hover {
+				color: $cyan-800;
+			}
+		}
+	}
+
+	&:hover {
+		color: $cyan-800;
+		.attachment-icon {
+			color: $cyan-800;
+		}
+	}
+}

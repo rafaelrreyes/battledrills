@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { STATUS_TYPES, isObjectEmpty, NoteTypes, AutogenTypes, iso8061ToReadable } from "UTILITIES/";
+import { StatusTypes, isObjectEmpty, NoteTypes, AutogenTypes, iso8061ToReadable } from "UTILITIES";
 import NotesTextbox from "./NotesTextbox/NotesTextbox";
 import moment from "moment";
 import "./NotesView.scss";
@@ -40,7 +40,7 @@ const renderDerivedNoteText = (note) => {
 		switch (note.autoType) {
 			case AutogenTypes.STATUS_CHANGE:
 				const noteTextLower = noteText.toLowerCase();
-				if ([STATUS_TYPES.IN_PROGRESS, STATUS_TYPES.BLOCKED, STATUS_TYPES.COMPLETED].includes(noteTextLower)) {
+				if ([StatusTypes.IN_PROGRESS, StatusTypes.BLOCKED, StatusTypes.COMPLETED].includes(noteTextLower)) {
 					return (
 						<>
 							{`${user.username} changed status to: `}

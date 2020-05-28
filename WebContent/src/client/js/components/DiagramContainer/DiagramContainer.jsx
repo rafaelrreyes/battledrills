@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { DiagramViewContainer, DetailedViewContainer } from "../";
-import { DrillEditorView } from "../";
+import { DetailedViewContainer } from "COMPONENTS";
+import DiagramView from "./DiagramView/DiagramView";
+import DiagramPaletteView from "./DiagramPaletteView/DiagramPaletteView";
 import joint from "jointjs/index";
-import BattleDrillDiagram from "../../joint/BattleDrillDiagram";
+import BattleDrillDiagram from "JOINT/BattleDrillDiagram";
 import {
 	setSelectedDrill,
 	resetSelectedTask,
@@ -18,14 +19,15 @@ import {
 } from "REDUX";
 import { ScrollableTabs, TooltipPlacement, Icon } from "CORE";
 import { API, MaterialIconNames, Routes } from "UTILITIES";
-//css
+
+// scss
 import "./DiagramContainer.scss";
 
 const DiagramContainer = () => {
 	const location = useLocation();
 
 	const graph = new joint.dia.Graph();
-	const battleDrillDiagram = new BattleDrillDiagram(graph);
+	const diagram = new BattleDrillDiagram(graph);
 
 	// redux dispatchers
 	const dispatch = useDispatch();
@@ -87,14 +89,14 @@ const DiagramContainer = () => {
 		};
 	}, [location]);
 
-	const onSetSelectedDrill = ({ selectedName }) => {
+	const tabSelectedHandler = ({ selectedName }) => {
 		API.getDrillByName(selectedName, {}, (response) => {
 			dispatch(setSelectedDrill(response));
 			dispatch(resetSelectedTask());
 		});
 	};
 
-	const toggleCollapseDetails = () => {
+	const collapseDetailsHandler = () => {
 		dispatch(resetSelectedTask());
 	};
 
@@ -103,7 +105,7 @@ const DiagramContainer = () => {
 			<></>
 		) : (
 			<>
-				<div className="detailed-view-side-bar-button" onClick={toggleCollapseDetails}>
+				<div className="detailed-view-side-bar-button" onClick={collapseDetailsHandler}>
 					<Icon>{MaterialIconNames.ARROW_RIGHT}</Icon>
 				</div>
 				<DetailedViewContainer />
@@ -116,18 +118,18 @@ const DiagramContainer = () => {
 			<div className="tab-flex-box">
 				<ScrollableTabs
 					tabValues={location.pathname === Routes.ACTIVE_DIAGRAM ? activeDrills : completedDrills}
-					onActiveTabSelected={onSetSelectedDrill}
+					onActiveTabSelected={tabSelectedHandler}
 					selectedItem={selectedDrill.name}
 					tooltipPlacement={TooltipPlacement.BOTTOM}
 				/>
 			</div>
 			{location.pathname === Routes.ACTIVE_DIAGRAM && (
 				<div className="diagram-view-bar">
-					<DrillEditorView battleDrillDiagram={battleDrillDiagram} />
+					<DiagramPaletteView diagram={diagram} />
 				</div>
 			)}
 			<div className="diagram-detailed-flex-box">
-				<DiagramViewContainer graph={graph} battleDrillDiagram={battleDrillDiagram} />
+				<DiagramView graph={graph} diagram={diagram} />
 				{renderDetailedView()}
 			</div>
 		</div>

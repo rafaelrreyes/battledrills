@@ -35,7 +35,7 @@ const TemplateEditorTaskView = () => {
 		const { taskId } = selectedTaskTemplate;
 		const taskFound = getTaskTemplate(store.getState(), taskId);
 		dispatch(setSelectedTaskTemplate(taskFound));
-		cancelEditDescription();
+		cancelEditDescriptionHandler();
 	}, [selectedTemplate]);
 
 	const renderDescription = () => {
@@ -44,12 +44,12 @@ const TemplateEditorTaskView = () => {
 			const disabled = description === newDescription;
 			return (
 				<>
-					<Icon className="cancel-edit-description-icon" onClick={cancelEditDescription}>
+					<Icon className="cancel-edit-description-icon" onClick={cancelEditDescriptionHandler}>
 						{MaterialIconNames.BLOCK}
 					</Icon>
 					<Icon
 						className={`edit-description-icon ${disabled ? "disabled" : ""}`}
-						onClick={toggleEditDescription}
+						onClick={toggleEditDescriptionHandler}
 					>
 						{MaterialIconNames.SAVE}
 					</Icon>
@@ -58,8 +58,8 @@ const TemplateEditorTaskView = () => {
 							inputType={InputTypes.REGULAR}
 							inputSize={InputSizes.FILL}
 							initValue={description}
-							onChange={onDescriptionChange}
-							submit={toggleEditDescription}
+							onChange={descriptionChangeHandler}
+							submit={toggleEditDescriptionHandler}
 							focus={true}
 							placeholder="Description"
 							maxlength={MAX_TASK_DESCRIPTION_LENGTH}
@@ -70,7 +70,7 @@ const TemplateEditorTaskView = () => {
 		} else {
 			return (
 				<>
-					<Icon onClick={toggleEditDescription}>{MaterialIconNames.EDIT}</Icon>
+					<Icon onClick={toggleEditDescriptionHandler}>{MaterialIconNames.EDIT}</Icon>
 					<span className="task-description">
 						{newDescription ? newDescription : TASK_DESCRIPTION_PLACEHOLDER}
 					</span>
@@ -79,23 +79,23 @@ const TemplateEditorTaskView = () => {
 		}
 	};
 
-	const onDescriptionChange = (value) => {
+	const descriptionChangeHandler = (value) => {
 		setNewDescription(value);
 	};
 
-	const cancelEditDescription = () => {
+	const cancelEditDescriptionHandler = () => {
 		setEditDescription(false);
 		setNewDescription(description);
 	};
 
-	const toggleEditDescription = () => {
+	const toggleEditDescriptionHandler = () => {
 		if (editDescription) {
 			dispatch(editTaskDescriptionTemplate({ id: taskId, description: newDescription }));
 		}
 		setEditDescription(!editDescription);
 	};
 
-	const onViewTemplates = () => {
+	const viewTemplatesHandler = () => {
 		dispatch(setSelectedTaskTemplate(null));
 	};
 
@@ -104,7 +104,7 @@ const TemplateEditorTaskView = () => {
 			<div className="alt-card-title">
 				<label>Edit Task</label>
 				<span className="templates-button">
-					<Icon onClick={onViewTemplates}>{MaterialIconNames.BACK}</Icon>
+					<Icon onClick={viewTemplatesHandler}>{MaterialIconNames.BACK}</Icon>
 				</span>
 			</div>
 			<div className="alt-card-content">

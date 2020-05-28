@@ -1,6 +1,6 @@
 import React from "react";
-import { UserConfiguration, MaterialIconNames } from "UTILITIES/index";
-import { Dropdown, DropdownSizes, DropdownTypes, FilterDropdown } from "CORE/index";
+import { UserConfiguration, MaterialIconNames } from "UTILITIES";
+import { Dropdown, DropdownSizes, DropdownTypes, FilterDropdown, Icon } from "CORE";
 
 import "./AllStatusFilterView.scss";
 
@@ -23,6 +23,7 @@ const renderFilteredRoles = (roles_filter, onFilterDelete) => {
 		return <span className="all-status-filter-role-item">No filters active</span>;
 	}
 
+	// In the case that the filters is equal to the amount in the defined role set or more, set the filter to show ALL
 	if (
 		filters.length === UserConfiguration.DEFINED_ROLES.length + 1 ||
 		filters.length === UserConfiguration.DEFINED_ROLES.length
@@ -34,14 +35,14 @@ const renderFilteredRoles = (roles_filter, onFilterDelete) => {
 		return (
 			<span className="all-status-filter-role-item" key={role + index}>
 				{role}
-				<i
-					className="material-icons all-status-filter-delete"
+				<Icon
+					className="all-status-filter-delete"
 					onClick={() => {
 						onFilterDelete(role);
 					}}
 				>
 					{MaterialIconNames.CLOSE}
-				</i>
+				</Icon>
 			</span>
 		);
 	});

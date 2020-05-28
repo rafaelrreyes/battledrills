@@ -23,6 +23,12 @@
 
 		.open-chats-view-item-minimized-target {
 			margin-left: 0.25em;
+			display: flex;
+			align-items: center;
+
+			.role-label {
+				margin-left: 0.25em;
+			}
 		}
 
 		.open-chats-view-item-minimized-commands {
@@ -61,10 +67,17 @@
 		.open-chats-view-item-target {
 			@include heading-3;
 			padding: 0.5em;
+			display: flex;
+			align-items: center;
+
+			.role-label {
+				margin-left: 0.25em;
+			}
 		}
 
 		.open-chats-view-item-commands {
-			top: 0.2em;
+			display: flex;
+			align-items: center;
 			position: relative;
 			cursor: pointer;
 
@@ -199,6 +212,8 @@
 	.open-chats-view-item-input {
 		display: flex;
 		justify-content: space-around;
+		margin-top: 0.25em;
+		margin-bottom: 0.25em;
 	}
 }
 

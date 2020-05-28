@@ -1,39 +1,38 @@
 import React from "react";
 import store from "REDUX/store";
-import { StatusIcon } from "CORE/index";
-import { API, STATUS_TYPES } from "UTILITIES/index";
-import { getUser, getSelectedDrill, editTask, resetSelectedTask, editActiveBillet } from "REDUX/index";
-import { setSelectedDrill } from "REDUX/index";
+import { StatusIcon } from "CORE";
+import { API, StatusTypes } from "UTILITIES";
+import { getUser, getSelectedDrill, editTask, resetSelectedTask, editActiveBillet, setSelectedDrill } from "REDUX";
 
 export const getAvailableActions = (status, selectedTask) => {
 	const start = {
-		icon: <StatusIcon type={STATUS_TYPES.IN_PROGRESS} size={18} />,
+		icon: <StatusIcon type={StatusTypes.IN_PROGRESS} size={18} />,
 		name: "Start",
 		menuAction: () => {
-			changeTaskState(STATUS_TYPES.IN_PROGRESS, selectedTask);
+			changeTaskState(StatusTypes.IN_PROGRESS, selectedTask);
 		}
 	};
 	const block = {
-		icon: <StatusIcon type={STATUS_TYPES.BLOCKED} size={18} />,
+		icon: <StatusIcon type={StatusTypes.BLOCKED} size={18} />,
 		name: "Block",
 		menuAction: () => {
-			changeTaskState(STATUS_TYPES.BLOCKED, selectedTask);
+			changeTaskState(StatusTypes.BLOCKED, selectedTask);
 		}
 	};
 	const complete = {
-		icon: <StatusIcon type={STATUS_TYPES.COMPLETED} size={18} />,
+		icon: <StatusIcon type={StatusTypes.COMPLETED} size={18} />,
 		name: "Complete",
 		menuAction: () => {
-			changeTaskState(STATUS_TYPES.COMPLETED, selectedTask);
+			changeTaskState(StatusTypes.COMPLETED, selectedTask);
 		}
 	};
 
 	switch (status) {
-		case STATUS_TYPES.IN_PROGRESS:
+		case StatusTypes.IN_PROGRESS:
 			return [block, complete];
-		case STATUS_TYPES.BLOCKED:
+		case StatusTypes.BLOCKED:
 			return [start, complete];
-		case STATUS_TYPES.COMPLETED:
+		case StatusTypes.COMPLETED:
 			return [start, block];
 		default:
 			return [start, block, complete];

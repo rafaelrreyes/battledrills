@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
-import "./NotificationViewItem.scss";
-import { getNotificationLink, getToastMessageHtml } from "CORE";
+import { getNotificationLink, getToastMessageHtml, Icon } from "CORE";
 import { MaterialIconNames, iso8061ToReadable } from "UTILITIES";
+
+import "./NotificationViewItem.scss";
 
 const NotificationViewItem = ({
 	toastId,
@@ -46,7 +47,7 @@ const NotificationViewItem = ({
 				})}
 			</span>
 			<span className="notification-view-item-commands">
-				{getNotificationLink({
+				{/* {getNotificationLink({
 					operationType,
 					objectType,
 					user,
@@ -56,15 +57,15 @@ const NotificationViewItem = ({
 					setVisible,
 					edittedKey,
 					history
-				})}
-				<i
-					className="material-icons notification-view-item-delete"
+				})} */}
+				<Icon
+					className="notification-view-item-delete"
 					onClick={() => {
 						deleteNotification(toastId);
 					}}
 				>
 					{MaterialIconNames.DELETE}
-				</i>
+				</Icon>
 			</span>
 		</li>
 	);

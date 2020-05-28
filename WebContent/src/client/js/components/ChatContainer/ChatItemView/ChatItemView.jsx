@@ -1,13 +1,13 @@
 import React, { Fragment, useState, useRef, useEffect } from "react";
-import { WS, MaterialIconNames } from "UTILITIES/index";
-import { ArrowTooltip, TooltipTypes, TooltipPlacement } from "CORE/index";
+import { WS, MaterialIconNames } from "UTILITIES";
+import { ArrowTooltip, TooltipTypes, TooltipPlacement, Icon } from "CORE";
 import ChatTextbox from "./ChatTextbox/ChatTextbox";
 import moment from "moment";
 
 //scss
 import "./ChatItemView.scss";
 
-const ChatItemView = ({ user, chat, updateChat, removeChat, toggleChatDisplay }) => {
+const ChatItemView = ({ user, chat, onUpdateChat, onRemoveChat, onToggleChat }) => {
 	const currentRole = user.role;
 	const targetRole = chat.role;
 	const messagesListRef = useRef();
@@ -21,9 +21,9 @@ const ChatItemView = ({ user, chat, updateChat, removeChat, toggleChatDisplay })
 			<ChatItemViewMinimized
 				targetRole={targetRole}
 				chat={chat}
-				toggleChatDisplay={toggleChatDisplay}
+				onToggleChat={onToggleChat}
 				messagesListRef={messagesListRef}
-				removeChat={removeChat}
+				onRemoveChat={onRemoveChat}
 			/>
 		);
 	} else {
@@ -32,40 +32,44 @@ const ChatItemView = ({ user, chat, updateChat, removeChat, toggleChatDisplay })
 				targetRole={targetRole}
 				currentRole={currentRole}
 				chat={chat}
-				updateChat={updateChat}
-				toggleChatDisplay={toggleChatDisplay}
+				onUpdateChat={onUpdateChat}
+				onToggleChat={onToggleChat}
 				messagesListRef={messagesListRef}
-				removeChat={removeChat}
+				onRemoveChat={onRemoveChat}
 			/>
 		);
 	}
 };
 
-const ChatItemViewMinimized = ({ targetRole, chat, toggleChatDisplay, removeChat, messagesListRef }) => {
+const ChatItemViewMinimized = ({ targetRole, chat, onToggleChat, onRemoveChat, messagesListRef }) => {
 	return (
 		<div className="open-chats-view-item-minimized-container">
 			<div
 				className="open-chats-view-item-minimized"
 				key={targetRole}
 				onClick={() => {
-					toggleChatDisplay(chat);
+					onToggleChat(chat);
 				}}
 			>
-				<span className="open-chats-view-item-minimized-target">{targetRole}</span>
+				<span className="open-chats-view-item-minimized-target">
+					{/* TODO this can eventually be a mini icon of their saved profile picture */}
+					<Icon>{MaterialIconNames.ACCOUNT}</Icon>
+					<label className="role-label">{targetRole}</label>
+				</span>
 				<span className="open-chats-view-item-minimized-commands">
 					{chat.notifications > 0 ? (
 						<span className="open-chats-view-item-minimized-notification">{chat.notifications}</span>
 					) : (
 						<></>
 					)}
-					<i
-						className="material-icons open-chats-view-item-close-button"
+					<Icon
+						className="open-chats-view-item-close-button"
 						onClick={() => {
-							removeChat(chat);
+							onRemoveChat(chat);
 						}}
 					>
 						{MaterialIconNames.CLOSE}
-					</i>
+					</Icon>
 				</span>
 			</div>
 			<div ref={messagesListRef} />
@@ -77,9 +81,9 @@ const ChatItemViewOpen = ({
 	targetRole,
 	currentRole,
 	chat,
-	updateChat,
-	toggleChatDisplay,
-	removeChat,
+	onUpdateChat,
+	onToggleChat,
+	onRemoveChat,
 	messagesListRef
 }) => {
 	const [clearMessage, setClearMessage] = useState(false);
@@ -94,21 +98,15 @@ const ChatItemViewOpen = ({
 			sender: currentRole,
 			target: targetRole,
 			message,
-			timestampMillis: moment()
-				.unix(moment().valueOf())
-				.valueOf()
+			timestampMillis: moment().unix(moment().valueOf()).valueOf()
 		};
 
 		WS().send(
 			messageObj,
 			// success
 			() => {
-				updateChat(messageObj);
+				onUpdateChat(messageObj);
 				setClearMessage(true);
-			},
-			// error
-			() => {
-				console.error(`Failed when sending message to user: ${messageObj.target}`);
 			}
 		);
 	};
@@ -116,24 +114,27 @@ const ChatItemViewOpen = ({
 	return (
 		<div className="open-chats-view-item">
 			<div className="open-chats-view-item-header">
-				<span className="open-chats-view-item-target">{targetRole}</span>
+				<span className="open-chats-view-item-target">
+					<Icon>{MaterialIconNames.ACCOUNT}</Icon>
+					<label className="role-label">{targetRole}</label>
+				</span>
 				<span className="open-chats-view-item-commands">
-					<i
-						className="material-icons open-chats-view-item-minimize"
+					<Icon
+						className="open-chats-view-item-minimize"
 						onClick={() => {
-							toggleChatDisplay(chat);
+							onToggleChat(chat);
 						}}
 					>
 						{MaterialIconNames.REMOVE}
-					</i>
-					<i
-						className="material-icons open-chats-view-item-close"
+					</Icon>
+					<Icon
+						className="open-chats-view-item-close"
 						onClick={() => {
-							removeChat(chat);
+							onRemoveChat(chat);
 						}}
 					>
 						{MaterialIconNames.CLOSE}
-					</i>
+					</Icon>
 				</span>
 			</div>
 			<div className="open-chats-view-item-messages">

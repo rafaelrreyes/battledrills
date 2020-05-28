@@ -1,0 +1,40 @@
+@import "~CSS/index";
+
+.file-input {
+	.attach-file {
+		margin-top: 0.25em;
+		@include body-3;
+		text-align: left;
+		max-width: 100%;
+
+		.file-attached {
+			display: flex;
+			align-items: center;
+			.filename {
+				text-overflow: ellipsis;
+				width: 60%;
+				white-space: nowrap;
+			}
+		}
+	}
+
+	.file-input-element {
+		display: none;
+	}
+
+	.file-commands {
+		margin-top: 0.5em;
+		display: flex;
+		justify-content: space-between;
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: wrap;
+
+		.file-upload-commands {
+			display: flex;
+			justify-content: left;
+			align-items: center;
+			flex-wrap: wrap;
+		}
+	}
+}

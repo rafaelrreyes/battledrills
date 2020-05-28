@@ -35,16 +35,16 @@ export const selectTask = (task) => {
 export const selectTaskTemplate = (task) => {
 	const currentSelectedTaskTemplate = getSelectedTaskTemplate(store.getState());
 
-	if (currentSelectedTaskTemplate !== null && task.taskId === currentSelectedTaskTemplate.taskId) {
+	if (
+		currentSelectedTaskTemplate !== null &&
+		typeof currentSelectedTaskTemplate !== "undefined" &&
+		task.taskId === currentSelectedTaskTemplate.taskId
+	) {
 		return;
 	}
 
 	const taskFound = getTaskTemplate(store.getState(), task.taskId);
 	store.dispatch(setSelectedTaskTemplate(taskFound));
-	// API.getTaskById(task.taskId, {}, (response) => {
-	// 	const selectedTaskTemplate = { ...response, selected: true };
-	// 	store.dispatch(setSelectedTaskTemplate(selectedTaskTemplate));
-	// });
 };
 
 export const deleteTask = (taskId) => {

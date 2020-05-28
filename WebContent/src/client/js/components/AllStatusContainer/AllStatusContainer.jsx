@@ -10,18 +10,22 @@ import {
 	getAllDrills,
 	setRolesFilters,
 	deleteRoleFilter,
-	setCurrentView
+	setCurrentView,
+	setSelectedDrill
 } from "REDUX";
 
-import { AllStatusTableView, AllStatusFilterView, AllStatusFooterView } from "..";
+import AllStatusTableView from "./AllStatusTableView/AllStatusTableView";
+import AllStatusFilterView from "./AllStatusFilterView/AllStatusFilterView";
+import AllStatusFooterView from "./AllStatusFooterView/AllStatusFooterView";
 import "./AllStatusContainer.scss";
-import { setSelectedDrill } from "REDUX";
 
 const DEFAULT_MAX_COLUMNS = 5;
+const DEFAULT_DISPLAY_INDEX = 0;
+const DEFAULT_ACTIVE_INDEX = 1;
 
 const AllStatusContainer = () => {
-	const [displayIndex, setDisplayIndex] = useState(0);
-	const [activePageIndex, setActivePageIndex] = useState(1);
+	const [displayIndex, setDisplayIndex] = useState(DEFAULT_DISPLAY_INDEX);
+	const [activePageIndex, setActivePageIndex] = useState(DEFAULT_ACTIVE_INDEX);
 	const [drillsType, setDrillsType] = useState(DROPDOWN_DEFAULT);
 	const dispatch = useDispatch();
 
@@ -39,15 +43,9 @@ const AllStatusContainer = () => {
 			dispatch(setAllStatuses(successResponse));
 		});
 
-		API.all(
-			{},
-			(successResponse) => {
-				dispatch(updateAllDrills(successResponse));
-			},
-			(errorResponse) => {
-				console.error(errorResponse);
-			}
-		);
+		API.all({}, (successResponse) => {
+			dispatch(updateAllDrills(successResponse));
+		});
 	}, [drillsType]);
 
 	const onSetRolesFilters = (filters) => {

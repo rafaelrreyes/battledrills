@@ -1,30 +1,29 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Icon, Input, InputSizes, InputTypes } from "CORE";
+import { useSelector } from "react-redux";
+import { Input, InputSizes, InputTypes } from "CORE";
 import { Button, ButtonTypes, ButtonSizes } from "CORE";
-import { MaterialIconNames } from "UTILITIES";
 import { getUser } from "REDUX";
 
-export const ChangePassword = () => {
+const ChangePassword = () => {
 	const user = useSelector(getUser);
 	// add a password tag to inputs to hide characters typed
 	const [oldPass, setOldPass] = useState("");
 	const [newPass, setNewPass] = useState("");
 	const [confirmPass, setConfirmPass] = useState("");
 
-	const onOldPassChange = (pass) => {
+	const oldPassChangeHandler = (pass) => {
 		setOldPass(pass);
 	};
 
-	const onNewPassChange = (pass) => {
+	const newPassChangeHandler = (pass) => {
 		setNewPass(pass);
 	};
 
-	const onConfirmPassChange = (pass) => {
+	const confirmPassHandler = (pass) => {
 		setConfirmPass(pass);
 	};
 
-	const updatePassword = () => {
+	const updatePassHandler = () => {
 		// do API req with new password
 		console.log("pass info", oldPass, newPass, confirmPass);
 	};
@@ -36,19 +35,27 @@ export const ChangePassword = () => {
 			<div className="user-info">
 				<div className="TODO">This feature is currently a work in progress.</div>
 				<div className="info">
-					<div className="label">Current Password:</div>
-					<Input inputType={InputTypes.REGULAR} inputSize={InputSizes.LARGE} onChange={onOldPassChange} />
+					<div className="label">Current Password</div>
+					<Input
+						inputType={InputTypes.REGULAR}
+						inputSize={InputSizes.LARGE}
+						onChange={oldPassChangeHandler}
+					/>
 				</div>
 				<div className="info">
-					<div className="label">New Password:</div>
-					<Input inputType={InputTypes.REGULAR} inputSize={InputSizes.LARGE} onChange={onNewPassChange} />
+					<div className="label">New Password</div>
+					<Input
+						inputType={InputTypes.REGULAR}
+						inputSize={InputSizes.LARGE}
+						onChange={newPassChangeHandler}
+					/>
 				</div>
 				<div className="info">
-					<div className="label">Confirm Password:</div>
-					<Input inputType={InputTypes.REGULAR} inputSize={InputSizes.LARGE} onChange={onConfirmPassChange} />
+					<div className="label">Confirm Password</div>
+					<Input inputType={InputTypes.REGULAR} inputSize={InputSizes.LARGE} onChange={confirmPassHandler} />
 				</div>
 				<div className="info">
-					<Button buttonSize={ButtonSizes.SMALL} buttonType={ButtonTypes.REGULAR} onClick={updatePassword}>
+					<Button buttonSize={ButtonSizes.SMALL} buttonType={ButtonTypes.REGULAR} onClick={updatePassHandler}>
 						Save
 					</Button>
 				</div>
@@ -56,3 +63,5 @@ export const ChangePassword = () => {
 		</div>
 	);
 };
+
+export default ChangePassword;

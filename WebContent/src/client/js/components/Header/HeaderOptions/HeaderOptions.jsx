@@ -1,39 +1,37 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import store from "REDUX/store";
 import { MenuDropdown, ModalContentTypes, openCreateDrillModal, Icon } from "CORE";
 import { MaterialIconNames, DrillTypes } from "UTILITIES";
 import { showModal } from "REDUX";
 
+const menuOptions = [
+	{
+		name: "Create Drill",
+		menuAction: () => {
+			openCreateDrillModal(DrillTypes.DEFAULT);
+		}
+	},
+	{
+		name: "Create Custom Drill",
+		menuAction: () => {
+			openCreateDrillModal(DrillTypes.CUSTOM);
+		}
+	},
+	{
+		name: "Version",
+		menuAction: () => {
+			store.dispatch(
+				showModal(ModalContentTypes.VERSION, {
+					title: "Version",
+					singleButton: true
+				})
+			);
+		}
+	}
+];
+
 const HeaderOptions = ({}) => {
 	const [showMenu, setShowMenu] = useState(false);
-
-	const dispatch = useDispatch();
-
-	const menuOptions = [
-		{
-			name: "Create Drill",
-			menuAction: () => {
-				openCreateDrillModal(DrillTypes.DEFAULT);
-			}
-		},
-		{
-			name: "Create Custom Drill",
-			menuAction: () => {
-				openCreateDrillModal(DrillTypes.CUSTOM);
-			}
-		},
-		{
-			name: "Version",
-			menuAction: () => {
-				dispatch(
-					showModal(ModalContentTypes.VERSION, {
-						title: "Version",
-						singleButton: true
-					})
-				);
-			}
-		}
-	];
 
 	const onMenuIconClicked = () => {
 		setShowMenu(!showMenu);

@@ -1,6 +1,6 @@
 import React from "react";
 import NotificationViewItem from "./NotificationViewItem";
-import { useClickOutside } from "HOOKS/index";
+import { useClickOutside } from "HOOKS";
 
 import "./NotificationView.scss";
 

@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { DrillData, ActiveDrills, CompletedDrills } from "../index";
-import { API, MaterialIconNames, getElapsedTime, DrillState, Routes } from "UTILITIES/index";
-import { ModalContentTypes } from "CORE/index";
+import { DrillData, ActiveDrills, CompletedDrills } from "../";
+import { API, MaterialIconNames, getElapsedTime, DrillState, Routes } from "UTILITIES";
+import { ModalContentTypes } from "CORE";
 import {
 	getSelectedDrill,
 	getPreviousActiveDrills,
 	getActiveDrills,
 	getPreviousCompletedDrills,
 	getCompletedDrills,
-	getUser
-} from "REDUX/index";
-import {
+	getUser,
 	setSelectedDrill,
 	resetSelectedDrill,
 	showModal,
@@ -24,10 +22,11 @@ import {
 	revertActiveDrillOrder,
 	revertCompletedDrillOrder,
 	setCurrentView
-} from "REDUX/index";
+} from "REDUX";
+
 import "./OverviewContainer.scss";
 
-const OPTIONS = {
+const Options = {
 	TIMER_INTERVAL: 1000 //1 second
 };
 
@@ -72,7 +71,7 @@ const OverviewContainer = () => {
 		updateElapsedTime();
 		timeTicker = setInterval(() => {
 			updateElapsedTime();
-		}, OPTIONS.TIMER_INTERVAL);
+		}, Options.TIMER_INTERVAL);
 
 		return () => {
 			clearInterval(timeTicker);
@@ -95,7 +94,7 @@ const OverviewContainer = () => {
 		}
 	};
 
-	const startDrill = (drillName) => {
+	const startDrillHandler = (drillName) => {
 		API.startDrill(drillName, user, (response) => {
 			API.getDrillByName(drillName, {}, (response) => {
 				dispatch(setSelectedDrill(response));
@@ -103,7 +102,7 @@ const OverviewContainer = () => {
 		});
 	};
 
-	const stopDrill = (drillName) => {
+	const stopDrillHandler = (drillName) => {
 		API.stopDrill(drillName, user, (response) => {
 			dispatch(setSelectedDrill(response));
 			// remove this later and just transfer active drill to completed in Redux
@@ -113,13 +112,13 @@ const OverviewContainer = () => {
 		});
 	};
 
-	const onDrillClick = (itemName) => {
+	const drillClickHandler = (itemName) => {
 		API.getDrillByName(itemName, {}, (response) => {
 			dispatch(setSelectedDrill(response));
 		});
 	};
 
-	const deleteDrill = () => {
+	const deleteDrillHandler = () => {
 		dispatch(
 			showModal(ModalContentTypes.CONFIRMATION, {
 				title: `Delete "${selectedDrill.name}"?`,
@@ -176,11 +175,11 @@ const OverviewContainer = () => {
 						<div className="card-content">
 							<DrillData
 								drillInfo={selectedDrill}
-								startDrill={startDrill}
-								stopDrill={stopDrill}
+								startDrill={startDrillHandler}
+								stopDrill={stopDrillHandler}
 								activeDrills={activeDrills}
 								elapsedTime={elapsedTime}
-								deleteDrill={deleteDrill}
+								deleteDrill={deleteDrillHandler}
 							/>
 						</div>
 					)}
@@ -188,7 +187,7 @@ const OverviewContainer = () => {
 				<div className="card main-card-2">
 					<ActiveDrills
 						activeDrills={activeDrills}
-						onDrillClick={onDrillClick}
+						onDrillClick={drillClickHandler}
 						selectedDrill={selectedDrill.name}
 						user={user}
 						previousActive={previousActive}
@@ -205,7 +204,7 @@ const OverviewContainer = () => {
 					<div className="card-title">Completed Drills</div>
 					<CompletedDrills
 						completedDrills={completedDrills}
-						onDrillClick={onDrillClick}
+						onDrillClick={drillClickHandler}
 						selectedDrill={selectedDrill.name}
 						user={user}
 						previousCompleted={previousCompleted}

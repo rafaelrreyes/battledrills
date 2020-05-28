@@ -4,7 +4,8 @@ import { withRouter } from "react-router-dom";
 import { hot } from "react-hot-loader/root";
 import { useLocalStorage } from "HOOKS";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { Header, Main, Footer, ModalContainer } from "COMPONENTS";
+import { Header, Main, Footer } from "COMPONENTS";
+import { ModalContainer } from "CORE";
 import { WS, SUPPORTED_WS_EVENT_TYPES, dispatchWebsocket } from "UTILITIES";
 import { setUser } from "REDUX";
 

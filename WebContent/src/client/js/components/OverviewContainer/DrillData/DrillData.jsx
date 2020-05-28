@@ -81,7 +81,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 								startDrill(drillInfo.name);
 							}}
 						>
-							<Icon className="md-20">{MaterialIconNames.PLAY_ARROW}</Icon>
+							<Icon className="md-20">{MaterialIconNames.START}</Icon>
 						</button>
 					</>
 				)}

@@ -1,4 +1,4 @@
-import { MaterialIconNames, STATUS_TYPES } from "UTILITIES/index";
+import { MaterialIconNames, StatusTypes } from "UTILITIES";
 
 export const ShapesConstants = {
 	// Diagram Shape Configuration Data
@@ -15,16 +15,16 @@ export const ShapesConstants = {
 
 export const getIcon = (status) => {
 	switch (status) {
-		case STATUS_TYPES.PENDING:
+		case StatusTypes.PENDING:
 			return `<i class="material-icons pending-icon task-icon md-18">${MaterialIconNames.PANORAMA_FISH_EYE}</i>`;
 
-		case STATUS_TYPES.IN_PROGRESS:
+		case StatusTypes.IN_PROGRESS:
 			return `<i class="material-icons in-progress-icon task-icon md-18">${MaterialIconNames.SCHEDULE}</i>`;
 
-		case STATUS_TYPES.BLOCKED:
+		case StatusTypes.BLOCKED:
 			return `<i class="material-icons blocked-icon task-icon md-18">${MaterialIconNames.BLOCK}</i>`;
 
-		case STATUS_TYPES.COMPLETED:
+		case StatusTypes.COMPLETED:
 			return `<i class="material-icons completed-icon task-icon md-18">${MaterialIconNames.CHECK_CIRCLE}</i>`;
 
 		default:

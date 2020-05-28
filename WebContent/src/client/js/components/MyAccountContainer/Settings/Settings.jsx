@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { Button, ButtonSizes, ButtonTypes } from "CORE";
-import { ToggleSwitch } from "CORE/index";
+import { ToggleSwitch } from "CORE";
 
 import { getNotificationPermission, getDisabledNotification } from "./SettingsHelper";
 import "./Settings.scss";
 
-export const Settings = () => {
+const Settings = () => {
 	const [desktopNotificationToggle, setDesktopNotificationToggle] = useState(getNotificationPermission());
 
-	const onDesktopToggle = () => {
+	const desktopToggleHandler = () => {
 		setDesktopNotificationToggle(!desktopNotificationToggle);
 	};
 
-	const saveSettings = () => {
+	const saveHandler = () => {
 		if (desktopNotificationToggle) {
 			Notification.requestPermission();
 		}
@@ -30,14 +30,16 @@ export const Settings = () => {
 						<ToggleSwitch
 							defaultToggle={getNotificationPermission()}
 							disabled={getDisabledNotification()}
-							onToggleProp={onDesktopToggle}
+							onToggleProp={desktopToggleHandler}
 						></ToggleSwitch>
 					</div>
 				</div>
-				<Button buttonSize={ButtonSizes.SMALL} buttonType={ButtonTypes.REGULAR} onClick={saveSettings}>
+				<Button buttonSize={ButtonSizes.SMALL} buttonType={ButtonTypes.REGULAR} onClick={saveHandler}>
 					Save
 				</Button>
 			</div>
 		</div>
 	);
 };
+
+export default Settings;

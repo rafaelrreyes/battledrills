@@ -1,0 +1,37 @@
+@import "~CSS/index";
+
+.account-view {
+	.main {
+		@include body-3;
+		.user-info {
+			.roles {
+				width: 35%;
+				margin: 0;
+				padding: 0;
+				width: fit-content;
+				list-style: none;
+				background-color: $blue-grey-700;
+
+				.role-item {
+					text-align: left;
+					padding: 0.5em;
+					padding-left: 1em;
+					cursor: pointer;
+					&:hover {
+						background-color: $cyan-700;
+					}
+				}
+			}
+
+			.account-commands {
+				margin-top: 1em;
+
+				.account-command-label {
+					cursor: pointer;
+					@include heading-4;
+					padding-left: 0.25em;
+				}
+			}
+		}
+	}
+}

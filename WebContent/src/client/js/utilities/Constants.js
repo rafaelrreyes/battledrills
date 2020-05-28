@@ -72,5 +72,12 @@ export const DrillTypes = {
 	DEFAULT: "default"
 };
 
+export const StatusTypes = {
+	PENDING: "pending",
+	IN_PROGRESS: "in-progress",
+	BLOCKED: "blocked",
+	COMPLETED: "completed"
+};
+
 export const MobileViewMaxWidth = 820;
 export const DesktopViewMinWidth = 821;

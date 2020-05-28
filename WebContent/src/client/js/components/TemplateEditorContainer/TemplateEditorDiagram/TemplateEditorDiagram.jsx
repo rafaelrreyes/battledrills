@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ReactDOM from "react-dom";
-
 import $ from "jquery";
-import Shapes from "../../../joint/Shapes";
-import "./TemplateEditorDiagram.scss";
+import Shapes from "JOINT/Shapes";
 import joint from "jointjs/index";
 
 import {
@@ -15,21 +13,22 @@ import {
 	editTaskCoordinatesTemplate
 } from "REDUX";
 
-// TODO move this to another directory also change it in DiagramViewContainer
-// import "./joint.css";
+import "./TemplateEditorDiagram.scss";
 
-// TODO change this
-const DEFAULTS = {
-	GRID_SIZE: 1,
-	WINDOW_WIDTH: 1920,
-	WINDOW_HEIGHT: 1080
+const DiagramDefaults = {
+	GRID_SIZE: 10,
+	GRID_OPTIONS: {
+		thickness: 2,
+		color: "rgb(125, 125, 125)"
+	}
 };
 
-const TemplateEditorDiagram = ({ diagram, graph }) => {
+const TemplateEditorDiagram = ({ diagram, graph, isGridEnabled = false }) => {
 	const diagramViewElementz = useRef(null);
 
-	const [width, setWidth] = useState(DEFAULTS.WINDOW_WIDTH);
-	const [height, setHeight] = useState(DEFAULTS.WINDOW_HEIGHT);
+	// need to set the paper to a ref to persist the paper through renders
+	let paper;
+	const paperRef = useRef(paper);
 
 	let activeElement = {};
 
@@ -38,22 +37,23 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 	const past = useSelector(getPastEdits);
 	const dispatch = useDispatch();
 
-	let paper;
-
 	useEffect(() => {
 		if (typeof paper === "undefined") {
-			paper = new joint.dia.Paper({
+			paperRef.current = new joint.dia.Paper({
 				el: ReactDOM.findDOMNode(diagramViewElementz.current),
 				model: graph,
-				width,
-				height,
-				gridSize: DEFAULTS.GRID_SIZE,
+				width: document.documentElement.clientWidth,
+				height: document.documentElement.clientHeight,
+				gridSize: DiagramDefaults.GRID_SIZE,
+				drawGrid: isGridEnabled ? DiagramDefaults.GRID_OPTIONS : false,
 				background: {
 					color: "rgb(200, 200, 200)"
 				},
 				restrictTranslate: true
 			});
+
 			setupEventHandlers();
+			window.addEventListener("resize", resizeWindowHandler);
 		}
 
 		if (selectedTemplate !== null || typeof selectedTemplate !== "undefined") {
@@ -61,10 +61,11 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 		}
 
 		return () => {
-			// TODO unbind events
-			paper.off("element:mouseenter");
-			paper.off("element:mouseleave");
-			paper.off("element:pointerup");
+			window.removeEventListener("resize", resizeWindowHandler);
+			paperRef.current.off("element:mouseenter");
+			paperRef.current.off("element:mouseleave");
+			paperRef.current.off("element:pointerup");
+			graph.off("change:position");
 		};
 	}, [selectedTemplate, selectedTaskTemplate]);
 
@@ -74,11 +75,26 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 		}
 	}, [past]);
 
+	useEffect(() => {
+		if (typeof paperRef.current !== "undefined") {
+			if (!isGridEnabled) {
+				paperRef.current.clearGrid();
+			} else {
+				paperRef.current.drawGrid(DiagramDefaults.GRID_OPTIONS);
+			}
+		}
+	}, [isGridEnabled]);
+
+	const resizeWindowHandler = () => {
+		const { clientWidth, clientHeight } = document.documentElement;
+		paperRef.current.setDimensions(clientWidth, clientHeight);
+	};
+
 	const setupEventHandlers = () => {
 		let tempPosition;
 		let lastElementInteracted = null;
 
-		paper.on("element:mouseenter", (element) => {
+		paperRef.current.on("element:mouseenter", (element) => {
 			const elementClass = element.$box.attr("class");
 			if (elementClass === "action-items-container") {
 				element.$box.css("z-index", 999999);
@@ -89,7 +105,7 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 			}
 		});
 
-		paper.on("element:mouseleave", (element) => {
+		paperRef.current.on("element:mouseleave", (element) => {
 			const elementClass = element.$box.attr("class");
 			if (elementClass === "action-items-container") {
 				element.$box.css("z-index", 2);
@@ -104,7 +120,7 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 			tempPosition = position;
 		});
 
-		paper.on("element:pointerup", (element) => {
+		paperRef.current.on("element:pointerup", (element) => {
 			// TODO disable diagram, show a loading wheel to block it off until the API request is complete
 
 			if (typeof tempPosition === "undefined") {
@@ -122,7 +138,7 @@ const TemplateEditorDiagram = ({ diagram, graph }) => {
 	};
 
 	return (
-		<div className="diagram-view-div">
+		<div className="diagram-view">
 			<div className="diagram" id="templateDiagram" ref={diagramViewElementz} />
 		</div>
 	);
