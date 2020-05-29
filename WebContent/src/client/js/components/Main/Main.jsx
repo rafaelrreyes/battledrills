@@ -7,7 +7,7 @@ import {
 	AllStatusContainer,
 	TemplateEditorContainer,
 	ReportsContainer,
-	MyAccountContainer,
+	AccountContainer,
 	NotificationContainer
 } from "COMPONENTS";
 import { Routes } from "UTILITIES";
@@ -22,7 +22,7 @@ const Main = () => {
 				<Route path={Routes.STATUS} component={AllStatusContainer} />
 				<Route path={Routes.TEMPLATE_EDITOR} component={TemplateEditorContainer} />
 				<Route path={Routes.REPORTS} component={ReportsContainer} />
-				<Route path={Routes.MY_ACCOUNT} component={MyAccountContainer} />
+				<Route path={Routes.MY_ACCOUNT} component={AccountContainer} />
 			</Switch>
 			<NotificationContainer />
 		</>

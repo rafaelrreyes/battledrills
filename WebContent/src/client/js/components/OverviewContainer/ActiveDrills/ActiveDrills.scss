@@ -1,0 +1,25 @@
+@import "~CSS/index";
+
+.card-title {
+	.active-drill-title-container {
+		.create-drill-menu {
+			position: absolute;
+			right: 2em;
+			top: 1.75em;
+		}
+		.active-drill-header {
+			position: relative;
+		}
+		.create-drill-button {
+			position: absolute;
+			right: 0;
+			margin-right: 0.25em;
+			cursor: pointer;
+			transition: 0.2s;
+
+			&:hover {
+				color: $cyan-700;
+			}
+		}
+	}
+}

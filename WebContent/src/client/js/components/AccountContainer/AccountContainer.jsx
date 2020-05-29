@@ -5,7 +5,7 @@ import ChangePassword from "./ChangePassword/ChangePassword";
 import Settings from "./Settings/Settings";
 import AccountManagement from "./AccountManagement/AccountManagement";
 import { useLocalStorage } from "HOOKS";
-import "./MyAccountContainer.scss";
+import "./AccountContainer.scss";
 
 export const AccountViews = {
 	ACCOUNT: "account",
@@ -14,7 +14,7 @@ export const AccountViews = {
 	ACCOUNT_MANAGEMENT: "account_management"
 };
 
-const MyAccountContainer = () => {
+const AccountContainer = () => {
 	const [view, setView] = useLocalStorage("account_management_view", AccountViews.ACCOUNT);
 
 	const optionClickHandler = (newView) => {
@@ -32,4 +32,4 @@ const MyAccountContainer = () => {
 	);
 };
 
-export default MyAccountContainer;
+export default AccountContainer;

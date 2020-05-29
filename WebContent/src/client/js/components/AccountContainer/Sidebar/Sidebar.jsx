@@ -2,7 +2,7 @@ import React from "react";
 import { Icon } from "CORE";
 import { MaterialIconNames } from "UTILITIES";
 import SideOption from "./SideOption/SideOption";
-import { AccountViews } from "../MyAccountContainer";
+import { AccountViews } from "../AccountContainer";
 import "./Sidebar.scss";
 
 const Sidebar = ({ onOptionClick, activeView }) => {

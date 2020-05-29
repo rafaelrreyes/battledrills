@@ -55,18 +55,18 @@ const AttachmentsView = ({ selectedObject, type, isCollapsible = false }) => {
 						title: `Attachment "${filename} exists. Do you want to overwrite it?`,
 						icon: MaterialIconNames.ATTACHMENT,
 						action: () => {
-							uploadAttachment(true);
+							uploadHandler(true);
 							dispatch(closeModal());
 						}
 					})
 				);
 			} else {
-				uploadAttachment(false);
+				uploadHandler(false);
 			}
 		});
 	};
 
-	const uploadAttachment = (isOverwrite) => {
+	const uploadHandler = (isOverwrite) => {
 		setIsUploading(true);
 		const formdata = new FormData();
 		formdata.append("file", file);

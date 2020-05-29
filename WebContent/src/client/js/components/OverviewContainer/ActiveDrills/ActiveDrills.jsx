@@ -1,6 +1,23 @@
-import React from "react";
-import { DraggableList, openCreateDrillModal, Icon } from "CORE";
-import { API, MaterialIconNames, areArraysEqual, DrillState, DrillTypes } from "UTILITIES";
+import React, { useState } from "react";
+import { DraggableList, Icon, MenuDropdown, openCreateDrillModal } from "CORE";
+import { API, MaterialIconNames, areArraysEqual, DrillTypes } from "UTILITIES";
+
+import "./ActiveDrills.scss";
+
+const menuOptions = [
+	{
+		name: "Create Drill",
+		menuAction: () => {
+			openCreateDrillModal(DrillTypes.DEFAULT);
+		}
+	},
+	{
+		name: "Create Custom Drill",
+		menuAction: () => {
+			openCreateDrillModal(DrillTypes.CUSTOM);
+		}
+	}
+];
 
 const ActiveDrills = ({
 	activeDrills,
@@ -12,6 +29,12 @@ const ActiveDrills = ({
 	pendingUpdateActiveDrills,
 	reorderDrillsError
 }) => {
+	const [showMenu, setShowMenu] = useState(false);
+
+	const showMenuHandler = () => {
+		setShowMenu(!showMenu);
+	};
+
 	const backendUpdate = (activeDrills) => {
 		// if the reorder is the same as it before, don't send a POST
 		if (areArraysEqual(previousActive, activeDrills)) {
@@ -36,15 +59,13 @@ const ActiveDrills = ({
 		<>
 			<div className="card-title">
 				<div className="active-drill-title-container">
-					Active Drills
-					<button
-						className="no-button active-drill-create-icon"
-						onClick={() => {
-							openCreateDrillModal(DrillTypes.DEFAULT);
-						}}
-					>
-						<Icon className="md-20">{MaterialIconNames.ADD_CIRCLE_OUTLINE}</Icon>
-					</button>
+					<span className="active-drill-header">Active Drills</span>
+					<Icon className="create-drill-button" tooltip="Create New Drill" onClick={showMenuHandler}>
+						{MaterialIconNames.ADD}
+					</Icon>
+					<div className="create-drill-menu">
+						{showMenu && <MenuDropdown menuOptions={menuOptions} closeMenu={showMenuHandler} />}
+					</div>
 				</div>
 			</div>
 			<DraggableList

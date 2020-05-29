@@ -12,7 +12,6 @@ export { default as CompletedDrills } from "./OverviewContainer/CompletedDrills/
 // Diagram Views
 export { default as DiagramContainer } from "./DiagramContainer/DiagramContainer";
 export { default as DetailedViewContainer } from "./DetailedViewContainer/DetailedViewContainer";
-export { default as DetailedTimer } from "./DetailedTimer/DetailedTimer";
 export { default as TaskActionsMenu } from "./TaskActionsMenu/TaskActionsMenu";
 export { default as OwnerActionsMenu } from "./OwnerActionsMenu/OwnerActionsMenu";
 // Notes View
@@ -41,4 +40,4 @@ export { default as TemplateEditorContainer } from "./TemplateEditorContainer/Te
 export { default as ReportsContainer } from "./ReportsContainer/ReportsContainer";
 
 // My Account View
-export { default as MyAccountContainer } from "./MyAccountContainer/MyAccountContainer";
+export { default as AccountContainer } from "./AccountContainer/AccountContainer";
