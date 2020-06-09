@@ -30,7 +30,4 @@ What things you need to install the software and how to install them
 
 ## Authors
 
-* Diana Baird
 * Rafael Reyes
-* Dustin Pham
-* Christopher Alsheikh
