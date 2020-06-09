@@ -1,7 +1,8 @@
 import React from "react";
 import store from "REDUX/store";
 import { MaterialIconNames, AttachmentTypes, API, NoteTypes } from "UTILITIES";
-import { Icon } from "CORE";
+import { Icon, ModalContentTypes } from "CORE";
+import { showModal, closeModal, editSelectedTaskNotes, deleteDrillAttachment, deleteTaskAttachment } from "REDUX";
 
 import "./AttachmentsListViewItem.scss";
 
@@ -88,7 +89,7 @@ const onDeleteClick = (attachment, selectedObject, user) => {
 						);
 					}
 				});
-				dispatch(closeModal());
+				store.dispatch(closeModal());
 			}
 		})
 	);
