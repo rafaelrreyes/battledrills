@@ -14,18 +14,13 @@ public class Listener implements ServletContextListener{
     
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        TemplateManager manager = TemplateManager.getInstance();
-        vmfMgr = new VmfManager();
-        vmfMgr.startKMessageMonitor();
+
     }
     
     @Override
     public void contextDestroyed(ServletContextEvent sce) 
     {
-        if(vmfMgr != null)
-        {
-            vmfMgr.stopKMessageMonitor();
-        }
+
     }
     
 }

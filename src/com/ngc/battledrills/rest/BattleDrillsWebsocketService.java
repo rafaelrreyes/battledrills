@@ -7,6 +7,8 @@ package com.ngc.battledrills.rest;
 
 import com.ngc.battledrills.data.User;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.websocket.Session;
@@ -20,8 +22,17 @@ public class BattleDrillsWebsocketService {
     
     private static Map<String, Session> sessions = new HashMap<String, Session>();
     
+    public static void connectToVmfManagerApp() {
+        try {
+            final BattleDrillsClientWebsocket vmfWebsocket = new BattleDrillsClientWebsocket();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     private BattleDrillsWebsocketService () {
-        
+        // connect to vmf manager app once the battle drills websocket gets initialized
+        connectToVmfManagerApp();
     }
     
     public static BattleDrillsWebsocketService initialize() {

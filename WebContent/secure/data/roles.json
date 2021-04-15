@@ -1,0 +1,82 @@
+[
+    {
+        "id": 1,
+        "name": "CO",
+        "permission": "admin"
+    },
+    {
+        "id": 2,
+        "name": "XO",
+        "permission": "admin"
+    },
+    {
+        "id": 3,
+        "name": "AirO",
+        "permission": "admin"
+    },
+    {
+        "id": 4,
+        "name": "FSCC",
+        "permission": "admin"
+    },
+    {
+        "id": 5,
+        "name": "BAS",
+        "permission": "admin"
+    },
+    {
+        "id": 6,
+        "name": "IO",
+        "permission": "admin"
+    },
+    {
+        "id": 7,
+        "name": "LOC",
+        "permission": "admin"
+    },
+    {
+        "id": 8,
+        "name": "PAO",
+        "permission": "admin"
+    },
+    {
+        "id": 9,
+        "name": "SAS",
+        "permission": "admin"
+    },
+    {
+        "id": 10,
+        "name": "S-1",
+        "permission": "admin"
+    },
+    {
+        "id": 11,
+        "name": "S-2",
+        "permission": "admin"
+    },
+    {
+        "id": 12,
+        "name": "S-3",
+        "permission": "admin"
+    },
+    {
+        "id": 13,
+        "name": "S-4",
+        "permission": "admin"
+    },
+    {
+        "id": 14,
+        "name": "S-6",
+        "permission": "admin"
+    },
+    {
+        "id": 15,
+        "name": "WO",
+        "permission": "admin"
+    },
+    {
+        "id": 16,
+        "name": "Convoy Commander",
+        "permission": "admin"
+    }
+]

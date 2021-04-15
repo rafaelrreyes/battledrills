@@ -22,6 +22,7 @@ public class BattleDrillsConfig {
     private static final String FILE_DIR = "secure/data/files/";
     private static final String BATTLE_DRILLS_DIR = "secure/data/battle_drills/";
     private static final String DATA_DIR = "secure/data/";
+    private static final String ROLES_FILE = "secure/data/roles.json";
     private static final String BATTLE_DRILLS_REPORTS_DIR = "secure/data/battle_drills/reports/";
     private static final String IED_DISCOVERED_TEMPLATE = "ied_discovered.json";
     private static final String CONFIG_FILE = "conf.json";
@@ -57,6 +58,11 @@ public class BattleDrillsConfig {
     {
         String runningContext = (devMode)?DEV_CONTEXT:CONTEXT;
         return runningContext + BATTLE_DRILLS_DIR;
+    }
+    
+    public static final String getRolesFile() {
+        String runningContext = devMode ? DEV_CONTEXT : CONTEXT;
+        return runningContext + ROLES_FILE;
     }
     
     public static final String getCompletedBattleDrillsDir() {
