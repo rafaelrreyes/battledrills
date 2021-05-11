@@ -6,20 +6,22 @@
 package com.ngc.battledrills.manage;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngc.battledrills.BattleDrillsConfig;
 import com.ngc.battledrills.data.Role;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import com.ngc.battledrills.constants.RolesConstants.RolesProperties;
+import com.ngc.battledrills.data.Group;
 import com.ngc.battledrills.util.JsonUtils;
 import java.nio.charset.StandardCharsets;
-import static org.apache.commons.io.FileUtils.getFile;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -27,7 +29,7 @@ import static org.apache.commons.io.FileUtils.getFile;
  */
 public class RolesManager {
     
-    private static final List<Role> roles = new ArrayList<Role>();
+    private static final Map<Integer, Role> roles = new HashMap<Integer, Role>();
     private static final ArrayList<Integer> roleIds = new ArrayList<Integer>();
     private static RolesManager instance;
     
@@ -44,11 +46,19 @@ public class RolesManager {
     }
     
     /**
+     * Returns the map of role objects.
+     * @return 
+     */
+    public Map<Integer, Role> getRolesMap() {
+        return roles;
+    }
+    
+    /**
      * Returns the list of role objects.
      * @return 
      */
-    public List<Role> getRoles() {
-        return roles;
+    public List<Role> getRolesList() {
+        return new ArrayList<>(roles.values());
     }
     
     /**
@@ -56,8 +66,8 @@ public class RolesManager {
      * @return 
      */
     public ArrayList<String> getRolenames() {
-        ArrayList<String> roleNames = new ArrayList<String>();
-        roles.forEach((role) -> {
+        ArrayList<String> roleNames = new ArrayList<>();
+        getRolesList().forEach((role) -> {
            roleNames.add(role.getName());
         });
         return roleNames;
@@ -68,13 +78,13 @@ public class RolesManager {
         try {
             File rolesFile = new File(BattleDrillsConfig.getRolesFile());
             String fileContents = FileUtils.readFileToString(rolesFile);
-            List<Role> mappedRoles = loadFromJson(fileContents);
-            roles.addAll(mappedRoles);
-            roles.forEach((role) -> {
+            Map<Integer, Role> mappedRoles = loadFromJson(fileContents);
+            roles.putAll(mappedRoles);
+            getRolesList().forEach((role) -> {
                 roleIds.add(role.getId());
             });
         } catch (IOException e) {
-            System.err.println("Unable to load  roles into runtime");
+            System.err.println("Unable to load roles into runtime");
         }
     }
     
@@ -84,31 +94,74 @@ public class RolesManager {
      * @return Role
      * @throws IOException 
      */
-    private List<Role> loadFromJson(String json) throws IOException {
-        List<Role> roles = Arrays.asList(new ObjectMapper().readValue(json, Role[].class));
-        return roles;
+    private Map<Integer, Role> loadFromJson(String json) throws IOException {
+        Map<Integer, Role> mappedRoles = new ObjectMapper().readValue(json, new TypeReference<HashMap<Integer, Role>>() {});
+        return mappedRoles;
     }
     
     /**
      * 
      * @param name
      * @param permission 
+     * @param groups 
+     * @return  
+     * @throws com.fasterxml.jackson.core.JsonProcessingException 
      */
-    public void addRole(String name, String permission) throws JsonProcessingException, IOException {
+    public Role addRole(String name, String permission, ArrayList<Integer> groups) throws JsonProcessingException, IOException {
         
         if (null == name || null == permission) {
-            return;
+            return null;
+        }
+        
+        if (null == groups) {
+            groups = new ArrayList<>();
         }
         
         // self assign ID
         int newRoleId = getAvailableID();
-        Role newRole = new Role(newRoleId, name, permission);
+        Role newRole = new Role(newRoleId, name, permission, groups);
         
         // add role to runtime and role ID container
-        roles.add(newRole);
+        roles.put(newRoleId, newRole);
         roleIds.add(newRoleId);
         
+        GroupManager groupMgr = GroupManager.getInstance();
+        groups.forEach((groupId) -> {
+            Group currentGroup = groupMgr.getGroupsMap().get(groupId);
+            currentGroup.getRoles().add(newRoleId);
+        });
+        
+        groupMgr.updateJsonFile();
+        
         updateJsonFile();
+        
+        return newRole;
+    }
+    
+    /**
+     * Edits multiple properties of a role by its id.
+     * Properties can contain "name" or "permission".
+     * @param id
+     * @param properties
+     * @return Role
+     */
+    public Role editRoleProperties(int id, Map<String, String> properties) {
+        
+        Role targetRole = roles.get(id);
+        
+        if (null != targetRole) {
+            if (properties.containsKey("name")) {
+                targetRole.setName(properties.get("name"));
+            }
+
+            if (properties.containsKey("permission")) {
+                targetRole.setPermission(properties.get("permission"));
+            }
+        }
+        
+        updateJsonFile();
+        
+        return targetRole;
     }
     
     /**
@@ -116,21 +169,16 @@ public class RolesManager {
      * @param id
      * @param property
      * @param value 
+     * @return Role
+     * @throws com.fasterxml.jackson.core.JsonProcessingException 
      */
-    public void editRoleByProperty(int id, RolesProperties property, String value) throws JsonProcessingException, IOException {
+    public Role editRoleByProperty(int id, RolesProperties property, String value) throws JsonProcessingException, IOException {
         
         if (null == property || null == value) {
-            return;
+            return null;
         }
         
-        Role targetRole = null;
-        // find corresponding role by id
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getId() == id) {
-                targetRole = roles.get(i);
-                break;
-            }
-        }
+        Role targetRole = roles.get(id);
         
         // set property
         if (null != targetRole) {
@@ -147,6 +195,8 @@ public class RolesManager {
         }
         
         updateJsonFile();
+        
+        return targetRole;
     }
     
     /**
@@ -156,15 +206,14 @@ public class RolesManager {
      */
     public boolean deleteRoleById(int id) {
         boolean isDeleted = false;
-        for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getId() == id) {
-                roles.remove(i);
-                isDeleted = true;
-                updateJsonFile();
-                break;
-            }
+        Role removedRole = roles.remove(id);
+          
+        if (null == removedRole) {
+            return false;
         }
         
+        updateJsonFile();
+
         // remove id in the rolesId container
         for (int j = 0; j < roleIds.size(); j++) {
             if (roleIds.get(j) == id) {
@@ -173,7 +222,19 @@ public class RolesManager {
             }
         }
         
-        return isDeleted;
+        GroupManager groupMgr = GroupManager.getInstance();
+        List<Group> groups = groupMgr.getGroupsList();
+        
+        groups.forEach((group) -> {
+            ArrayList<Integer> rolesInCurrentGroup = group.getRoles();
+            if (rolesInCurrentGroup.indexOf(id) != -1) {
+                rolesInCurrentGroup.remove(rolesInCurrentGroup.indexOf(id));
+            }
+        });
+        
+        groupMgr.updateJsonFile();
+        
+        return true;
     }
     
     /**
@@ -203,7 +264,7 @@ public class RolesManager {
     /**
      * Writes the contents of Roles container to json file.
      */
-    private void updateJsonFile() {
+    public void updateJsonFile() {
         try {
             File file = FileUtils.getFile(BattleDrillsConfig.getRolesFile());
             FileUtils.writeStringToFile(file, JsonUtils.writeValue(roles), StandardCharsets.UTF_8);

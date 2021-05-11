@@ -6,7 +6,6 @@
 package com.ngc.battledrills.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
@@ -15,19 +14,17 @@ import java.util.ArrayList;
  * @author rafae
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Role {
+public class Group {
     private int id;
     private String name;
-    private String permission;
-    private ArrayList<Integer> groups;
+    private ArrayList<Integer> roles = new ArrayList<Integer>();
     
-    private Role() {}
+    private Group() {}
     
-    public Role(int id, String name, String permission, ArrayList<Integer> groups) {
+    public Group(int id, String name, ArrayList<Integer> roles) {
         this.id = id;
         this.name = name;
-        this.permission = permission;
-        this.groups = groups;
+        this.roles = roles;
     }
     
     @JsonProperty("id")
@@ -48,37 +45,25 @@ public class Role {
         this.name = name;
     }
     
-    @JsonProperty("permission")
-    public String getPermission() {
-        return this.permission;
+    @JsonProperty("roles")
+    public ArrayList<Integer> getRoles() {
+        return this.roles;
+    }
+
+    public void setRoles(ArrayList<Integer> roles) {
+        this.roles = roles;
     }
     
-    public void setPermission(String permission) {
-        this.permission = permission;
-    }
-    
-    @JsonProperty("groups")
-    public ArrayList<Integer> getGroups() {
-        return this.groups;
-    }
-    
-    public void setGroups(ArrayList<Integer> groups) {
-        this.groups = groups;
-    }
-    
-    @JsonProperty("groupNames")
-    public ArrayList<String> getGroupNames() {
-//        return this.groups;
-//TODO: need to get groupnames from groupmanager by the ids in the groups list
+    @JsonProperty("roleNames") 
+    public ArrayList<String> getRoleNames() {
         return null;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("ID: ").append(getId()).append(System.lineSeparator());
         sb.append("Name: ").append(getName()).append(System.lineSeparator());
-        sb.append("Permission: ").append(getPermission()).append(System.lineSeparator());
         
         return sb.toString();
     }

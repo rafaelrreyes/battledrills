@@ -320,7 +320,6 @@ public class BattleDrillManager {
         catch(Exception e)
         {
             System.err.println("DIANA unable to create battle drill from template: " + e);
-            return null;
         }
         
         return battleDrill;
