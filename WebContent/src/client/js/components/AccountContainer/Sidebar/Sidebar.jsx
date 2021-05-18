@@ -11,7 +11,7 @@ const Sidebar = ({ onOptionClick, activeView }) => {
 			<Icon className="md-96">{MaterialIconNames.ACCOUNT_CIRCLE}</Icon>
 			<div className="options">
 				<SideOption
-					icon={MaterialIconNames.PERSON}
+					icon={MaterialIconNames.ACCOUNT}
 					isActive={activeView === AccountViews.ACCOUNT}
 					onClick={() => {
 						onOptionClick(AccountViews.ACCOUNT);
@@ -19,7 +19,7 @@ const Sidebar = ({ onOptionClick, activeView }) => {
 				>
 					My Account
 				</SideOption>
-				<SideOption
+				{/* <SideOption
 					icon={MaterialIconNames.SECURITY}
 					isActive={activeView === AccountViews.CHANGE_PASSWORD}
 					onClick={() => {
@@ -27,7 +27,7 @@ const Sidebar = ({ onOptionClick, activeView }) => {
 					}}
 				>
 					Change Password
-				</SideOption>
+				</SideOption> */}
 				<SideOption
 					icon={MaterialIconNames.SETTINGS}
 					isActive={activeView === AccountViews.SETTINGS}
@@ -37,7 +37,8 @@ const Sidebar = ({ onOptionClick, activeView }) => {
 				>
 					Settings
 				</SideOption>
-				<SideOption
+
+				{/* <SideOption
 					icon={MaterialIconNames.ACCOUNTS}
 					isActive={activeView === AccountViews.ACCOUNT_MANAGEMENT}
 					onClick={() => {
@@ -45,6 +46,24 @@ const Sidebar = ({ onOptionClick, activeView }) => {
 					}}
 				>
 					Manage Accounts
+				</SideOption> */}
+				<SideOption
+					icon={MaterialIconNames.ROLES}
+					isActive={activeView === AccountViews.ROLES}
+					onClick={() => {
+						onOptionClick(AccountViews.ROLES);
+					}}
+				>
+					Roles
+				</SideOption>
+				<SideOption
+					icon={MaterialIconNames.ACCOUNTS}
+					isActive={activeView === AccountViews.GROUPS}
+					onClick={() => {
+						onOptionClick(AccountViews.GROUPS);
+					}}
+				>
+					Groups
 				</SideOption>
 			</div>
 		</div>

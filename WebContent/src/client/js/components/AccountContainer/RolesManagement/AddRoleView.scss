@@ -1,0 +1,97 @@
+@import "~CSS/index";
+
+.add-role-view {
+	.role-view-header {
+		display: flex;
+		font-size: 18px;
+		font-weight: bolder;
+		margin-top: 20px;
+	}
+
+	.input-fields {
+		display: flex;
+		flex-direction: column;
+		width: 50%;
+		margin: 10px 10px 10px 0px;
+
+		.field {
+			display: flex;
+			align-items: center;
+			justify-content: start;
+			margin: 10px 10px 10px 0px;
+
+			.field-label {
+				width: 100px;
+				text-align: left;
+				font-size: 16px;
+				font-weight: bolder;
+			}
+		}
+	}
+
+	.drag-drop-container {
+		display: flex;
+		align-items: center;
+		width: 75%;
+
+		.group-list-container {
+			width: 50%;
+			margin: 10px;
+
+			.group-list-header {
+				font-size: 16px;
+				font-weight: bolder;
+				margin: 10px;
+			}
+
+			.group-list {
+				background: $blue-grey-700;
+				width: 100%;
+				min-height: 430px;
+				max-height: 430px;
+				overflow-y: auto;
+
+				.loading-wheel {
+					margin-top: 20px;
+				}
+
+				.group-list-item,
+				.available-group-list-item {
+					height: 40px;
+					padding: 5px;
+					background: $blue-grey-800;
+					margin: 10px;
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					overflow: hidden;
+
+					.group-list-item-name {
+						margin-left: 10px;
+						display: flex;
+						justify-content: start;
+						text-align: left;
+					}
+
+					i {
+						&:hover {
+							color: $cyan-700;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.footer-buttons {
+		width: 25%;
+		display: flex;
+		align-items: center;
+		justify-content: space-evenly;
+		margin: 10px;
+
+		button {
+			margin-right: 10px;
+		}
+	}
+}

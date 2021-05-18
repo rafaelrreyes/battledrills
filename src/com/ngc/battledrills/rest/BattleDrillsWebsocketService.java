@@ -32,7 +32,7 @@ public class BattleDrillsWebsocketService {
     
     private BattleDrillsWebsocketService () {
         // connect to vmf manager app once the battle drills websocket gets initialized
-        connectToVmfManagerApp();
+//        connectToVmfManagerApp();
     }
     
     public static BattleDrillsWebsocketService initialize() {

@@ -8,6 +8,7 @@ package com.ngc.battledrills.data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ngc.battledrills.manage.GroupManager;
 import java.util.ArrayList;
 
 /**
@@ -68,9 +69,13 @@ public class Role {
     
     @JsonProperty("groupNames")
     public ArrayList<String> getGroupNames() {
-//        return this.groups;
-//TODO: need to get groupnames from groupmanager by the ids in the groups list
-        return null;
+        ArrayList<String> mappedGroupNames = new ArrayList<>();
+        GroupManager groupMgr = GroupManager.getInstance();
+        
+        this.groups.forEach((groupId) -> {
+            mappedGroupNames.add(groupMgr.getGroupsMap().get(groupId).getName());
+        });
+        return mappedGroupNames;
     }
     
     @Override

@@ -5,10 +5,13 @@
 		flex: 1 9 auto;
 		display: flex;
 		flex-direction: column;
-		padding: 20px;
+		padding: 20px 0px 0px 0px;
+		width: 20%;
+		min-width: 250px;
+		background: $blue-grey-800;
 
 		.options {
-			margin: 0 auto;
+			margin-top: 20px;
 		}
 
 		.admin-options {

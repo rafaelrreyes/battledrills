@@ -7,6 +7,8 @@ package com.ngc.battledrills.data;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ngc.battledrills.manage.GroupManager;
+import com.ngc.battledrills.manage.RolesManager;
 import java.util.ArrayList;
 
 /**
@@ -56,7 +58,13 @@ public class Group {
     
     @JsonProperty("roleNames") 
     public ArrayList<String> getRoleNames() {
-        return null;
+        ArrayList<String> mappedRolesNames = new ArrayList<>();
+        RolesManager roleMgr = RolesManager.getInstance();
+        
+        this.roles.forEach((roleId) -> {
+            mappedRolesNames.add(roleMgr.getRolesMap().get(roleId).getName());
+        });
+        return mappedRolesNames;
     }
 
     @Override

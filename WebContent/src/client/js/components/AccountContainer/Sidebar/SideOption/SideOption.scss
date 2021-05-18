@@ -8,7 +8,8 @@
 		align-items: center;
 		cursor: pointer;
 		padding: 8px 24px;
-		background-color: $grey-700;
+		font-weight: 100;
+		background-color: $blue-grey-700;
 
 		.side-text {
 			display: flex;
@@ -18,7 +19,7 @@
 		}
 
 		&:hover {
-			background-color: $blue-grey-800;
+			background-color: $blue-grey-600;
 		}
 	}
 

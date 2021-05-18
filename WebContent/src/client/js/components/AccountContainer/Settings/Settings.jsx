@@ -21,7 +21,7 @@ const Settings = () => {
 	return (
 		<div className="main">
 			<div className="title">Manage Your Settings</div>
-			<hr className="title-break"></hr>
+			<div className="title-break"></div>
 			<div className="user-info">
 				<div className="title">Notifications</div>
 				<div className="info">

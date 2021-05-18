@@ -1,0 +1,138 @@
+@import "~CSS/index";
+
+.account-view {
+	.main {
+		width: 80%;
+		overflow-y: auto;
+		// min-width: fit-content;
+		// box-sizing: border-box;
+		overflow-x: overlay;
+
+		.main-commands {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.add-group-label {
+				margin-left: 10px;
+			}
+
+			.search-input {
+				display: flex;
+				align-items: center;
+
+				i {
+					margin-left: 5px;
+				}
+			}
+		}
+
+		.headers {
+			display: flex;
+			margin-top: 10px;
+			font-weight: bolder;
+			background: $blue-grey-800;
+
+			.header-item {
+				display: flex;
+				justify-content: start;
+				align-items: center;
+				height: 30px;
+				padding: 10px;
+			}
+
+			.group-name-header {
+				width: 60%;
+				cursor: pointer;
+
+				.name-header-label {
+					cursor: pointer;
+					&:hover {
+						color: $cyan-700;
+					}
+				}
+			}
+
+			.roles-count-header {
+				width: 30%;
+
+				.roles-count-header-label {
+					cursor: pointer;
+					&:hover {
+						color: $cyan-700;
+					}
+				}
+			}
+
+			.commands-header {
+				width: 15%;
+			}
+
+			i {
+				cursor: pointer;
+				&:hover {
+					color: $cyan-700;
+				}
+			}
+		}
+
+		.group-list {
+			width: 100%;
+			height: 100%;
+			overflow: overlay;
+			overflow-x: hidden;
+
+			.loading-wheel {
+				margin-top: 20px;
+			}
+
+			.group-row-item {
+				display: flex;
+				align-items: center;
+				min-height: 40px;
+				border-bottom: 1px solid $blue-grey-800;
+				cursor: pointer;
+
+				.group-column-item {
+					padding: 10px;
+					display: flex;
+					align-items: center;
+				}
+
+				.group-name {
+					width: 60%;
+					display: flex;
+					align-items: center;
+
+					.group-name-label {
+						font-weight: bold;
+						margin-left: 5px;
+					}
+				}
+
+				.group-role-count {
+					width: 30%;
+					display: flex;
+					flex-wrap: wrap;
+					align-items: center;
+
+					.group-role-count-label {
+						margin-left: 5px;
+						font-weight: bold;
+					}
+				}
+
+				.group-commands {
+					width: 15%;
+					justify-content: flex-end;
+					display: flex;
+					padding-right: 20px;
+				}
+
+				&:hover {
+					background: $blue-grey-700;
+				}
+			}
+		}
+	}
+}

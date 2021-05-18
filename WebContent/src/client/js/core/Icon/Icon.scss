@@ -7,3 +7,21 @@
 .green {
 	color: $green-400 !important;
 }
+
+.circled-background {
+	background: $blue-grey-600;
+	border-radius: 100px;
+	padding: 5px;
+	cursor: pointer;
+	margin: 5px;
+
+	&:hover {
+		background: $blue-grey-900;
+	}
+}
+
+.disabled {
+	background: $grey-600;
+	cursor: default;
+	pointer-events: none;
+}

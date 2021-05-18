@@ -1,0 +1,149 @@
+@import "~CSS/index";
+
+.account-view {
+	.main {
+		width: 80%;
+		overflow-y: auto;
+		// min-width: fit-content;
+		// box-sizing: border-box;
+		overflow-x: overlay;
+
+		.main-commands {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			.add-role-label {
+				margin-left: 10px;
+			}
+
+			.search-input {
+				display: flex;
+				align-items: center;
+
+				i {
+					margin-left: 5px;
+				}
+			}
+		}
+
+		.headers {
+			display: flex;
+			margin-top: 10px;
+			font-weight: bolder;
+			background: $blue-grey-800;
+
+			.header-item {
+				display: flex;
+				justify-content: start;
+				align-items: center;
+				height: 30px;
+				padding: 10px;
+			}
+
+			.role-name-header {
+				width: 15%;
+				cursor: pointer;
+
+				.name-header-label {
+					cursor: pointer;
+					&:hover {
+						color: $cyan-700;
+					}
+				}
+			}
+
+			.permission-header {
+				width: 10%;
+
+				.permission-header-label {
+					cursor: pointer;
+					&:hover {
+						color: $cyan-700;
+					}
+				}
+			}
+
+			.groups-header {
+				width: 60%;
+			}
+
+			.commands-header {
+				width: 15%;
+			}
+
+			i {
+				cursor: pointer;
+				&:hover {
+					color: $cyan-700;
+				}
+			}
+		}
+
+		.roles-list {
+			width: 100%;
+			height: 100%;
+			overflow: overlay;
+			overflow-x: hidden;
+
+			.loading-wheel {
+				margin-top: 20px;
+			}
+
+			.role-row-item {
+				display: flex;
+				align-items: center;
+				min-height: 40px;
+				border-bottom: 1px solid $blue-grey-800;
+				cursor: pointer;
+
+				.role-column-item {
+					padding: 10px;
+					display: flex;
+					align-items: center;
+				}
+
+				.role-name {
+					width: 15%;
+					display: flex;
+					align-items: center;
+
+					.role-name-label {
+						font-weight: bold;
+						margin-left: 5px;
+					}
+				}
+
+				.role-groups {
+					width: 60%;
+					display: flex;
+					flex-wrap: wrap;
+
+					.role-item-groupname {
+						background: $blue-grey-900;
+						border-radius: 5px;
+						margin: 2.5px 7.5px;
+						padding: 2.5px 5px;
+						// flex: 1 0 10%;
+						white-space: nowrap;
+					}
+				}
+
+				.role-permission {
+					width: 10%;
+				}
+
+				.role-commands {
+					width: 15%;
+					justify-content: flex-end;
+					display: flex;
+					padding-right: 20px;
+				}
+
+				&:hover {
+					background: $blue-grey-700;
+				}
+			}
+		}
+	}
+}

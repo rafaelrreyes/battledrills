@@ -4,6 +4,8 @@ import Account from "./Account/Account";
 import ChangePassword from "./ChangePassword/ChangePassword";
 import Settings from "./Settings/Settings";
 import AccountManagement from "./AccountManagement/AccountManagement";
+import RolesManagement from "./RolesManagement/RolesManagement";
+import GroupManagement from "./GroupManagement/GroupManagement";
 import { useLocalStorage } from "HOOKS";
 import "./AccountContainer.scss";
 
@@ -11,7 +13,9 @@ export const AccountViews = {
 	ACCOUNT: "account",
 	CHANGE_PASSWORD: "change_password",
 	SETTINGS: "settings",
-	ACCOUNT_MANAGEMENT: "account_management"
+	ACCOUNT_MANAGEMENT: "account_management",
+	ROLES: "roles",
+	GROUPS: "groups"
 };
 
 const AccountContainer = () => {
@@ -28,6 +32,8 @@ const AccountContainer = () => {
 			{view === AccountViews.CHANGE_PASSWORD && <ChangePassword></ChangePassword>}
 			{view === AccountViews.SETTINGS && <Settings></Settings>}
 			{view === AccountViews.ACCOUNT_MANAGEMENT && <AccountManagement></AccountManagement>}
+			{view === AccountViews.ROLES && <RolesManagement />}
+			{view === AccountViews.GROUPS && <GroupManagement />}
 		</div>
 	);
 };

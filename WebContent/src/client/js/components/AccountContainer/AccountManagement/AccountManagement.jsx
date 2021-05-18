@@ -26,7 +26,7 @@ const AccountManagement = () => {
 	return (
 		<div className="main">
 			<div className="title">Account Management</div>
-			<hr className="title-break"></hr>
+			<div className="title-break"></div>
 			<div className="user-info">
 				<div className="TODO">This feature is currently a work in progress.</div>
 				<div className="title">Accounts</div>

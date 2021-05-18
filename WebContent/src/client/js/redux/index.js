@@ -10,6 +10,8 @@ import AllStatus from "./AllStatus/AllStatusReducer";
 import Billet from "./Billet/BilletReducer";
 import View from "./View/ViewReducer";
 import DiagramEditor from "./DiagramEditor/DiagramEditorReducer";
+import Roles from "./Roles/RolesReducer";
+import Groups from "./Groups/GroupsReducer";
 
 export * from "./AllDrills/AllDrillsActions";
 export * from "./AllDrills/AllDrillsSelectors";
@@ -33,6 +35,10 @@ export * from "./View/ViewActions";
 export * from "./View/ViewSelectors";
 export * from "./DiagramEditor/DiagramEditorActions";
 export * from "./DiagramEditor/DiagramEditorSelectors";
+export * from "./Roles/RolesActions";
+export * from "./Roles/RolesSelectors";
+export * from "./Groups/GroupsActions";
+export * from "./Groups/GroupsSelectors";
 
 export default combineReducers({
 	AllDrills,
@@ -45,5 +51,7 @@ export default combineReducers({
 	AllStatus,
 	Billet,
 	View,
-	DiagramEditor
+	DiagramEditor,
+	Roles,
+	Groups
 });

@@ -23,6 +23,8 @@ const REPORTS = "reports";
 const TASK = "task";
 const METRICS = "metrics";
 const TEMPLATES = "templates";
+const ROLES = "roles";
+const GROUPS = "groups";
 
 // Battledrills endpoints
 
@@ -468,6 +470,83 @@ const getReport = (requestBody, onSuccess, onError) => {
 };
 
 /**
+ * Gets all possible role permission types.
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ * @returns
+ */
+const getPermissionTypes = (onSuccess, onError) => {
+	const endpoint = `/${ROLES}/permissions`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+/**
+ * Retrieves roles objects in an array.
+ * @param {Function} onSuccess
+ * @param {Function} onError
+ * @returns
+ */
+const getRoles = (onSuccess, onError) => {
+	const endpoint = `/${ROLES}`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+const getRolenames = (onSuccess, onError) => {
+	const endpoint = `/${ROLES}/names`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+const addRole = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${ROLES}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const editRoleProperties = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${ROLES}`;
+	return put(endpoint, requestBody, onSuccess, onError);
+};
+
+const deleteRoleById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${ROLES}`;
+	return del(endpoint, requestBody, onSuccess, onError);
+};
+
+const getGroups = (onSuccess, onError) => {
+	const endpoint = `/${GROUPS}`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+const getGroupnames = (onSuccess, onError) => {
+	const endpoint = `/${GROUPS}/names`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+const addGroup = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${GROUPS}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const editGroupnameById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${GROUPS}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const deleteGroupById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${GROUPS}`;
+	return del(endpoint, requestBody, onSuccess, onError);
+};
+
+const addRoleToGroupById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${GROUPS}/role`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const deleteRoleFromGroupById = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${GROUPS}/role`;
+	return del(endpoint, requestBody, onSuccess, onError);
+};
+
+/**
  * Wrapper method for AXIOS GET requests.
  * @param {String} endpoint
  * @param {Object} params
@@ -612,5 +691,18 @@ export const API = {
 	deleteDrillTemplate,
 	deleteDrillTemplates,
 	revertDrillTemplate,
-	getReport
+	getReport,
+	getPermissionTypes,
+	getRoles,
+	getRolenames,
+	addRole,
+	editRoleProperties,
+	deleteRoleById,
+	getGroups,
+	getGroupnames,
+	addGroup,
+	editGroupnameById,
+	deleteGroupById,
+	addRoleToGroupById,
+	deleteRoleFromGroupById
 };
