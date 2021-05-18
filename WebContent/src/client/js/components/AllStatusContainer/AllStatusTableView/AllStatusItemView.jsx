@@ -8,6 +8,7 @@ import "./AllStatusItemView.scss";
  */
 
 const AllStatusItemView = ({ drillName, tasks, onTaskLinkClick }) => {
+	// TODO: need to propagate the showTasks state up the component tree to save its state for when navigating back to this page
 	const [showTasks, setShowTasks] = useState(false);
 
 	const tasksListClickHandler = () => {

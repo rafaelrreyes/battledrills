@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { UserConfiguration, MaterialIconNames } from "UTILITIES";
+import { API, MaterialIconNames } from "UTILITIES";
 import ChatItemView from "./ChatItemView/ChatItemView";
 import { Icon, Input, InputSizes, InputTypes } from "CORE";
-import { addChat, toggleChatDisplay, swapChats, updateChat, removeChat, getUser, getAllChats } from "REDUX";
+import { addChat, getRoles, toggleChatDisplay, swapChats, updateChat, removeChat, getUser, getAllChats } from "REDUX";
 
 import "./ChatContainer.scss";
 
@@ -24,12 +24,14 @@ const getWidth = () => {
 let resizeTimeout = false;
 
 const ChatContainer = () => {
+	const [allRoles, setAllRoles] = useState([]);
 	const [showContactsList, setShowContactsList] = useState(false);
 	const [userSearchString, setUserSearchString] = useState("");
 	const [displayExtraChats, setDisplayExtraChats] = useState(false);
 	const [maxChats, setMaxChats] = useState(Math.floor(getWidth() / SCREEN_WIDTH_CONSTANT));
 	const chats = useSelector(getAllChats);
 	const user = useSelector(getUser);
+	const reduxRoles = useSelector(getRoles);
 
 	const dispatch = useDispatch();
 
@@ -39,6 +41,16 @@ const ChatContainer = () => {
 			window.removeEventListener("resize", handleResize);
 		};
 	}, []);
+
+	useEffect(() => {
+		// anytime the roles is changed in app state, fetch most updated roles
+		API.getRoles((roles) => {
+			const roleNames = roles.map((role) => {
+				return role.name;
+			});
+			setAllRoles(roleNames);
+		});
+	}, [reduxRoles]);
 
 	const handleResize = () => {
 		clearTimeout(resizeTimeout);
@@ -106,7 +118,7 @@ const ChatContainer = () => {
 		const userRole = user.role;
 
 		// Always add default "All" for All Chat Option
-		contacts.push("All", ...UserConfiguration.DEFINED_ROLES);
+		contacts.push("All", ...allRoles);
 
 		if (userSearchString !== "") {
 			return contacts

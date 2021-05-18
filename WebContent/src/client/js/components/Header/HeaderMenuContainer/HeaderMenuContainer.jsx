@@ -1,21 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NotificationView } from "COMPONENTS";
 import { MenuDropdown, Icon, TooltipPlacement } from "CORE";
 import { MaterialIconNames, UserConfiguration } from "UTILITIES";
-import { setUser, getUser, getRole, markAllRead, getUnreadNotificationsCount, getToasts, removeToast } from "REDUX";
+import {
+	setUser,
+	getUser,
+	getRoles,
+	setRoles,
+	getRole,
+	markAllRead,
+	getUnreadNotificationsCount,
+	getToasts,
+	removeToast
+} from "REDUX";
 import { useLocalStorage } from "HOOKS";
 import "./HeaderMenuContainer.scss";
+import { API } from "UTILITIES/API";
 
 const HeaderMenuContainer = () => {
 	const [showUserMenu, setShowUserMenu] = useState(false);
 	const [showNotificationsView, setShowNotificationsView] = useState(false);
 	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", useSelector(getUser));
-
+	const [menuRoles, setMenuRoles] = useState([]);
 	const dispatch = useDispatch();
 
 	// redux selectors
 	const role = useSelector(getRole);
+	const roles = useSelector(getRoles);
 	const unreadNotifications = useSelector(getUnreadNotificationsCount);
 	const toasts = useSelector(getToasts);
 
@@ -33,6 +45,23 @@ const HeaderMenuContainer = () => {
 		});
 		return roles;
 	})();
+
+	useEffect(() => {
+		if (showUserMenu) {
+			API.getRoles((roles) => {
+				dispatch(setRoles(roles));
+				const allRoles = roles.map((role) => {
+					return {
+						name: role.name,
+						menuAction: () => {
+							setUserHandler(role.name);
+						}
+					};
+				});
+				setMenuRoles(allRoles);
+			});
+		}
+	}, [showUserMenu]);
 
 	const toggleNotificationDisplayHandler = () => {
 		if (!showNotificationsView) {
@@ -92,10 +121,18 @@ const HeaderMenuContainer = () => {
 		return (
 			<span>
 				<span className="menu-user-button" onClick={userIconClickHandler}>
-					<Icon className="menu-icon">{MaterialIconNames.PERSON}</Icon>
+					<Icon className="menu-icon" onClick={userIconClickHandler}>
+						{MaterialIconNames.ACCOUNT}
+					</Icon>
 					<span className="user-label">{role}</span>
 				</span>
-				{showUserMenu && <MenuDropdown menuOptions={getRolesOptions} closeMenu={userIconClickHandler} />}
+				{showUserMenu && (
+					<MenuDropdown
+						className="override-menu-dropdown"
+						menuOptions={menuRoles}
+						closeMenu={userIconClickHandler}
+					/>
+				)}
 			</span>
 		);
 	};

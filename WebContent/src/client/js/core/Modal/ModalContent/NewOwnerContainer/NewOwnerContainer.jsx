@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { getSelectedDrill, getSelectedTemplate } from "REDUX";
-import { UserConfiguration } from "UTILITIES";
 import { Dropdown, DropdownSizes, DropdownTypes, DROPDOWN_DEFAULT, Icon } from "CORE";
+import { API } from "UTILITIES";
 import "./NewOwnerContainer.scss";
 
 const NewOwnerContainer = ({
@@ -16,6 +16,7 @@ const NewOwnerContainer = ({
 }) => {
 	const [role, setRole] = useState(DROPDOWN_DEFAULT);
 	const [parent, setParent] = useState(DROPDOWN_DEFAULT);
+	const [allRoles, setAllRoles] = useState([]);
 
 	const { participants } = fromTemplate ? useSelector(getSelectedTemplate) : useSelector(getSelectedDrill);
 
@@ -48,6 +49,27 @@ const NewOwnerContainer = ({
 		}
 	}, [role, parent]);
 
+	useEffect(() => {
+		API.getRoles((roles) => {
+			let configuredRoles;
+			if (typeof participants === "undefined") {
+				configuredRoles = roles.map((role) => {
+					return role.name;
+				});
+			} else {
+				configuredRoles = roles
+					.filter((role) => {
+						return !participants.includes(role.name);
+					})
+					.map((mappedRole) => {
+						return mappedRole.name;
+					});
+			}
+
+			setAllRoles(configuredRoles);
+		});
+	}, []);
+
 	const onRoleChange = (role) => {
 		setRole(role);
 	};
@@ -56,21 +78,9 @@ const NewOwnerContainer = ({
 		setParent(parent);
 	};
 
-	const configureOptions = () => {
-		// all roles are available, eventually we will make defined roles something that admins can add or delete from
-		if (typeof participants === "undefined") {
-			return UserConfiguration.DEFINED_ROLES;
-		}
-
-		// we only want to allow roles that aren't in the drill yet
-		return UserConfiguration.DEFINED_ROLES.filter((role) => {
-			return !participants.includes(role);
-		});
-	};
-
 	const configureExistingParticipants = () => {
 		if (typeof participants === "undefined") {
-			return UserConfiguration.DEFINED_ROLES;
+			return allRoles;
 		}
 
 		return participants;
@@ -117,7 +127,7 @@ const NewOwnerContainer = ({
 			<Dropdown
 				dropdownType={DropdownTypes.REGULAR}
 				dropdownSize={DropdownSizes.LARGE}
-				options={configureOptions()}
+				options={allRoles}
 				onChange={onRoleChange}
 				firstOption="Select a new role to add*"
 				firstValid={false}

@@ -14,9 +14,11 @@
 		-ms-user-select: none;
 		user-select: none;
 		cursor: pointer;
+		margin-left: 10px;
 
 		.user-label {
-			@include body-4;
+			@include body-5;
+			margin-left: 5px;
 		}
 
 		&:hover > .menu-icon {
@@ -26,6 +28,11 @@
 		&:hover > .user-label {
 			color: $cyan-700;
 		}
+	}
+
+	.override-menu-dropdown {
+		top: 48px;
+		right: 10px;
 	}
 
 	.toggled {

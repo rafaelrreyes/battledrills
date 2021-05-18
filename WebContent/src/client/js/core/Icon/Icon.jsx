@@ -19,6 +19,10 @@ export const Icon = ({
 					isDisabled ? "disabled" : ""
 				}`}
 				onClick={(e) => {
+					if (typeof onClick === "undefined") {
+						return;
+					}
+
 					e.stopPropagation();
 					onClick();
 				}}

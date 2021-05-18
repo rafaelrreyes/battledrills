@@ -254,7 +254,11 @@ const RolesManagement = () => {
 
 	const renderGroups = (groupNames) => {
 		return groupNames.map((groupname, index) => {
-			return <span className="role-item-groupname">{groupname}</span>;
+			return (
+				<span key={groupname + index} className="role-item-groupname">
+					{groupname}
+				</span>
+			);
 		});
 	};
 
