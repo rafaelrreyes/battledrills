@@ -9,11 +9,11 @@ import "./ReportsSelect.scss";
 const DRILL_TYPES = ["Active", "Completed"];
 const DEFAULT_SELECT_DRILL = "Select a drill";
 
-export const ReportsSelect = ({ selectedDrillName, allDrills, onGenerateReport }) => {
+export const ReportsSelect = ({ selectedDrillId, allDrills, onGenerateReport }) => {
 	const getInitialDrillType = () => {
-		if (selectedDrillName !== undefined) {
+		if (selectedDrillId !== undefined) {
 			const activeDrill = allDrills.active.find((element) => {
-				return element === selectedDrillName;
+				return element.id === selectedDrillId;
 			});
 
 			return activeDrill === undefined ? "Completed" : "Active";
@@ -23,7 +23,7 @@ export const ReportsSelect = ({ selectedDrillName, allDrills, onGenerateReport }
 	};
 
 	const [drillType, setDrillType] = useState(getInitialDrillType);
-	const [drill, setDrill] = useState(selectedDrillName ? selectedDrillName : DROPDOWN_DEFAULT);
+	const [drill, setDrill] = useState(selectedDrillId ? selectedDrillId : DROPDOWN_DEFAULT);
 	const [compareDrills, setCompareDrills] = useState([]);
 	const [drillNameError, setDrillNameError] = useState(false);
 
@@ -42,18 +42,39 @@ export const ReportsSelect = ({ selectedDrillName, allDrills, onGenerateReport }
 	};
 
 	const getDrillOptions = () => {
-		return drillType === DrillState.ACTIVE ? allDrills.active : allDrills.completed;
+		return drillType === DrillState.ACTIVE
+			? allDrills.active.map(({ id, name }) => {
+					return {
+						id,
+						name
+					};
+			  })
+			: allDrills.completed.map(({ id, name }) => {
+					return {
+						id,
+						name
+					};
+			  });
+		// return drillType === DrillState.ACTIVE ? allDrills.active : allDrills.completed;
 	};
 
 	const getCompareOptions = () => {
 		if (drillType === DrillState.ACTIVE) {
-			return allDrills.active.filter((activeDrill) => {
-				return activeDrill !== drill;
-			});
+			return allDrills.active
+				.filter((activeDrill) => {
+					return activeDrill.id !== drill;
+				})
+				.map(({ id, name }) => {
+					return { id, name };
+				});
 		} else {
-			return allDrills.completed.filter((completedDrill) => {
-				return completedDrill !== drill;
-			});
+			return allDrills.completed
+				.filter((completedDrill) => {
+					return completedDrill.id !== drill;
+				})
+				.map(({ id, name }) => {
+					return { id, name };
+				});
 		}
 	};
 

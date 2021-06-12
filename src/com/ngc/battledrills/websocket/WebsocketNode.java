@@ -1,4 +1,4 @@
-package com.ngc.battledrills.data;
+package com.ngc.battledrills.websocket;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

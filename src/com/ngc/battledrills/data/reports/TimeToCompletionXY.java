@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeToCompletionXY extends TaskXY {
-    public TimeToCompletionXY(String x, String y, String owner, String description) {
-        super(x, y, owner, description);
+    public TimeToCompletionXY(String x, String y, int roleId, String description) {
+        super(x, y, roleId, description);
     }
 }

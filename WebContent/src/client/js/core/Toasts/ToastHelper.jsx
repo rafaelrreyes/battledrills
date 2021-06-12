@@ -182,7 +182,7 @@ export const getNotificationLink = (props) => {
  * @param {} props
  */
 export const onNotificationClick = (props) => {
-	const { drillName, setVisible, history } = props;
+	const { drillId, setVisible, history } = props;
 
 	if (
 		isTaskStatusUpdate(props) ||
@@ -194,7 +194,7 @@ export const onNotificationClick = (props) => {
 		const { taskData } = props;
 
 		// this stuff is run after the navigation to /active_diagram because of the request being async
-		API.getDrillByName(drillName, {}, (response) => {
+		API.getDrillById(drillId, {}, (response) => {
 			store.dispatch(setSelectedDrill(response));
 			// if the toast is for notes/task updates then select the task
 			if (isTaskStatusUpdate(props) || isNewNote(props)) {
@@ -206,7 +206,7 @@ export const onNotificationClick = (props) => {
 			history.push(Routes.ACTIVE_DIAGRAM);
 		});
 	} else if (isStoppedDrill(props)) {
-		API.getDrillByName(drillName, {}, (response) => {
+		API.getDrillById(drillId, {}, (response) => {
 			store.dispatch(setSelectedDrill(response));
 			setVisible(false);
 			history.push(Routes.COMPLETED_DIAGRAM);

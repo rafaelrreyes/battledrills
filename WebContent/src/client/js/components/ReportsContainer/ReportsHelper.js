@@ -109,7 +109,7 @@ export const createTimeToCompletion = async (canvas, reportParams) => {
 			tooltips: {
 				callbacks: {
 					afterTitle: (tooltipItem, data) => {
-						return getDataPoint(tooltipItem[0], data.datasets).owner;
+						return getDataPoint(tooltipItem[0], data.datasets).roleName;
 					},
 					beforeBody: (tooltipItem, data) => {
 						return getDataPoint(tooltipItem[0], data.datasets).description;

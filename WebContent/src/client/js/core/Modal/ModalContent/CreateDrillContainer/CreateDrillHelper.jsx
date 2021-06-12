@@ -1,7 +1,7 @@
 import React from "react";
 import store from "REDUX/store";
 import { showModal, closeModal, updateActiveDrills, setActiveBillet, setAllStatuses } from "REDUX";
-import { getCurrentView, getUser, getRole, getActiveDrills } from "REDUX";
+import { getCurrentView, getUser, getActiveDrills } from "REDUX";
 import { ModalContentTypes } from "CORE";
 import { MaterialIconNames, API, ValidatorReasonCodes, Routes, DrillTypes } from "UTILITIES";
 
@@ -15,6 +15,7 @@ export const openCreateDrillModal = (drillType) => {
 				const requestBody = {
 					type: data.type,
 					name: data.name,
+					creatorId: getUser(store.getState()).id,
 					start: data.startDrill,
 					user: getUser(store.getState()),
 					// location has these defaults if not submitted
@@ -29,7 +30,7 @@ export const openCreateDrillModal = (drillType) => {
 				API.createDrill(
 					requestBody,
 					(response) => {
-						createDrillUpdate(response.name);
+						createDrillUpdate(response);
 						createDrillUpdateMyDrillsView();
 						createDrillUpdateStatusView();
 
@@ -49,17 +50,18 @@ export const openCreateDrillModal = (drillType) => {
 };
 
 // fires every time a new drill is created
-export const createDrillUpdate = (drillName) => {
+export const createDrillUpdate = (newDrill) => {
+	const { id, name } = newDrill;
 	let activeDrills = getActiveDrills(store.getState()).slice(); // don't modify actual redux store
-	activeDrills.push(drillName);
+	activeDrills.push({ id, name });
 	store.dispatch(updateActiveDrills(activeDrills));
 };
 
 // should only fire if the view is on "My Drills" and a new drill is created
 export const createDrillUpdateMyDrillsView = () => {
 	if (getCurrentView(store.getState()) === Routes.MY_DRILLS) {
-		const role = getRole(store.getState()).toUpperCase();
-		API.getOwnerBillet(role, {}, (data) => {
+		const role = getUser(store.getState()).toUpperCase();
+		API.getBilletByRoleId(role.id, {}, (data) => {
 			store.dispatch(setActiveBillet(data));
 		});
 	}

@@ -21,6 +21,7 @@ public class Role {
     private String name;
     private String permission;
     private ArrayList<Integer> groups;
+    private ArrayList<String> groupNames;
     
     private Role() {}
     
@@ -76,6 +77,10 @@ public class Role {
             mappedGroupNames.add(groupMgr.getGroupsMap().get(groupId).getName());
         });
         return mappedGroupNames;
+    }
+    
+    public void setGroupNames(ArrayList<String> groupNames) {
+        this.groupNames = groupNames;
     }
     
     @Override

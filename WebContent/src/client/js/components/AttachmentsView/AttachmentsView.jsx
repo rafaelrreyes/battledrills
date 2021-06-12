@@ -42,7 +42,7 @@ const AttachmentsView = ({ selectedObject, type, isCollapsible = false }) => {
 			params: {
 				filename,
 				type,
-				id: type === AttachmentTypes.DRILL ? selectedObject.name : selectedObject.taskId
+				id: type === AttachmentTypes.DRILL ? selectedObject.id : selectedObject.taskId
 			}
 		};
 
@@ -72,7 +72,7 @@ const AttachmentsView = ({ selectedObject, type, isCollapsible = false }) => {
 		formdata.append("file", file);
 
 		// drill or task
-		formdata.append("id", type === AttachmentTypes.DRILL ? selectedObject.name : selectedObject.taskId);
+		formdata.append("id", type === AttachmentTypes.DRILL ? selectedObject.id : selectedObject.taskId);
 		formdata.append("type", type);
 
 		// use blob for form data must be passed with its own content

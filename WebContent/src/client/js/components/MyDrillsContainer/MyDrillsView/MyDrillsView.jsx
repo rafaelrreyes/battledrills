@@ -20,21 +20,21 @@ const MyDrillsView = ({ drills, onDrillColumnClose }) => {
 	}
 
 	return drills.map((drill) => {
-		let drillname = Object.keys(drill)[0];
+		const { name, tasks } = drill;
 
 		let elementToRender = (
 			<span className="drill-report-title" ref={drillNameRefCallback}>
-				{drillname}
+				{name}
 			</span>
 		);
-		elementToRender = conditionalTooltipRender(elementToRender, drillNameRef, drillname);
+		elementToRender = conditionalTooltipRender(elementToRender, drillNameRef, name);
 
 		return (
-			<div className="drill-report-item" key={drillname}>
+			<div className="drill-report-item" key={name}>
 				<div className="drill-report-header">
 					{elementToRender}
 					<span className="drill-report-counters">
-						<span className="drill-report-counter">{getCompletedTasksCount(drill)}</span>
+						<span className="drill-report-counter">{getCompletedTasksCount(tasks)}</span>
 					</span>
 				</div>
 				<ul className="drill-report-column">{renderDrillTable(drill)}</ul>
@@ -43,27 +43,36 @@ const MyDrillsView = ({ drills, onDrillColumnClose }) => {
 	});
 };
 
-const getCompletedTasksCount = (drill) => {
+const getCompletedTasksCount = (tasks) => {
 	// technical debt, address and make this better, could make counting completed tasks a helper inside status.js cause it is used alot
 	let completedTasks = 0;
-	let tasks = Object.values(drill)[0];
+
+	if (tasks === null) {
+		return null;
+	}
+
 	tasks.forEach((task) => {
 		const { status } = task.currentStatus;
 		if (status === StatusTypes.COMPLETED) {
 			completedTasks++;
 		}
 	});
-	return `${completedTasks}/${Object.values(drill)[0].length}`;
+
+	if (completedTasks === 0 && tasks.length === 0) {
+		return null;
+	}
+
+	return `${completedTasks}/${tasks.length}`;
 };
 
 const renderDrillTable = (drill) => {
-	const tasks = Object.values(drill)[0];
-	const drillName = Object.keys(drill)[0];
-	if (tasks.length === 0) {
+	const { id, tasks } = drill;
+	if (tasks === null || typeof tasks === "undefined" || tasks.length === 0) {
 		return <div className="drill-report-item-no-tasks-label">No tasks.</div>;
 	}
+
 	return tasks.map((task) => {
-		return <MyDrillsTaskItem task={task} key={task.taskId} drillName={drillName} />;
+		return <MyDrillsTaskItem task={task} key={task.taskId} drillId={id} />;
 	});
 };
 

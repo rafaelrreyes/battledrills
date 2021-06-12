@@ -7,6 +7,8 @@ package com.ngc.battledrills.data.reports;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ngc.battledrills.data.BattleDrill;
+import com.ngc.battledrills.manage.BattleDrillManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,19 +18,30 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TimeToCompletion {
+    public String drillId = "";
     public String drillName = "";
     public String totalTime = ""; // total time to complete drill in HH:mm:ss format
     public List<TaskXY> dataPoints = new ArrayList<>();
 
-    public TimeToCompletion(String drillName, String totalTime) {
-        this.drillName = drillName;
+    public TimeToCompletion(String drillId, String totalTime) {
+        this.drillId = drillId;
         this.totalTime = totalTime;
     }
 
-    public String getDrillName() {
-        return drillName;
+    public String getDrillId() {
+        return drillId;
     }
 
+    public void setDrillId(String drillId) {
+        this.drillId = drillId;
+    }
+    
+    public String getDrillName() {
+        BattleDrillManager mgr = BattleDrillManager.getInstance();
+        BattleDrill bd = mgr.getById(this.drillId);
+        return bd.getName();
+    }
+    
     public void setDrillName(String drillName) {
         this.drillName = drillName;
     }
@@ -57,7 +70,7 @@ public class TimeToCompletion {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Drill Name: ").append(this.getDrillName()).append(System.lineSeparator());
+        sb.append("Drill ID: ").append(this.getDrillId()).append(System.lineSeparator());
         sb.append("Total Time: ").append(this.getTotalTime()).append(System.lineSeparator());
         sb.append("Data Points: ").append(this.getDataPoints()).append(System.lineSeparator());
 

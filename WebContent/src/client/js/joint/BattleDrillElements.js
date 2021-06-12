@@ -16,22 +16,24 @@ export default class BattleDrillElements {
 	 * @returns {Object} contributor element object
 	 */
 	addContributorRectangle(data = {}) {
-		if (typeof data.title === "undefined") {
+		if (typeof data.roleId === "undefined") {
 			return;
 		}
-		const width = data.title.length * ShapesConstants.CONTRIBUTOR_WIDTH_MULTIPLIER + 25;
+		const width = data.roleName.length * ShapesConstants.CONTRIBUTOR_WIDTH_MULTIPLIER + 25;
 		const height = ShapesConstants.CONTRIBUTOR_HEIGHT;
 		const { self_coordinates } = data;
 
-		const contributorRect = new joint.shapes.html.OwnerBlock({
+		const contributorRect = new joint.shapes.html.RoleBlock({
 			size: {
 				width,
 				height
 			},
 			attrs: {
-				title: data.title,
+				roleName: data.roleName,
+				roleId: data.roleId,
 				diagramData: {
-					owner: data.title,
+					roleId: data.roleId,
+					roleName: data.roleName,
 					coordinateType: CoordinateTypes.SELF,
 					isTemplate: data.isTemplate
 				},
@@ -58,13 +60,7 @@ export default class BattleDrillElements {
 	 * @param {Array} tasks
 	 * @returns {Object} tasks element object
 	 */
-	addTaskItemsBlock(
-		ownerNode,
-		tasks = [],
-		tasks_coordinates = { x: 0, y: 0 },
-		selectedTask = {},
-		isTemplate = false
-	) {
+	addTaskItemsBlock(roleNode, tasks = [], tasks_coordinates = { x: 0, y: 0 }, selectedTask = {}, isTemplate = false) {
 		if (tasks.length === 0) {
 			return null;
 		}
@@ -81,7 +77,7 @@ export default class BattleDrillElements {
 					strokeWidth: 0
 				},
 				diagramData: {
-					owner: ownerNode.get("attrs").diagramData.owner,
+					roleId: roleNode.get("attrs").diagramData.roleId,
 					coordinateType: CoordinateTypes.TASKS,
 					isTemplate
 				}

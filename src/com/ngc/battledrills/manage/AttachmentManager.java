@@ -73,10 +73,10 @@ public class AttachmentManager {
     }
     
     /**
-     * Creates a file directory for a drill by its name 
-     * @param drillName
+     * Creates a file directory for a drill by its id 
+     * @param drillId
      */
-    public void createDrillDirectory(String drillName) {
+    public void createDrillDirectory(String drillId) {
         // create the files directory in secure/data if it doesn't exist
         // although it should, unless deleted by a user manually
         
@@ -87,7 +87,7 @@ public class AttachmentManager {
             }
 
             // create drill directory in secure/data/files/ directory if it doesn't exist
-            String drillDirectoryPath = ATTACHMENT_DIRECTORY_PATH + drillName;
+            String drillDirectoryPath = ATTACHMENT_DIRECTORY_PATH + drillId;
 
             if (!checkDirectoryExists(drillDirectoryPath)) {
                 File drillDirectory = new File(drillDirectoryPath);
@@ -107,13 +107,13 @@ public class AttachmentManager {
     public void createTaskDirectory(String taskId) throws ItemNotFoundException {
         // get the task
         Task targetTask = TaskRepo.getTask(taskId);
-        String associatedBattleDrill = targetTask.getBattleDrillName();
+        String associatedBattleDrill = targetTask.getBattleDrillId();
         
         // create drill directory if it doesn't exist, this would only be when a drill has no attachments
         createDrillDirectory(associatedBattleDrill);
         
         try {
-            String taskDirectoryPath = ATTACHMENT_DIRECTORY_PATH + "/" + associatedBattleDrill + "/" + taskId;
+            String taskDirectoryPath = ATTACHMENT_DIRECTORY_PATH + associatedBattleDrill + "/" + taskId;
             
             if (!checkDirectoryExists(taskDirectoryPath)) {
                 File taskDirectory = new File(taskDirectoryPath);
@@ -126,7 +126,7 @@ public class AttachmentManager {
     }
    
     /**
-     * Uploads an attachment to a drill by the drills name (id), the role uploading (WO, CO, S-1, etc), and the file itself.
+     * Uploads an attachment to a drill by the drills id, the role uploading (WO, CO, S-1, etc), and the file itself.
      * @param id
      * @param uploader
      * @param inputStream
@@ -140,7 +140,7 @@ public class AttachmentManager {
         
         // check for duplicate file name
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        BattleDrill battleDrill = mgr.getByName(id);
+        BattleDrill battleDrill = mgr.getById(id);
         
         String fileName = fileDetails.getFileName();
         
@@ -162,12 +162,12 @@ public class AttachmentManager {
                 } else {
                     // create attachment object
                     Attachment attachment = new Attachment();
-                    attachment.setUploader(uploader.getRole());
+                    attachment.setUploaderId(uploader.getId());
                     attachment.setFilename(fileName);
                     attachment.setType(AttachmentTypes.BATTLE_DRILL);
                     battleDrill.addAttachment(attachment, uploader);
                 }
-                mgr.saveBattleDrill(battleDrill.getName(), false);
+                mgr.saveBattleDrill(battleDrill.getId(), false);
             } catch (ItemNotFoundException ex) {
                 System.err.println("Error when updating attachment POJO");
                 throw new WebApplicationException("Error when updating attachment POJO");
@@ -198,12 +198,13 @@ public class AttachmentManager {
         
         // get the task and associated battle drill
         Task targetTask = TaskRepo.getTask(id);
-        String drill = targetTask.getBattleDrillName();
+        String drillId = targetTask.getBattleDrillId();
         
         String fileName = fileDetails.getFileName();
         
         try {
-            String filePath = ATTACHMENT_DIRECTORY_PATH + drill + "/" + id + "/" + fileName;
+            String filePath = ATTACHMENT_DIRECTORY_PATH + drillId + "/" + id + "/" + fileName;
+            System.out.println(filePath);
             success = uploadFileAttachment(inputStream, filePath);
         } catch (IOException ex) {
             System.err.println("Error when uploading drill attachment: " + ex);
@@ -219,7 +220,7 @@ public class AttachmentManager {
             } else {
                 // create attachment object
                 Attachment attachment = new Attachment();
-                attachment.setUploader(uploader.getRole());
+                attachment.setUploaderId(uploader.getId());
                 attachment.setFilename(fileName);
                 attachment.setType(AttachmentTypes.TASK);
                 targetTask.addAttachment(attachment, uploader);
@@ -322,16 +323,18 @@ public class AttachmentManager {
         
         if (type.equals(AttachmentTypes.BATTLE_DRILL)) {
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            BattleDrill bd = mgr.getByName(id);
+            BattleDrill bd = mgr.getById(id);
             fileLocation =  ATTACHMENT_DIRECTORY_PATH + id + "/" + fileName;
             isDeletedFromDB = bd.deleteAttachment(fileName, user);
         } else if (type.equals(AttachmentTypes.TASK)) {
             // handle deletion for task attachment
             Task task = TaskRepo.getTask(id);
-            String drill = task.getBattleDrillName();
+            String drill = task.getBattleDrillId();
             fileLocation = ATTACHMENT_DIRECTORY_PATH + drill + "/" + id + "/" + fileName;
             isDeletedFromDB = task.deleteAttachment(fileName, user);
         }
+        
+        System.out.println(fileLocation);
         
         try { 
             
@@ -400,7 +403,7 @@ public class AttachmentManager {
         boolean exists = false;    
         if (type.equals(AttachmentTypes.BATTLE_DRILL)) {
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            BattleDrill bd = mgr.getByName(id);
+            BattleDrill bd = mgr.getById(id);
             exists = fileNameExists(bd, fileName);
         } else if (type.equals(AttachmentTypes.TASK)) {
             Task task =  TaskRepo.getTask(id);

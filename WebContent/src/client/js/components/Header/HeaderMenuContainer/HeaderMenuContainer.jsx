@@ -26,25 +26,8 @@ const HeaderMenuContainer = () => {
 	const dispatch = useDispatch();
 
 	// redux selectors
-	const role = useSelector(getRole);
-	const roles = useSelector(getRoles);
 	const unreadNotifications = useSelector(getUnreadNotificationsCount);
 	const toasts = useSelector(getToasts);
-
-	// need to set roles statically using IIFE
-	const getRolesOptions = (function () {
-		let roles = [];
-		let definedRoles = UserConfiguration.DEFINED_ROLES;
-		definedRoles.forEach((role) => {
-			roles.push({
-				name: role,
-				menuAction: () => {
-					setUserHandler(role);
-				}
-			});
-		});
-		return roles;
-	})();
 
 	useEffect(() => {
 		if (showUserMenu) {
@@ -54,7 +37,7 @@ const HeaderMenuContainer = () => {
 					return {
 						name: role.name,
 						menuAction: () => {
-							setUserHandler(role.name);
+							setRoleHandler(role);
 						}
 					};
 				});
@@ -78,10 +61,11 @@ const HeaderMenuContainer = () => {
 		dispatch(removeToast(toastId));
 	};
 
-	const setUserHandler = (role) => {
+	const setRoleHandler = (role) => {
 		// change later when we have a username
-		setLoggedInUser({ username: role, role });
-		dispatch(setUser({ username: role, role }));
+		const { id, name } = role;
+		setLoggedInUser({ username: name, name, id });
+		dispatch(setUser({ username: name, name, id }));
 	};
 
 	const renderNotificationsCounter = () => {
@@ -124,7 +108,7 @@ const HeaderMenuContainer = () => {
 					<Icon className="menu-icon" onClick={userIconClickHandler}>
 						{MaterialIconNames.ACCOUNT}
 					</Icon>
-					<span className="user-label">{role}</span>
+					<span className="user-label">{loggedInUser.name}</span>
 				</span>
 				{showUserMenu && (
 					<MenuDropdown

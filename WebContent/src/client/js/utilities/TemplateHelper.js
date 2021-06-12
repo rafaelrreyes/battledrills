@@ -4,9 +4,9 @@ import { ModalContentTypes } from "CORE/";
 
 import { showModal, closeModal, getSelectedDrill, getUser, setSelectedDrill } from "REDUX/";
 
-export const saveTemplateByDrillName = () => {
+export const saveTemplateByDrillId = () => {
 	const selectedDrill = getSelectedDrill(store.getState());
-	const drillName = selectedDrill.name;
+	const drillId = selectedDrill.id;
 	const user = getUser(store.getState());
 
 	store.dispatch(
@@ -16,13 +16,13 @@ export const saveTemplateByDrillName = () => {
 			action: (type) => {
 				const requestBody = {
 					type,
-					drillName,
+					drillId,
 					user
 				};
 
-				API.saveTemplateByDrillName(requestBody, () => {
+				API.saveTemplateByDrillId(requestBody, () => {
 					// successfully saved template
-					API.getDrillByName(drillName, {}, (drill) => {
+					API.getDrillById(drillId, {}, (drill) => {
 						// successfully updated selected drill
 						store.dispatch(setSelectedDrill(drill));
 					});

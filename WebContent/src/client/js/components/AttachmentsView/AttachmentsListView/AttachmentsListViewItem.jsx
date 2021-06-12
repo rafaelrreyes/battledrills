@@ -31,7 +31,7 @@ const getDisplayName = (filename) => {
 };
 
 const getObjectId = (type, selectedObject) => {
-	return type === AttachmentTypes.DRILL ? selectedObject.name : selectedObject.taskId;
+	return type === AttachmentTypes.DRILL ? selectedObject.id : selectedObject.taskId;
 };
 
 const onDownloadClick = (attachment, selectedObject) => {

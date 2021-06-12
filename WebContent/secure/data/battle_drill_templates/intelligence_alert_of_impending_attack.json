@@ -1,8 +1,9 @@
 {
 	"type": "intelligence_alert_of_impending_attack",
-	"participants": ["CO", "WO", "S-2", "S-3", "AirO", "FSCC", "S-4"],
+	"participants": [1, 15, 11, 12, 3, 4, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 590,
 			"y": 30
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 590,
 					"y": 100
@@ -30,6 +32,7 @@
 				"children": [
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 62,
 							"y": 175
@@ -46,13 +49,14 @@
 								"description": "Reposition ISR"
 							},
 							{
-								"description": "Assess threat"
+								"description": "Assess Threat"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 230,
 							"y": 175
@@ -63,13 +67,14 @@
 						},
 						"tasks": [
 							{
-								"description": "W/O to QRF and all units"
+								"description": "W/O to QRF and nearest unit to site"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 395,
 							"y": 175
@@ -87,6 +92,7 @@
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 575,
 							"y": 180
@@ -113,6 +119,7 @@
 					},
 					{
 						"title": "S-4",
+						"roleId": 13,
 						"self_coordinates": {
 							"x": 755,
 							"y": 180
@@ -123,10 +130,10 @@
 						},
 						"tasks": [
 							{
-								"description": "Notify RCT of required support"
+								"description": "Notify RCT of any required support"
 							},
 							{
-								"description": "Redirect movement, if required"
+								"description": "Redirect movement if required"
 							},
 							{
 								"description": "W/O to convoys via available secure means"

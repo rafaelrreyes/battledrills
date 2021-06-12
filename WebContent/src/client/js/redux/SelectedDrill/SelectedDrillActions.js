@@ -24,11 +24,11 @@ export const editTask = (selectedDrill, updatedData, targetTaskId) => {
 	};
 };
 
-export const editCoordinates = (owner, coordinateType, updatedCoordinates) => {
+export const editCoordinates = (roleId, coordinateType, updatedCoordinates) => {
 	return {
 		type: SelectedDrillConstants.EDIT_COORDINATES,
 		payload: {
-			owner,
+			roleId,
 			coordinateType,
 			updatedCoordinates
 		}

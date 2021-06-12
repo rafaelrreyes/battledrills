@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ProgressBar, StatusIcon, Hyperlink, HyperlinkTypes, Icon } from "CORE";
 import { MaterialIconNames, StatusTypes, Routes } from "UTILITIES";
 import "./AllStatusItemView.scss";
@@ -7,9 +7,13 @@ import "./AllStatusItemView.scss";
  * component renders Progress Bar and Tasks
  */
 
-const AllStatusItemView = ({ drillName, tasks, onTaskLinkClick }) => {
-	// TODO: need to propagate the showTasks state up the component tree to save its state for when navigating back to this page
-	const [showTasks, setShowTasks] = useState(false);
+const AllStatusItemView = ({ role, isShowing = false, drillId, tasks, onTaskLinkClick, onShowTasks }) => {
+	const [showTasks, setShowTasks] = useState(isShowing);
+
+	// any time the showTasks state is updated, propagate up to parent
+	useEffect(() => {
+		onShowTasks(role, drillId, showTasks);
+	}, [showTasks]);
 
 	const tasksListClickHandler = () => {
 		setShowTasks(!showTasks);
@@ -19,18 +23,21 @@ const AllStatusItemView = ({ drillName, tasks, onTaskLinkClick }) => {
 		<div className="all-status-items-container">
 			<div className="all-status-items">
 				<ProgressBar completedTasks={countCompletedTasks(tasks)} allTasks={tasks.length} />
-				<Icon className="task-display-button" onClick={tasksListClickHandler}>
-					{MaterialIconNames.TASK_LIST}
+				<Icon
+					tooltip={showTasks ? "Hide Tasks" : "Show Tasks"}
+					className="task-display-button"
+					hasCircledBackground={true}
+					onClick={tasksListClickHandler}
+				>
+					{showTasks ? MaterialIconNames.ARROW_UP : MaterialIconNames.TASK_LIST}
 				</Icon>
 			</div>
-			{showTasks && (
-				<ul className="all-status-tasks-list">{renderTaskList(drillName, tasks, onTaskLinkClick)}</ul>
-			)}
+			{showTasks && <ul className="all-status-tasks-list">{renderTaskList(drillId, tasks, onTaskLinkClick)}</ul>}
 		</div>
 	);
 };
 
-const renderTaskList = (drillName, tasks, onTaskLinkClick) => {
+const renderTaskList = (drillId, tasks, onTaskLinkClick) => {
 	return tasks.map((task, index) => {
 		return (
 			<Hyperlink
@@ -41,7 +48,7 @@ const renderTaskList = (drillName, tasks, onTaskLinkClick) => {
 				hyperlinkRef={(node) => {
 					if (node) {
 						node.addEventListener("click", () => {
-							onTaskLinkClick(drillName, task);
+							onTaskLinkClick(drillId, task);
 						});
 					}
 				}}

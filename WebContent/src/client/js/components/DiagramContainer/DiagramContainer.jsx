@@ -45,9 +45,16 @@ const DiagramContainer = () => {
 			dispatch(updateAllDrills(response));
 			if (location.pathname === Routes.ACTIVE_DIAGRAM) {
 				// only need to select a drill if none is selected on mount
-				if (typeof selectedDrill.name === "undefined" || !activeDrills.includes(selectedDrill.name)) {
+				if (
+					typeof selectedDrill.id === "undefined" ||
+					!activeDrills
+						.map((activeDrill) => {
+							return activeDrill.id;
+						})
+						.includes(selectedDrill.id)
+				) {
 					if (Array.isArray(active) && active.length) {
-						API.getDrillByName(active[0], {}, (response) => {
+						API.getDrillById(active[0].id, {}, (response) => {
 							if (response !== null) {
 								dispatch(setSelectedDrill(response));
 							}
@@ -61,7 +68,7 @@ const DiagramContainer = () => {
 					// another view unless clicking on a drill tab
 					// After all, this would essentially update the selected drill to be from the backend, which is good in the case that it
 					// is updated from any other clients
-					API.getDrillByName(selectedDrill.name, {}, (response) => {
+					API.getDrillById(selectedDrill.id, {}, (response) => {
 						if (response !== null) {
 							dispatch(setSelectedDrill(response));
 						}
@@ -69,9 +76,17 @@ const DiagramContainer = () => {
 				}
 			} else if (location.pathname === Routes.COMPLETED_DIAGRAM) {
 				// only need to select a drill if none is selected on mount
-				if (typeof selectedDrill.name === "undefined" || !completedDrills.includes(selectedDrill.name)) {
+				// TODO:
+				if (
+					typeof selectedDrill.id === "undefined" ||
+					!completedDrills
+						.map((completedDrill) => {
+							return completedDrill.id;
+						})
+						.includes(selectedDrill.id)
+				) {
 					if (Array.isArray(completed) && completed.length) {
-						API.getDrillByName(completed[0], {}, (response) => {
+						API.getDrillById(completed[0].id, {}, (response) => {
 							if (response !== null) {
 								dispatch(setSelectedDrill(response));
 							}
@@ -89,8 +104,8 @@ const DiagramContainer = () => {
 		};
 	}, [location]);
 
-	const tabSelectedHandler = ({ selectedName }) => {
-		API.getDrillByName(selectedName, {}, (response) => {
+	const tabSelectedHandler = ({ selected }) => {
+		API.getDrillById(selected, {}, (response) => {
 			dispatch(setSelectedDrill(response));
 			dispatch(resetSelectedTask());
 		});
@@ -119,7 +134,7 @@ const DiagramContainer = () => {
 				<ScrollableTabs
 					tabValues={location.pathname === Routes.ACTIVE_DIAGRAM ? activeDrills : completedDrills}
 					onActiveTabSelected={tabSelectedHandler}
-					selectedItem={selectedDrill.name}
+					selectedItem={selectedDrill.id}
 					tooltipPlacement={TooltipPlacement.BOTTOM}
 				/>
 			</div>

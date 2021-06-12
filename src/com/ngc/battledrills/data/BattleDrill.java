@@ -24,6 +24,7 @@ import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.AttachmentManager;
 import com.ngc.battledrills.manage.BattleDrillManager;
+import com.ngc.battledrills.manage.RolesManager;
 import com.ngc.battledrills.template.BattleDrillTemplate;
 import com.ngc.battledrills.util.BattleDrillConstants;
 import java.security.InvalidParameterException;
@@ -39,6 +40,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import com.ngc.battledrills.util.JsonUtils;
+import java.util.UUID;
 /**
  *
  * @author admin
@@ -47,8 +49,10 @@ import com.ngc.battledrills.util.JsonUtils;
 @JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BattleDrill extends BattleDrillTemplate {
+    private String id;
     private String name;
     private String creatorName;
+    private int creatorId;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime startTime = null;
@@ -58,7 +62,9 @@ public class BattleDrill extends BattleDrillTemplate {
     private Map<String, String> location = new HashMap<>();
     private List<Attachment> attachments = new ArrayList<>();
 
-    public BattleDrill(){}
+    public BattleDrill() {
+        this.id = UUID.randomUUID().toString();
+    }
 
     @JsonProperty("attachments")
     public List<Attachment> getAttachments() {
@@ -79,11 +85,12 @@ public class BattleDrill extends BattleDrillTemplate {
     public boolean addAttachment(Attachment attachment, User user) {
         this.attachments.add(attachment);
         
+        // TODO: noti
          // send attachment upload notification
-        Notification attachmentNotification = 
-                NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, getName(), null, AttachmentManager.AttachmentTypes.BATTLE_DRILL, attachment.getFilename());
-        Notify.sendNotificationToAllExcluding(attachmentNotification);
-        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, attachmentNotification));
+//        Notification attachmentNotification = 
+//                NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, getName(), null, AttachmentManager.AttachmentTypes.BATTLE_DRILL, attachment.getFilename());
+//        Notify.sendNotificationToAllExcluding(attachmentNotification);
+//        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, attachmentNotification));
         return true;
     }
     
@@ -120,11 +127,12 @@ public class BattleDrill extends BattleDrillTemplate {
             if (this.attachments.get(i).getFilename().equals(fileName)) {
                 this.attachments.remove(i);
                 
+                // TODO:
                  // send attachment delete notification
-                Notification attachmentNotification = 
-                        NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getName(), null, AttachmentManager.AttachmentTypes.BATTLE_DRILL, fileName);
-                Notify.sendNotificationToAllExcluding(attachmentNotification);
-                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, attachmentNotification));
+//                Notification attachmentNotification = 
+//                        NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getName(), null, AttachmentManager.AttachmentTypes.BATTLE_DRILL, fileName);
+//                Notify.sendNotificationToAllExcluding(attachmentNotification);
+//                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, attachmentNotification));
                 isDeleted = true;
                 break;
             }
@@ -137,8 +145,7 @@ public class BattleDrill extends BattleDrillTemplate {
         this.name = name;
     }
     
-    public void setCreatorName(String creatorName)
-    {
+    public void setCreatorName(String creatorName){
         this.creatorName = creatorName;
     }
     
@@ -156,47 +163,40 @@ public class BattleDrill extends BattleDrillTemplate {
         return this.name;
     }
     
-    public String getCreatorName()
-    {
-        return this.creatorName;
+    public String getCreatorName() {
+        RolesManager rolesMgr = RolesManager.getInstance();
+        return rolesMgr.getRolenameById(this.creatorId);
+    }
+    
+    public int getCreatorId() {        
+        return this.creatorId;
+    }
+    
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
     }
     
     @JsonIgnore
-    public Node getSubtreeByOwner(String owner)
-    {
-        if(StringUtils.isBlank(owner))
-        {
-            throw new InvalidParameterException("Unable to get subtree by owner - owner parameter cannot be blank");
+    public Node getSubtreeByRoleId(int roleId) {
+        if (roleId < 1) {
+            throw new InvalidParameterException("Unable to get subtree by role ID - role ID parameter must be defined in DB");
         }
-        
+
         Node root = this.getRoot();
-        return (root.getOwner().equalsIgnoreCase(owner))?root:root.getSubtreeByOwner(owner);
+        return root.getRoleId() == roleId ? root : root.getSubtreeByRoleId(roleId);
     }
     
+    // Returns a list of all tasks grouped by the tasks' role
     @JsonIgnore
-    public List<Task> getTasksByOwner(String owner)
-    {
-        if(StringUtils.isBlank(owner))
-        {
-            throw new InvalidParameterException("Unable to get tasks by owner - owner parameter cannot be blank");
-        }
-        
-        Node root = this.getRoot();
-        return (null == root ? null : (root.getOwner().equalsIgnoreCase(owner))?root.getTasks():root.getTasksByOwner(owner));
-    }
-    
-    // Returns a list of all tasks grouped by the tasks' owner
-    @JsonIgnore
-    public Map<String, List<Task>> getTasksXOwner()
-    {
-        Map<String, List<Task>> tasksXOwner = new HashMap<>();
-        root.getTasksForAllOwners(tasksXOwner);
-        return tasksXOwner;
+    public Map<Integer, List<Task>> getTasksByRole() {
+        Map<Integer, List<Task>> tasksByRole = new HashMap<>();
+        root.getTasksForAllRoles(tasksByRole);
+        return tasksByRole;
     }
 
     @JsonIgnore
     public int getNumTasks() {
-        Map<String, List<Task>> allTasks = getTasksXOwner();
+        Map<Integer, List<Task>> allTasks = getTasksByRole();
         int count = 0;
         count = allTasks.values().stream().map((task) -> task.size()).reduce(count, Integer::sum);
         return count;
@@ -211,19 +211,14 @@ public class BattleDrill extends BattleDrillTemplate {
     }
     
     @JsonProperty("duration")
-    public long getElapsedTimeInSeconds()
-    {
-        if(startTime == null)
-        {
+    public long getElapsedTimeInSeconds() {
+        if (startTime == null) {
             return 0;
         }
         
-        if(endTime == null)
-        {
+        if(endTime == null) {
             return Duration.between(startTime, LocalDateTime.now()).getSeconds();
-        }
-        else
-        {
+        } else {
             return Duration.between(startTime, endTime).getSeconds();
         }
     }
@@ -231,8 +226,7 @@ public class BattleDrill extends BattleDrillTemplate {
     // @return a boolean value indicating whether or not the task was found and deleted.  A false value indicates the task was not found in this battle drill
     public boolean deleteTask(String taskId, User user)
     {
-        if (StringUtils.isBlank(taskId))
-        {
+        if (StringUtils.isBlank(taskId)) {
             throw new InvalidParameterException("Unable to delete task - taskId parameter cannot be blank");
         }
         Node root = this.getRoot();
@@ -240,16 +234,16 @@ public class BattleDrill extends BattleDrillTemplate {
     }
     
     /**
-     * Updates a battle drills target node x, y coordinates by the owner name and type.
+     * Updates a battle drills target node x, y coordinates by the role id and type.
      * Type can be "self" or "task".
-     * @param owner
+     * @param roleId
      * @param coordinateType
      * @param x
      * @param y
      * @throws java.lang.Exception
      */
-    public void updateDiagramCoordinates(String owner, String coordinateType, int x, int y) throws Exception {
-        Node targetNode = getNodeByOwner(owner);
+    public void updateDiagramCoordinates(int roleId, String coordinateType, int x, int y) throws Exception {
+        Node targetNode = getNodeByRoleId(roleId);
         switch (coordinateType) {
             case Node.NodeConstants.SELF:
                 targetNode.updateSelfCoordinates(x, y);
@@ -261,35 +255,34 @@ public class BattleDrill extends BattleDrillTemplate {
                 throw new Exception("Coordinate type must be one of the following: self, tasks");
         }
         
-        // TODO
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        mgr.saveBattleDrill(this.getName(), false);
+        mgr.saveBattleDrill(this.getId(), false);
     }
     
     /**
-     * Updates the description of a task embedded within this drill. Looks up the target owner node and then updates its target task.
-     * @param owner
+     * Updates the description of a task embedded within this drill. Looks up the target role node and then updates its target task.
+     * @param roleId
      * @param user
      * @param taskId
      * @param description 
      * @return boolean
      */
-    public boolean updateTaskDescription(String owner, User user, String taskId, String description) {
-        Node targetNode = getNodeByOwner(owner);
+    public boolean updateTaskDescription(int roleId, User user, String taskId, String description) {
+        Node targetNode = getNodeByRoleId(roleId);
         return targetNode.updateTaskDescriptionById(taskId, user, description);
     }
     
     /**
-     * Adds a new task to an owner by their name.
-     * @param owner
+     * Adds a new task to an role by their ID.
+     * @param roleId
      * @param description
      * @param user
      * @return boolean
      */
-    public boolean addTaskToOwner(String owner, String description, User user) {
+    public boolean addTaskToRole(int roleId, String description, User user) {
 
         try {
-            Node targetNode = getNodeByOwner(owner);
+            Node targetNode = getNodeByRoleId(roleId);
             Map<String, Integer> coordinates = new HashMap<>();
             
             // only set the coordinates if it the first task being added
@@ -301,30 +294,29 @@ public class BattleDrill extends BattleDrillTemplate {
             // TODO perform notification here
             return targetNode.addNewTask(description, coordinates);
         } catch (Exception e) {
-            throw new WebApplicationException("Error when trying to find owner of name: " + owner + ". That owner does not exist.");
+            throw new WebApplicationException("Error when trying to find role ID: " + roleId + ". That role does not exist.");
         }
         
     }
     
     /**
-     * Adds a new owner to this drill.
-     * @param owner
-     * @param parent
+     * Adds a new role to this drill.
+     * @param roleId
+     * @param parentId
      * @return boolean
      */
-    public boolean addOwner(String owner, String parent) {
+    public boolean addRole(int roleId, int parentId) {
         
-        // create the new owner
+        // create the new role node
         Node newNode = new Node();
         Map<String, Integer> coordinates = new HashMap<>();
-        newNode.setOwner(owner);
+        newNode.setRoleId(roleId);
         
-        // this owner is being added as a child to another node
-        if (null != parent || !StringUtils.isBlank(parent)) {
-        
-            Node parentNode = getNodeByOwner(parent);
+        // this role is being added as a child to another node
+        if (parentId > 0) {
+            Node parentNode = getNodeByRoleId(parentId);
             
-            // Place new owner node directly under its parent in diagram
+            // Place new role node directly under its parent in diagram
             coordinates.put("x", parentNode.getSelfCoordinates().get("x"));
             coordinates.put("y", parentNode.getSelfCoordinates().get("y") + BattleDrillConstants.DEFAULT_DIAGRAM_Y_COORDINATE_OFFSET);
             newNode.setSelfCoordinates(coordinates);
@@ -343,60 +335,61 @@ public class BattleDrill extends BattleDrillTemplate {
             coordinates.put("y", BattleDrillConstants.DEFAULT_DIAGRAM_ROOT_Y_COORDINATE);
             newNode.setSelfCoordinates(coordinates);
             newNode.setBattleDrillName(this.getName());
+            newNode.setBattleDrillId(this.getId());
             this.setRoot(newNode);
         }
         
-        super.addParticipant(owner);
+        super.addParticipant(roleId);
         
         // save to database
         try {
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            mgr.saveBattleDrill(this.getName(), false);
+            mgr.saveBattleDrill(this.getId(), false);
         } catch (ItemNotFoundException ex) {
-            throw new WebApplicationException("Error when adding new owner.");
+            throw new WebApplicationException("Error when adding new role to drill.");
         }
         
         return true;
     }
     
     /**
-     * Edits a current owner to a new title.
-     * @param owner
-     * @param newOwner
+     * Edits a current role to a new role id.
+     * @param currentRoleId
+     * @param newRoleId
      * @return 
      */
-    public boolean editOwner(String owner, String newOwner) {
-        Node targetNode = getNodeByOwner(owner);
-        return targetNode.editOwnerAndSave(newOwner);
+    public boolean editRoleById(int currentRoleId, int newRoleId) {
+        Node targetNode = getNodeByRoleId(currentRoleId);
+        return targetNode.editRoleAndSave(newRoleId);
     }
     
     /**
-     * 
-     * @param owner
+     * Deletes a role from this battle drill by its role id.
+     * @param roleId
      * @return 
      */
-    public boolean deleteOwner(String owner) {
-        // deleting an owner should also delete their task and subgroups, otherwise, we may want to set the deleted owner's owner to the childs (mending open wound)
+    public boolean deleteRoleById(int roleId) {
+        // deleting a role should also delete their task and subgroups, otherwise, we may want to set the deleted role's role to the childs (mending open wound)
         try {
-            Node targetNode = getNodeByOwner(owner);
+            Node targetNode = getNodeByRoleId(roleId);
             
-            // delete all participants under this owner from participants data structure
+            // delete all participants under this role from participants data structure
             recursiveDeleteParticipant(targetNode);
             
             // delete self from participants data structure
-            super.deleteParticipant(owner);
+            super.deleteParticipant(roleId);
             
             // empty all tasks and children data structures
             targetNode.emptyTasks();
             targetNode.emptyChildren();
             
-            // loop through the parent of this owner and delete its pointer to this node
+            // loop through the parent of this role and delete its pointer to this node
             Node parentNode = targetNode.parent;
             
             // check if this is not the root
             if (null != parentNode) {
                 for (int i = 0; i < parentNode.getChildNodes().size(); i++) {
-                    if (parentNode.getChildNodes().get(i).getOwner().equalsIgnoreCase(owner)) {
+                    if (parentNode.getChildNodes().get(i).getRoleId() == roleId) {
                         parentNode.getChildNodes().remove(i);
                     }
                 }
@@ -406,20 +399,20 @@ public class BattleDrill extends BattleDrillTemplate {
             }
             
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            mgr.saveBattleDrill(getName(), false);
+            mgr.saveBattleDrill(getId(), false);
             return true;
         } catch (ItemNotFoundException ex) {
-            throw new WebApplicationException("Error when attempting to delete owner");
+            throw new WebApplicationException("Error when attempting to delete role from battle drill.");
         }
     }
     
     /**
-     * Deletes all owners under the parameter node (subordinates) from the participants data structure.
+     * Deletes all roles under the parameter node (subordinates) from the participants data structure.
      * @param node 
      */
     public void recursiveDeleteParticipant(Node node) {
         if (node.getChildNodes() == null || node.getChildNodes().isEmpty()) {
-            super.deleteParticipant(node.getOwner());
+            super.deleteParticipant(node.getRoleId());
         } else {
             node.getChildNodes().forEach((childNode) -> {
                 recursiveDeleteParticipant(childNode);
@@ -451,13 +444,13 @@ public class BattleDrill extends BattleDrillTemplate {
     }
     
     /**
-     * Helper to get the node by the owner name.
-     * @param owner
+     * Helper to get the node by the role ID.
+     * @param roleId
      * @return Node
      */
-    private Node getNodeByOwner(String owner) {
+    private Node getNodeByRoleId(int roleId) {
         Node rootNode = this.getRoot();
-        return rootNode.getOwner().equalsIgnoreCase(owner) ? rootNode : rootNode.getSubtreeByOwner(owner);
+        return rootNode.getRoleId() == roleId ? rootNode : rootNode.getSubtreeByRoleId(roleId);
     }
     
     @JsonProperty("location")
@@ -476,13 +469,24 @@ public class BattleDrill extends BattleDrillTemplate {
         return endTime;
     }
     
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    @JsonProperty("id")
+    public String getId() {
+        return this.id;
+    }
+    
     @Override
     public String toString()
     {
         StringBuilder sb = new StringBuilder();
+        sb.append("Drill ID: ").append(this.getId()).append(System.lineSeparator());
         sb.append("Name: ").append(this.getName()).append(System.lineSeparator());
         sb.append("Type: ").append(this.getType()).append(System.lineSeparator());
         sb.append("Creator Name: ").append(this.getCreatorName()).append(System.lineSeparator());
+        sb.append("Creator ID: ").append(this.getCreatorId()).append(System.lineSeparator());
         sb.append("Location: (").append("Latitude: ").append(location.get("latitude"))
           .append(", Longitude: ").append(location.get("longitude")).append(")").append(System.lineSeparator());
         sb.append("Permission: ").append(this.getPermission()).append(System.lineSeparator());

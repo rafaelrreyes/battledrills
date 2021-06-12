@@ -5,14 +5,14 @@ const initialState = {
 	chats: []
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
 	const { type, payload } = action;
 	switch (type) {
 		case ChatConstants.ADD_CHAT: {
-			const { sender, target, message, timestampMillis } = payload;
+			const { senderId, receiverId, receiverName, message, timestampMillis } = payload;
 			let withMessageObj = {};
 			if (typeof message !== "undefined") {
-				withMessageObj = { sender, target, message, timestampMillis };
+				withMessageObj = { senderId, receiverId, message, timestampMillis, receiverName };
 			}
 			// check if message is also added to this chat, then add it to messages array if necessary (this could b when someone else messages you
 			// through websocket )
@@ -26,9 +26,10 @@ export default function(state = initialState, action) {
 				chats: [
 					...chats,
 					{
+						receiverName,
 						minimized: false,
 						notifications: 0,
-						role: target,
+						receiverId: receiverId,
 						messages: message ? [withMessageObj] : []
 					}
 				]
@@ -55,7 +56,7 @@ export default function(state = initialState, action) {
 			const { chats } = state;
 			const chat = payload.chat;
 			const updatedChats = chats.map((currentChat) => {
-				if (currentChat.role.toUpperCase() === chat.role.toUpperCase()) {
+				if (currentChat.receiverId === chat.receiverId) {
 					if (payload.forceOpen) {
 						currentChat.minimized = false;
 					} else {
@@ -75,7 +76,7 @@ export default function(state = initialState, action) {
 			const { chats } = state;
 			const chat = payload;
 			const filteredChats = chats.filter((currentChat) => {
-				return currentChat.role.toUpperCase() !== chat.role.toUpperCase();
+				return currentChat.receiverId !== chat.receiverId;
 			});
 
 			return {
@@ -91,9 +92,8 @@ export default function(state = initialState, action) {
 const deepUpdateChat = (messageObj, chats) => {
 	const targetChat = chats.find((currentChat) => {
 		return (
-			currentChat.role.toUpperCase() === messageObj.target.toUpperCase() ||
-			(currentChat.role.toUpperCase() === messageObj.sender.toUpperCase() &&
-				messageObj.target.toUpperCase() !== "ALL")
+			currentChat.receiverId === messageObj.receiverId ||
+			(currentChat.receiverId === messageObj.senderId && messageObj.receiverId !== "*")
 		);
 	});
 	if (targetChat.minimized) {

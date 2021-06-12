@@ -22,6 +22,7 @@ import com.ngc.battledrills.manage.BattleDrillManager;
 import com.ngc.battledrills.data.reports.ReportData;
 import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.manage.ReportsManager;
+import com.ngc.battledrills.manage.RolesManager;
 import com.ngc.battledrills.template.BattleDrillTemplate;
 import com.ngc.battledrills.util.JacksonInjectableValues;
 import java.time.LocalDateTime;
@@ -43,9 +44,13 @@ import com.ngc.battledrills.util.JsonUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Node {
-    private String owner = "";
-    private final Map<String, Integer> selfCoordinates = new HashMap<String, Integer>();
-    private final Map<String, Integer> tasksCoordinates = new HashMap<String, Integer>();
+    
+    private String roleName = "";
+    private Member member = null;
+    private int roleId = 0;
+    
+    private final Map<String, Integer> selfCoordinates = new HashMap<>();
+    private final Map<String, Integer> tasksCoordinates = new HashMap<>();
 
     public class NodeConstants {
         public static final String SELF = "self";
@@ -67,19 +72,28 @@ public class Node {
     @JsonBackReference
     private BattleDrillTemplate bdroot;
 
-    public Node(){}
+    public Node() {}
 
-    @JsonProperty("title")
-    public void setOwner(String owner)
-    {
-        this.owner = owner;
+    // TODO we need to change this to "role" instead of title to be more consistent
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
-
-    public String getOwner()
-    {
-        return this.owner;
+    
+    @JsonProperty("roleName")
+    public String getRoleName() {
+        RolesManager rolesMgr = RolesManager.getInstance();
+        return rolesMgr.getRolenameById(this.roleId);
     }
-
+    
+    @JsonProperty("roleId")
+    public int getRoleId() {
+        return this.roleId;
+    }
+    
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+    
     /**
      * Sets the self coordinates when new drill is created using json template.
      * @param coordinates 
@@ -135,18 +149,28 @@ public class Node {
     }
     
     @JsonIgnore
-    public String getBattleDrillName()
-    {
-        if(null != bdroot)
-        {
+    public String getBattleDrillId() {
+        if (null != bdroot) {
+            return bdroot.getId();
+        } else if (null != parent) {
+            return parent.getBattleDrillId();
+        } else {
+            return "";
+        }
+    }
+    
+    public void setBattleDrillId(String drillId) {
+        bdroot = new BattleDrillTemplate();
+        bdroot.setId(drillId);
+    }
+    
+    @JsonIgnore
+    public String getBattleDrillName() {
+        if (null != bdroot) {
             return bdroot.getName();
-        }
-        else if(null != parent)
-        {
+        } else if(null != parent) {
             return parent.getBattleDrillName();
-        }
-        else
-        {
+        } else {
             return "";
         }
     }
@@ -157,20 +181,18 @@ public class Node {
     }
 
     @JsonProperty("tasks")
-    public void setTasks(List<Task> tasks)
-    {
+    public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+        
         if (!saveAsTemplate) {
                     
         }
-        try
-        {
+        
+        try {
             TaskRepo.addTasks(tasks);
 //            this.tasks = tasks;
-        }
-        catch(DuplicateItemException d)
-        {
-            System.err.println("Unable to set tasks for owner " + getOwner() + " - duplicate task being added: " + d);
+        } catch(DuplicateItemException d) {
+            System.err.println("Unable to set tasks for role id: " + getRoleId() + "(rolename:" + getRoleName() + ") - duplicate task being added: " + d);
         }
     }
     
@@ -238,18 +260,18 @@ public class Node {
 			
             // Update report with new task
             ReportsManager rMgr = ReportsManager.getInstance();
-            Report report = rMgr.getReport(this.getBattleDrillName());
+            Report report = rMgr.getReportByDrillId(this.getBattleDrillId());
             // drill is created at this point, report should already be created
 
             // check if drill started
             BattleDrillManager bdMgr = BattleDrillManager.getInstance();
-            BattleDrill drill = bdMgr.getByName(this.getBattleDrillName());
+            BattleDrill drill = bdMgr.getById(this.getBattleDrillId());
             if (drill.getStartTime() != null) {
                 LocalDateTime startTime = LocalDateTime.now();
                 newTask.getCurrentStatus().setStartTime(startTime);
                 List<Status> statuses = new ArrayList<>();
                 statuses.add(newTask.getCurrentStatus());
-                ReportData data = new ReportData(newTask.getOwner(), newTask.getDescription(), statuses, startTime);
+                ReportData data = new ReportData(newTask.getRoleId(), newTask.getDescription(), statuses, startTime);
                 if (report.getReportData(newTask.getId()) == null) {
                     report.setReportData(newTask.getId(), data);
                     report.setNumTasks(report.getNumTasks() + 1);
@@ -263,7 +285,7 @@ public class Node {
             }
             
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            mgr.saveBattleDrill(newTask.parent.getBattleDrillName(), false);
+            mgr.saveBattleDrill(newTask.parent.getBattleDrillId(), false);
             return true;
         } catch (DuplicateItemException | ItemNotFoundException e) {
             throw new WebApplicationException("Error when adding a new task.");
@@ -287,7 +309,6 @@ public class Node {
             
             // find task in this node that matches, and edit it by replacing it with the new task
             for (int i = 0; i < this.tasks.size(); i++) {
-                
                 if (this.tasks.get(i).getId().equals(taskId)) {
                     this.tasks.set(i, task);
                 }
@@ -304,7 +325,7 @@ public class Node {
             Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.EDIT, taskNotification));
             
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            mgr.saveBattleDrill(getBattleDrillName(), false);
+            mgr.saveBattleDrill(getBattleDrillId(), false);
             return true;
         } catch (ItemNotFoundException e) {
             throw new WebApplicationException("Error when attempting to update a task description", Response.Status.BAD_REQUEST);
@@ -312,29 +333,27 @@ public class Node {
     }
     
     /**
-     * Edits owner name then saves it to database.
-     * @param newOwner
+     * Edits role id then saves it to database.
+     * @param newRoleId
      * @return boolean
      */
-    public boolean editOwnerAndSave(String newOwner) {
+    public boolean editRoleAndSave(int newRoleId) {
         try {
-            this.setOwner(newOwner);
+            this.setRoleId(newRoleId);
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            mgr.saveBattleDrill(getBattleDrillName(), false);
+            mgr.saveBattleDrill(getBattleDrillId(), false);
             return true;
         } catch(ItemNotFoundException e) {
-            throw new WebApplicationException("Error when attempting to edit owner title.");
+            throw new WebApplicationException("Error when attempting to edit role id.");
         }
     }
 
-    public List<Task> getTasks()
-    {
+    public List<Task> getTasks() {
         return this.tasks;
     }
 
     @JsonProperty("children")
-    public void setChildNodes(List<Node> children)
-    {
+    public void setChildNodes(List<Node> children) {
         this.children = children;
     }
     
@@ -351,24 +370,19 @@ public class Node {
         return this.children;
     }
 
-    // Traverse the tree to get the tasks for all owners/billets
+    // Traverse the tree to get the tasks for all roles/billets
     @JsonIgnore
-    public void getTasksForAllOwners(Map<String, List<Task>> ownerXtasks)
-    {
-        String owner = this.getOwner();
-        if(ownerXtasks.containsKey(owner))
-        {
-            List<Task> mytasks = ownerXtasks.get(owner);
+    public void getTasksForAllRoles(Map<Integer, List<Task>> rolesByTasks) {
+        int roleId = this.getRoleId();
+        if (rolesByTasks.containsKey(roleId)) {
+            List<Task> mytasks = rolesByTasks.get(roleId);
             mytasks.addAll(tasks);
-        }
-        else
-        {
-            ownerXtasks.put(owner, tasks);
+        } else {
+            rolesByTasks.put(roleId, tasks);
         }
 
-        for(Node child : children)
-        {
-            child.getTasksForAllOwners(ownerXtasks);
+        for (Node child : children) {
+            child.getTasksForAllRoles(rolesByTasks);
         }
     }
 
@@ -376,14 +390,14 @@ public class Node {
     public void startAllTasks(LocalDateTime startTime) {
         ReportsManager rMgr = ReportsManager.getInstance();
         // drill is created at this point, report should already be created
-        Report report = rMgr.getReport(this.getBattleDrillName());
+        Report report = rMgr.getReportByDrillId(this.getBattleDrillId());
         report.setStartTime(startTime);
 
         tasks.forEach((task) -> {
             task.getCurrentStatus().setStartTime(startTime);
             List<Status> statuses = new ArrayList<>();
             statuses.add(task.getCurrentStatus());
-            ReportData data = new ReportData(task.getOwner(), task.getDescription(), statuses, startTime);
+            ReportData data = new ReportData(task.getRoleId(), task.getDescription(), statuses, startTime);
             if (report.getReportData(task.getId()) == null) {
                 report.setReportData(task.getId(), data);
             }
@@ -395,62 +409,52 @@ public class Node {
         rMgr.saveReport(report);
     }
 
-    // Traverse the tree to get the tasks owned by the requested owner/billet
-    public List<Task> getTasksByOwner(String owner)
+    // Traverse the tree to get the tasks owned by the requested role/billet
+    public List<Task> getTasksByRoleId(int roleId)
     {
         Node match = null;
-        for(Node child : children)
-        {
-            if(child.getOwner().equalsIgnoreCase(owner))
-            {
+        for (Node child : children) {
+            if (child.getRoleId() == roleId) {
                 match = child;
                 break;
             }
         }
 
-        if(null != match)
-        {
+        if (null != match) {
             return match.getTasks();
-        }
-        else // If the node matching the owner was not found, pass the find request to child nodes
-        {
-            for(Node child : children)
-            {
-                match = child.getSubtreeByOwner(owner);
-                if(null != match)
-                {
+        
+        // If the node matching the role ID was not found, pass the find request to child nodes
+        } else {
+            for (Node child : children) {
+                match = child.getSubtreeByRoleId(roleId);
+                if(null != match) {
                     break;
                 }
             }
         }
 
-        return (match == null)?null:match.getTasks();
+        return (match == null) ? null : match.getTasks();
     }
 
-    // Traverse the tree to get the subtree owned by the requested owner
-    public Node getSubtreeByOwner(String owner)
+    // Traverse the tree to get the subtree owned by the requested role ID
+    public Node getSubtreeByRoleId(int roleId)
     {
         Node match = null;
-        for(Node child : children)
-        {
-            if(child.getOwner().equalsIgnoreCase(owner))
-            {
+        for(Node child : children) {
+            if(child.getRoleId() == roleId) {
                 match = child;
                 break;
             }
         }
 
-        if(null != match)
-        {
+        if (null != match) {
             return match;
-        }
-        else // If the node matching the owner was not found, pass the find request to child nodes
-        {
-            for(Node child : children)
-            {
-                match = child.getSubtreeByOwner(owner);
-                if(null != match)
-                {
+        
+        // If the node matching the role was not found, pass the find request to child nodes   
+        } else {
+            for(Node child : children) {
+                match = child.getSubtreeByRoleId(roleId);
+                if (null != match) {
                     break;
                 }
             }
@@ -460,29 +464,25 @@ public class Node {
     }
 
     // Traverse the tree to delete the requested task
-    public boolean deleteTask(String taskId, User user)
-    {
+    public boolean deleteTask(String taskId, User user) {
         boolean success = false;
         Task toDelete = null;
 
         // First check if the task is in this node's task list.  If so, delete it and return successful
-        for(Task task : tasks)
-        {
-            if(task.getId().equals(taskId))
-            {
+        for (Task task : tasks) {
+            if (task.getId().equals(taskId)) {
                 toDelete = task;
                 break;
             }
         }
 
         // If the task was found in this node's task list, delete it and record success
-        if(null != toDelete)
-        {
+        if (null != toDelete) {
             tasks.remove(toDelete);
             success = true;
 
             ReportsManager rMgr = ReportsManager.getInstance();
-            Report report = rMgr.getReport(this.getBattleDrillName());
+            Report report = rMgr.getReportByDrillId(this.getBattleDrillId());
             report.deleteReportData(taskId);
             report.setNumTasks(report.getNumTasks() - 1);
             
@@ -493,14 +493,11 @@ public class Node {
                 Notify.sendNotificationToAllExcluding(taskNotification);
                 Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, taskNotification));
             }
-        }
-        else // If the task was not found, pass the delete request to child nodes, and return immediately if the task is successfully deleted in a descendant of this node
+        } else // If the task was not found, pass the delete request to child nodes, and return immediately if the task is successfully deleted in a descendant of this node
         {
-            for(Node child : children)
-            {
+            for(Node child : children) {
                 success = child.deleteTask(taskId, user);
-                if(success == true)
-                {
+                if(success == true) {
                     break;
                 }
             }
@@ -510,10 +507,9 @@ public class Node {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Owner: ").append(this.owner).append(System.lineSeparator());
+        sb.append("Role ID: ").append(this.roleId).append(System.lineSeparator());
 
         if (selfCoordinates.containsKey("x") && selfCoordinates.containsKey("y")) {
             sb.append("Self coordinates: { x: " + selfCoordinates.get("x") + ", y: " + selfCoordinates.get("y") + " }").append(System.lineSeparator());
@@ -523,20 +519,16 @@ public class Node {
             sb.append("Tasks coordinates: { x: " + tasksCoordinates.get("x") + ", y: " + tasksCoordinates.get("y") + " }").append(System.lineSeparator());
         }
 
-        if(tasks != null && tasks.size() > 0)
-        {
+        if(tasks != null && tasks.size() > 0) {
             sb.append("Tasks: ").append(System.lineSeparator());
-            for(Task task : tasks)
-            {
+            for(Task task : tasks) {
                 sb.append(task).append(System.lineSeparator());
             }
         }
 
-        if(children != null && children.size() > 0)
-        {
+        if(children != null && children.size() > 0) {
             sb.append("Children: ").append(System.lineSeparator());
-            for(Node node : children)
-            {
+            for(Node node : children) {
                 sb.append(node).append(System.lineSeparator());
             }
         }

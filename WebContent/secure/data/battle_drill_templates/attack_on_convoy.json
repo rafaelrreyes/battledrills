@@ -1,8 +1,9 @@
 {
 	"type": "attack_on_convoy",
-	"participants": ["CO","WO","FSCC","S-1", "S-2", "S-3", "S-4", "LOC", "XO", "AirO"],
+	"participants": [1, 15, 2, 11, 3, 12, 4, 7, 10, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 740,
 			"y": 30
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 740,
 					"y": 90
@@ -24,12 +26,13 @@
 						"description": "Stand to QRF"
 					},
 					{
-						"description": "Notify RCT SWO and pass UXO/IED report"
+						"description": "Notify RCT SWO and pass UXO/IED Report"
 					}
 				],
 				"children": [
 					{
 						"title": "XO",
+						"roleId": 2,
 						"self_coordinates": {
 							"x": 70,
 							"y": 140
@@ -50,6 +53,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 235,
 							"y": 140
@@ -70,6 +74,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 405,
 							"y": 140
@@ -83,7 +88,7 @@
 								"description": "Coordinate air CASEVAC if required"
 							},
 							{
-								"description": "Monitor A/C movement"
+								"description": "Monitor A/C movement/employment"
 							},
 							{
 								"description": "Coordinate with Air for CASEVAC"
@@ -93,6 +98,7 @@
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 585,
 							"y": 140
@@ -110,6 +116,7 @@
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 675,
 							"y": 140
@@ -136,6 +143,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 825,
 							"y": 145
@@ -145,6 +153,7 @@
 						"children": [
 							{
 								"title": "S-1",
+								"roleId": 10,
 								"self_coordinates": {
 									"x": 760,
 									"y": 200
@@ -162,6 +171,7 @@
 							},
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 885,
 									"y": 225
@@ -172,7 +182,7 @@
 								},
 								"tasks": [
 									{
-										"description": "Redirect movement, if required"
+										"description": "Redirect movement if required"
 									},
 									{
 										"description": "Ensure convoy remains with IED until relieved"

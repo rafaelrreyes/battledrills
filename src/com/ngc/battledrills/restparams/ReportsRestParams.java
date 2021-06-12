@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.restparams;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,13 +16,13 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportsRestParams {
-    private String drillName;
+    private String drillId;
     private String taskId;
     private String reportType;
-    private List<String> compareDrillNames;
+    private List<String> compareDrillIds;
 
-    public String getDrillName() {
-        return this.drillName;
+    public String getDrillId() {
+        return this.drillId;
     }
 
     public String getTaskId() {
@@ -33,12 +33,12 @@ public class ReportsRestParams {
         return this.reportType;
     }
 
-    public List<String> getCompareDrillNames() {
-        return this.compareDrillNames;
+    public List<String> getCompareDrillIds() {
+        return this.compareDrillIds;
     }
 
-    public void setDrillName(String drillName) {
-        this.drillName = drillName;
+    public void setDrillId(String drillId) {
+        this.drillId = drillId;
     }
 
     public void setTaskId(String taskId) {
@@ -49,17 +49,17 @@ public class ReportsRestParams {
         this.reportType = reportType;
     }
 
-    public void setCompareDrillNames(List<String> compareDrillNames) {
-        this.compareDrillNames = compareDrillNames;
+    public void setCompareDrillIds(List<String> compareDrillIds) {
+        this.compareDrillIds = compareDrillIds;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Drill name: ").append(this.drillName).append(System.lineSeparator());
+        sb.append("Drill ID: ").append(this.drillId).append(System.lineSeparator());
         sb.append("Task Id: ").append(this.taskId).append(System.lineSeparator());
         sb.append("Report Type: ").append(this.reportType).append(System.lineSeparator());
-        sb.append("Compare Drill Names: ").append(this.compareDrillNames).append(System.lineSeparator());
+        sb.append("Compare Drill IDs: ").append(this.compareDrillIds).append(System.lineSeparator());
         return sb.toString();
     }
 }

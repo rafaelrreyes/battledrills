@@ -23,13 +23,13 @@ import com.ngc.battledrills.data.User;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.manage.AttachmentManager;
 import com.ngc.battledrills.manage.TaskManager;
-import com.ngc.battledrills.rest.BattleDrillRestParams;
-import com.ngc.battledrills.rest.NoteRestParams;
-import com.ngc.battledrills.rest.OrderedDrillsRestParams;
+import com.ngc.battledrills.restparams.BattleDrillRestParams;
+import com.ngc.battledrills.restparams.NoteRestParams;
+import com.ngc.battledrills.restparams.OrderedDrillsRestParams;
 import com.ngc.battledrills.util.JsonUtils;
-import com.ngc.battledrills.rest.ReportsRestParams;
+import com.ngc.battledrills.restparams.ReportsRestParams;
 import com.ngc.battledrills.rest.ReportsService;
-import com.ngc.battledrills.rest.StatusRestParams;
+import com.ngc.battledrills.restparams.StatusRestParams;
 import com.ngc.battledrills.vmf.VmfManager;
 import java.io.File;
 import java.util.ArrayList;
@@ -139,7 +139,7 @@ public class BattleDrillsMain {
 
             System.out.println("_________________________________________________________ START TEST ___________________________________________________________");
             ReportsRestParams params = new ReportsRestParams();
-            params.setDrillName("WCD1");
+            params.setDrillId("WCD1");
             service.getReports(params);
         } catch (Exception e) {
             System.err.println("Dustin - unable to test: " + e);
@@ -150,7 +150,7 @@ public class BattleDrillsMain {
         BattleDrillManager mgr = BattleDrillManager.getInstance();
         
         String testTaskId = "991444f5-73db-45fb-85b8-464e807e32cd";
-        User user = new User("sessionId", "WO", "Dustin");
+        User user = new User("sessionId", 15, "WO", "Dustin");
 
         
         try {
@@ -183,8 +183,8 @@ public class BattleDrillsMain {
         BattleDrillManager mgr = BattleDrillManager.getInstance();
         try {
             System.out.println(getTestLocation());
-            User user = new User("sessionId", "XO", "Dustin");
-            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "assassination 1", false, user, getTestLocation());
+            User user = new User("sessionId", 2, "XO", "Dustin");
+            BattleDrill bd = mgr.createByType(1, "assassination_of_iraqi_government_official", "assassination 1", false, user, getTestLocation());
             System.out.println("Test Battle Drill with location: " + bd.toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -199,8 +199,8 @@ public class BattleDrillsMain {
         BattleDrillManager mgr = BattleDrillManager.getInstance();
         try
         {
-            User user = new User("sessionId", "CO", "Dustin");
-            BattleDrill bd = mgr.createByType("assassination_of_iraqi_government_official", "dianatestload3", false, user, getTestLocation());
+            User user = new User("sessionId", 1, "CO", "Dustin");
+            BattleDrill bd = mgr.createByType(1, "assassination_of_iraqi_government_official", "dianatestload3", false, user, getTestLocation());
             System.out.println("Diana battle drill: " + bd);
         }
         catch(Exception e)
@@ -226,21 +226,21 @@ public class BattleDrillsMain {
     
     public static void testGetTasksByBillet()
     {
-        System.out.println("here");
-        String billet = "WO";
-        Map<String, List<Task>> tasks = TaskRepo.getTasksByBillet(billet);
-        
-        for(String bdName : tasks.keySet())
-        {
-            System.out.println("Battle Drill Name: " + bdName);
-            System.out.println(tasks.get(bdName));
-        }
+//        System.out.println("here");
+//        String billet = "WO";
+//        Map<String, Object> tasks = TaskRepo.getTasksByBillet(billet);
+//        
+//        for (String drillId : tasks.keySet())
+//        {
+//            System.out.println("Battle Drill Name: " + bdName);
+//            System.out.println(tasks.get(bdName));
+//        }
     }
     
     public static void testVmf()
     {
-        VmfManager vmfMgr = new VmfManager();
-        vmfMgr.startKMessageMonitor();
+//        VmfManager vmfMgr = new VmfManager();
+//        vmfMgr.startKMessageMonitor();
     }
     
     public static void testDeleteBattleDrill()
@@ -253,8 +253,8 @@ public class BattleDrillsMain {
             System.out.println("DIANA TYPES: ");
             System.out.println(types);
             
-            User user = new User("sessionId", "CO", "Dustin");
-            mgr.createByType("ied_discovered", "dianatest2", false, user, getTestLocation());
+            User user = new User("sessionId", 1, "CO", "Dustin");
+            mgr.createByType(1, "ied_discovered", "dianatest2", false, user, getTestLocation());
                     
             List<String> names = mgr.getActiveDrillNames().get("active");
             System.out.println("Diana names");
@@ -276,7 +276,7 @@ public class BattleDrillsMain {
         try
         {
             BattleDrill bd = bdManager.getByName("ToT Test1");
-            Node tree = bd.getSubtreeByOwner("S-3");
+            Node tree = bd.getSubtreeByRoleId(12);
             System.out.println("DIANA TREE");
             System.out.println(tree);
             
@@ -332,7 +332,7 @@ public class BattleDrillsMain {
                 System.out.println("DIANA task: ");
                 System.out.println(task);
                 
-                User user = new User("sessionId", "XO", "Dustin");
+                User user = new User("sessionId", 2, "XO", "Dustin");
                 Note note = new Note(user, "Testing note4");
                 //Note note2 = new Note("diana", "Testing note5");
                 //Note note3 = new Note("sonya", "Testing note6");
@@ -367,8 +367,8 @@ public class BattleDrillsMain {
         BattleDrillManager bdManager = BattleDrillManager.getInstance();
         try
         {
-            User user = new User("sessionId", "CO", "Dustin");
-            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest1", false, user, getTestLocation());
+            User user = new User("sessionId", 1, "CO", "Dustin");
+            BattleDrill bd = bdManager.createByType(1, "ied_discovered", "dianatest1", false, user, getTestLocation());
             Node root = bd.getRoot();
             Node child = root.getChildNodes().get(0);
             
@@ -392,24 +392,24 @@ public class BattleDrillsMain {
     
     public static void testGetNames()
     {
-        BattleDrillService service = new BattleDrillService();
-        BattleDrillManager manager = BattleDrillManager.getInstance();
-        System.out.println("DIANA names: ");
-        try
-        {
-            manager.getAllDrillNames();
-            System.out.println(service.getBattleDrillNames(null));
-            
-            System.out.println(service.getBattleDrillByName("dianatest2"));
-        }
-        catch(Exception e)
-        {
-            System.err.println(e);
-        }
+//        BattleDrillService service = new BattleDrillService();
+//        BattleDrillManager manager = BattleDrillManager.getInstance();
+//        System.out.println("DIANA names: ");
+//        try
+//        {
+//            manager.getAllDrillNames();
+//            System.out.println(service.getBattleDrillNames(null));
+//            
+//            System.out.println(service.getBattleDrillByName("dianatest2"));
+//        }
+//        catch(Exception e)
+//        {
+//            System.err.println(e);
+//        }
     }
     
     public static void testNotification() {
-        User user = new User("sessionId", "XO", "Dustin");
+        User user = new User("sessionId", 1, "XO", "Dustin");
         Note note = new Note(user, "hello");
         String taskId = "8ee99806-885c-4c2c-a232-9f1b5997e804";
         Map<String, String> taskData = new HashMap<>();
@@ -445,9 +445,9 @@ public class BattleDrillsMain {
             
             //Template template = manager.getByType("intelligence_alert_of_impending_attack");
             //System.out.println(template);
-            User user = new User("sessionId", "CO", "Dustin");
+            User user = new User("sessionId", 1, "CO", "Dustin");
             System.out.println("_________________________________________________________ START TEST ___________________________________________________________");
-            BattleDrill bd = bdManager.createByType("ied_discovered", "dianatest3", false, user, getTestLocation());
+            BattleDrill bd = bdManager.createByType(1, "ied_discovered", "dianatest3", false, user, getTestLocation());
             
             /*int diana = 0;
             if(diana < 1)
@@ -478,27 +478,27 @@ public class BattleDrillsMain {
         BattleDrillService service = new BattleDrillService();
         try
         {
-            System.out.println("___________________________ ALL DRILLS START __________________________");
-            System.out.println(bdManager.getAllDrillNames());
-            System.out.println("______________________________ ADD DRILLS _____________________________");
-            User user = new User("sessionId", "CO", "Dustin");
-            bdManager.createByType("ied_discovered", "dustinTest1", false, user, getTestLocation());
-            bdManager.createByType("ied_discovered", "dustinTest2", false, user, getTestLocation());
-            bdManager.createByType("ied_discovered", "dustinTest3", false, user, getTestLocation());
-            System.out.println(bdManager.getAllDrillNames());
-            
-            ArrayList<String> active = new ArrayList<String>();
-            active.add("dustinTest2");
-            active.add("dustinTest1");
-            active.add("dustinTest3");
-            ArrayList<String> completed = new ArrayList<String>();
-            OrderedDrillsRestParams odrp = new OrderedDrillsRestParams();
-            odrp.setOrderedActiveDrills(active);
-            odrp.setOrderedCompletedDrills(completed);
-            
-            service.updateBattleDrillOrder(odrp);
-            System.out.println("____________________________ REORDER DRILLS ___________________________");
-            System.out.println(bdManager.getAllDrillNames());
+//            System.out.println("___________________________ ALL DRILLS START __________________________");
+//            System.out.println(bdManager.getAllDrillNames());
+//            System.out.println("______________________________ ADD DRILLS _____________________________");
+//            User user = new User("sessionId", "CO", "Dustin");
+//            bdManager.createByType("ied_discovered", "dustinTest1", false, user, getTestLocation());
+//            bdManager.createByType("ied_discovered", "dustinTest2", false, user, getTestLocation());
+//            bdManager.createByType("ied_discovered", "dustinTest3", false, user, getTestLocation());
+//            System.out.println(bdManager.getAllDrillNames());
+//            
+//            ArrayList<String> active = new ArrayList<String>();
+//            active.add("dustinTest2");
+//            active.add("dustinTest1");
+//            active.add("dustinTest3");
+//            ArrayList<String> completed = new ArrayList<String>();
+//            OrderedDrillsRestParams odrp = new OrderedDrillsRestParams();
+//            odrp.setOrderedActiveDrills(active);
+//            odrp.setOrderedCompletedDrills(completed);
+//            
+//            service.updateBattleDrillOrder(odrp);
+//            System.out.println("____________________________ REORDER DRILLS ___________________________");
+//            System.out.println(bdManager.getAllDrillNames());
         }
         catch(Exception e)
         {

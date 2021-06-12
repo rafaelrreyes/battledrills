@@ -13,7 +13,7 @@ export { default as CompletedDrills } from "./OverviewContainer/CompletedDrills/
 export { default as DiagramContainer } from "./DiagramContainer/DiagramContainer";
 export { default as DetailedViewContainer } from "./DetailedViewContainer/DetailedViewContainer";
 export { default as TaskActionsMenu } from "./TaskActionsMenu/TaskActionsMenu";
-export { default as OwnerActionsMenu } from "./OwnerActionsMenu/OwnerActionsMenu";
+export { default as RoleActionsMenu } from "./RoleActionsMenu/RoleActionsMenu";
 // Notes View
 export { default as NotesView } from "./NotesView/NotesView";
 

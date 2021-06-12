@@ -1,8 +1,9 @@
 {
 	"type": "missing_marine",
-	"participants": ["CO", "WO", "XO", "S-2", "S-3", "IO", "AirO", "FSCC", "LOC", "S-1", "S-4", "BAS"],
+	"participants": [1, 15, 2, 11, 12, 6, 3, 4, 7, 10, 13, 5],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 465,
 			"y": 20
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 465,
 					"y": 75
@@ -36,6 +38,7 @@
 				"children": [
 					{
 						"title": "XO",
+						"roleId": 2,
 						"self_coordinates": {
 							"x": 70,
 							"y": 130
@@ -53,6 +56,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 170,
 							"y": 130
@@ -73,6 +77,7 @@
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 290,
 							"y": 130
@@ -98,6 +103,7 @@
 						"children": [
 							{
 								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 225,
 									"y": 335
@@ -116,6 +122,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 450,
 							"y": 150
@@ -132,7 +139,7 @@
 								"description": "Assess ability to provide continuous CAS"
 							},
 							{
-								"description": "Monitor A/C movement"
+								"description": "Monitor A/C movement/employment"
 							},
 							{
 								"description": "Coordinate with S-2 for ISR coverage"
@@ -145,6 +152,7 @@
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 550,
 							"y": 130
@@ -164,13 +172,14 @@
 								"description": "Pass aimpoint to Btry"
 							},
 							{
-								"description": "Coordinate with AirO to clear air space for CASEVAC/CAS"
+								"description": "Coordinate with AirO to clear airspace for CASEVAC/CAS"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 690,
 							"y": 150
@@ -180,6 +189,7 @@
 						"children": [
 							{
 								"title": "S-1",
+								"roleId": 10,
 								"self_coordinates": {
 									"x": 690,
 									"y": 250
@@ -202,6 +212,7 @@
 							},
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 775,
 									"y": 250
@@ -218,6 +229,7 @@
 								"children": [
 									{
 										"title": "BAS",
+										"roleId": 5,
 										"self_coordinates": {
 											"x": 775,
 											"y": 385

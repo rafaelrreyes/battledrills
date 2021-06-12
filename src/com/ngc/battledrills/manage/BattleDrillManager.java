@@ -21,10 +21,10 @@ import com.ngc.battledrills.comms.NotifyTypes;
 import com.ngc.battledrills.data.Report;
 import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.exception.DuplicateItemException;
-import com.ngc.battledrills.rest.BattleDrillRestParams;
+import com.ngc.battledrills.restparams.BattleDrillRestParams;
 import com.ngc.battledrills.data.TaskRepo;
 import com.ngc.battledrills.data.User;
-import com.ngc.battledrills.rest.OrderedDrillsRestParams;
+import com.ngc.battledrills.restparams.OrderedDrillsRestParams;
 import com.ngc.battledrills.template.BattleDrillTemplate;
 import com.ngc.battledrills.util.ConvenienceUtils.VmfType;
 import com.ngc.battledrills.util.JsonUtils;
@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.io.FileUtils;
@@ -50,11 +51,10 @@ public class BattleDrillManager {
     // Todo - should make BattleDrillRepo objects to hold the CRUD operations, and this manager class would just manage them
     private static final Map<String, BattleDrill> activeBattleDrills = new HashMap<>();
     private static final Map<String, BattleDrill> completedBattleDrills = new HashMap<>();
-    private static final ArrayList<String> orderedActiveBattleDrills = new ArrayList<String>();
-    private static final ArrayList<String> orderedCompletedBattleDrills = new ArrayList<String>();
+    private static final ArrayList<Map<String, String>> orderedActiveBattleDrills = new ArrayList<Map<String, String>>();
+    private static final ArrayList<Map<String, String>> orderedCompletedBattleDrills = new ArrayList<Map<String, String>>();
 
-    private BattleDrillManager()
-    {
+    private BattleDrillManager() {
         loadAll();
     }
     
@@ -67,25 +67,21 @@ public class BattleDrillManager {
         private static final BattleDrillManager instance = new BattleDrillManager();
     }
     
-    private void loadAll()
-    {
+    private void loadAll() {
         loadActiveDrills();
         loadCompletedDrills();
         loadOrderedDrills();
     }
     
-    private void loadActiveDrills()
-    {
-        try
-        {
+    private void loadActiveDrills() {
+        try {
             File dir = new File(BattleDrillsConfig.getActiveBattleDrillsDir());
-            File[] files = dir.listFiles((d, name) -> name.endsWith(".json"));
+            File[] files = dir.listFiles((d, drill) -> drill.endsWith(".json"));
             
-            for(File file : files)
-            {
+            for(File file : files) {
                 String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 BattleDrill battleDrill = loadFromJson(fileContents);
-                activeBattleDrills.put(battleDrill.getName(), battleDrill);
+                activeBattleDrills.put(battleDrill.getId(), battleDrill);
             }
         }
         catch(IOException i)
@@ -95,41 +91,40 @@ public class BattleDrillManager {
     }
     
     // Diana - consider not storing the full objects, but only storing their names and then loading from the file if someone requests the full details
-    private void loadCompletedDrills()
-    {
-        try
-        {
+    private void loadCompletedDrills() {
+        try {
             File dir = new File(BattleDrillsConfig.getCompletedBattleDrillsDir());
-            File[] files = dir.listFiles((d, name) -> name.endsWith(".json"));
+            File[] files = dir.listFiles((d, drill) -> drill.endsWith(".json"));
             
-            for(File file : files)
-            {
+            for(File file : files) {
                 String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 BattleDrill battleDrill = loadFromJson(fileContents);
-                completedBattleDrills.put(battleDrill.getName(), battleDrill);
+                completedBattleDrills.put(battleDrill.getId(), battleDrill);
             }
-        }
-        catch(IOException i)
-        {
+        } catch(IOException i) {
             System.err.println("DIANA unable to load template: " + i);
         }
     }
     
-    private void loadOrderedDrills()
-    {
-        try 
-        {
+    private void loadOrderedDrills() {
+        try {
             File orderedActiveDrillFile = new File(getOrderedDrillsFilename());
             if (orderedActiveDrillFile.isFile() && orderedActiveDrillFile.canRead()) {
                 String json = FileUtils.readFileToString(orderedActiveDrillFile, StandardCharsets.UTF_8);
                 ObjectMapper mapper = new ObjectMapper();
-                HashMap<String, ArrayList<String>> drills = mapper.readValue(json, new TypeReference<HashMap<String, ArrayList<String>>>(){});
-                for(String drillName : drills.get("active")) {
-                    orderedActiveBattleDrills.add(drillName);
+                HashMap<String, ArrayList<Map<String, String>>> drills = mapper.readValue(json, new TypeReference<HashMap<String, ArrayList<Map<String, String>>>>(){});
+                for (Map<String, String> drill : drills.get("active")) {
+                    Map<String, String> targetDrill = new HashMap<>();
+                    targetDrill.put("id", drill.get("id"));
+                    targetDrill.put("name", drill.get("name"));
+                    orderedActiveBattleDrills.add(drill);
                 }
 
-                for(String drillName : drills.get("completed")) {
-                    orderedCompletedBattleDrills.add(drillName);
+                for (Map<String, String> drill : drills.get("completed")) {
+                    Map<String, String> targetDrill = new HashMap<>();
+                    targetDrill.put("id", drill.get("id"));
+                    targetDrill.put("name", drill.get("name"));
+                    orderedCompletedBattleDrills.add(drill);
                 }
             }
         } 
@@ -154,113 +149,157 @@ public class BattleDrillManager {
     }
     
     public Map<String, ArrayList<String>> getAllDrillNames() {
-        Map<String, ArrayList<String>> battleDrills = new HashMap<>();
+        Map<String, ArrayList<String>> drillNames = new HashMap<>();
+        ArrayList<String> activeDrillNames = new ArrayList<>();
+        ArrayList<String> completedDrillNames = new ArrayList<>();
+        
+        // extract names from ordered drills and place into map consisting of
+        // "active" and "completed" drill names
+        orderedActiveBattleDrills.forEach((orderedActiveDrill) -> {
+            activeDrillNames.add(orderedActiveDrill.get("name"));
+        });
+        
+        orderedCompletedBattleDrills.forEach((orderedCompletedDrill) -> {
+            completedDrillNames.add(orderedCompletedDrill.get("name"));
+        });
+        
+        drillNames.put("active", activeDrillNames);
+        drillNames.put("completed", completedDrillNames);
+        return drillNames;
+    }
+    
+    public Map<String, ArrayList<Map<String, String>>> getAllDrills() {
+        Map<String, ArrayList<Map<String, String>>> battleDrills = new HashMap<>();
         battleDrills.put("active", orderedActiveBattleDrills);
         battleDrills.put("completed", orderedCompletedBattleDrills);
         return battleDrills;
     }
     
-    public void deleteBattleDrill(String battleDrillName, User user)
-    {
-        if(StringUtils.isBlank(battleDrillName))
-        {
-            throw new InvalidParameterException("Unable to delete battle drill - battleDrillName parameter cannot be empty");
+    public Map<String, ArrayList<String>> getAllDrillIds() {
+        Map<String, ArrayList<String>> drillIds = new HashMap<>();
+        ArrayList<String> activeDrillIds = new ArrayList<>();
+        ArrayList<String> completedDrillIds = new ArrayList<>();
+        
+        // extract names from ordered drills and place into map consisting of
+        // "active" and "completed" drill ids
+        orderedActiveBattleDrills.forEach((orderedActiveDrill) -> {
+            activeDrillIds.add(orderedActiveDrill.get("id"));
+        });
+        
+        orderedCompletedBattleDrills.forEach((orderedCompletedDrill) -> {
+            completedDrillIds.add(orderedCompletedDrill.get("id"));
+        });
+        
+        drillIds.put("active", activeDrillIds);
+        drillIds.put("completed", completedDrillIds);
+        return drillIds;
+    }
+    
+    public void deleteBattleDrill(String drillId, User user) {
+        if (StringUtils.isBlank(drillId)) {
+            throw new InvalidParameterException("Unable to delete battle drill - drill ID parameter cannot be empty");
         }
         
-        if(activeBattleDrills.containsKey(battleDrillName))
-        {
-            activeBattleDrills.remove(battleDrillName);
-            orderedActiveBattleDrills.remove(battleDrillName);
-            TaskRepo.deleteTasksByBattleDrill(battleDrillName);
-            File battleDrillFile = new File(getFullFilename(battleDrillName, false));
-            battleDrillFile.delete();
-            saveOrderedDrills();
-        }
-        else if(completedBattleDrills.containsKey(battleDrillName))
-        {
-            completedBattleDrills.remove(battleDrillName);
-            orderedCompletedBattleDrills.remove(battleDrillName);
-            TaskRepo.deleteTasksByBattleDrill(battleDrillName);
-            File battleDrillFile = new File(getFullFilename(battleDrillName, true));
-            battleDrillFile.delete();
-            saveOrderedDrills();
-        }
-        else // If the battle drill wasn't found, just log the message
-        {
-            System.err.println("Unable to delete battle drill - battle drill with name " + battleDrillName + " not found.");
+        if (!activeBattleDrills.containsKey(drillId) && !completedBattleDrills.containsKey(drillId)) {
+            System.err.println("Unable to delete battle drill - battle drill with id: " + drillId + " not found.");
             return;
         }
-        Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getAllDrillNames(), battleDrillName);
-        Notify.sendNotificationToAllExcluding(drillNotification);
-        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, drillNotification));
+        
+        if (activeBattleDrills.containsKey(drillId)) {
+            activeBattleDrills.remove(drillId);
+            Iterator<Map<String,String>> iterator = orderedActiveBattleDrills.iterator();
+            while (iterator.hasNext()) {
+                Map<String, String> orderedActiveDrill = iterator.next();
+                if (orderedActiveDrill.containsKey("id") && orderedActiveDrill.get("id").equals(drillId)) {
+                    iterator.remove();
+                }
+            }
+            
+        } else if(completedBattleDrills.containsKey(drillId)) {
+            completedBattleDrills.remove(drillId);
+            Iterator<Map<String,String>> iterator = orderedCompletedBattleDrills.iterator();
+            while (iterator.hasNext()) {
+                Map<String, String> orderedCompletedDrill = iterator.next();
+                if (orderedCompletedDrill.containsKey("id") && orderedCompletedDrill.get("id").equals(drillId)) {
+                    iterator.remove();
+                }
+            }
+        }
+        
+        // delete tasks associated with battle drill and update
+        TaskRepo.deleteTasksByBattleDrill(drillId);
+        File battleDrillFile = new File(getFullFilename(drillId, false));
+        battleDrillFile.delete();
+        saveOrderedDrills();
+        
+        
+        // TODO: update notification to account for drill ids
+//        Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getAllDrillNames(), battleDrillName);
+//        Notify.sendNotificationToAllExcluding(drillNotification);
+//        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, drillNotification));
     }
     
-    public Map<String, ArrayList<String>> getCompletedDrillNames()
-    {
-        Map<String, ArrayList<String>> battleDrills = new HashMap<>();
-        battleDrills.put("completed", orderedCompletedBattleDrills);
-        return battleDrills;
+    public Map<String, ArrayList<String>> getCompletedDrillNames() {
+        Map<String, ArrayList<String>> completedDrills = new HashMap<>();
+        ArrayList<String> completedDrillNames = new ArrayList<>();
+        orderedCompletedBattleDrills.forEach((orderedCompleteDrill) -> {
+            completedDrillNames.add(orderedCompleteDrill.get("name"));
+        });
+        completedDrills.put("completed", completedDrillNames);
+        return completedDrills;
     }
     
-    public List<BattleDrill> getCompletedDrills()
-    {
+    public Map<String, ArrayList<String>> getCompletedDrillIds() {
+        Map<String, ArrayList<String>> completedDrills = new HashMap<>();
+        ArrayList<String> completedDrillIds = new ArrayList<>();
+        orderedCompletedBattleDrills.forEach((orderedCompleteDrill) -> {
+            completedDrillIds.add(orderedCompleteDrill.get("id"));
+        });
+        completedDrills.put("completed", completedDrillIds);
+        return completedDrills;
+    }
+    
+    public List<BattleDrill> getCompletedDrills() {
         return new ArrayList(completedBattleDrills.values());
     }
     
-    public Map<String, ArrayList<String>> getActiveDrillNames()
-    {
-        Map<String, ArrayList<String>> battleDrills = new HashMap<>();
-        battleDrills.put("active", orderedActiveBattleDrills);
-        return battleDrills;
+    public Map<String, ArrayList<String>> getActiveDrillNames() {
+        Map<String, ArrayList<String>> activeDrills = new HashMap<>();
+        ArrayList<String> activeDrillNames = new ArrayList<>();
+        orderedActiveBattleDrills.forEach((orderedActiveDrill) -> {
+            activeDrillNames.add(orderedActiveDrill.get("name"));
+        });
+        activeDrills.put("completed", activeDrillNames);
+        return activeDrills;
     }
     
-    public List<BattleDrill> getActiveDrills()
-    {
+    public List<BattleDrill> getActiveDrills() {
         return new ArrayList(activeBattleDrills.values());
     }
     
-    public void createFromVmf(VmfType vmfType)
-    {
-        if(null == vmfType)
-        {
+    // TODO drill id changes
+    public void createFromVmf(VmfType vmfType) {
+        if (null == vmfType) {
             throw new InvalidParameterException("Unable to create Battle Drill from VMF Message - the vmfType parameter cannot be null.");
         }
         
-        switch(vmfType)
-        {
+        switch(vmfType) {
             case MEDEVAC:
-                System.out.println("DIANA creating new battle drill for MEDEVAC Vmf Message");
                 // Todo - implement creation of unique name and create new drill
                 ZoneId zoneId = ZoneId.systemDefault();
                 long nowMillis = LocalDateTime.now().atZone(zoneId).toEpochSecond();
-                String battleDrillName = "vmf_medevac_" + nowMillis;
-                int maxAttempts = 10;
-                int attempt = 0;
-                while(activeBattleDrills.containsKey(battleDrillName) || attempt++ >= maxAttempts)
-                {
-                    nowMillis = LocalDateTime.now().atZone(zoneId).toEpochSecond();
-                    battleDrillName = "vmf_medevac_" + nowMillis;
-                }
-                
-                if(activeBattleDrills.containsKey(battleDrillName) == false)
-                {
-                    try
-                    {
-                        // need to figure out and create location object by parsing vmf message
-                        // but for now defaulting it to San Diego Lat Long
-                        HashMap<String, String> location = new HashMap<String, String>();
-                        location.put("latitude", "32.7157");
-                        location.put("longitude", "117.1611");
-                        User vmf = new User("VMF", "VMF", "VMF");
-                        this.createByType("medevac", battleDrillName, true, vmf, location);
-                    }
-                    catch(DuplicateItemException d)
-                    {
-                        System.err.println("Unable to create battle drill for MEDEVAC VMF message - unable to generate a unique name for new battle drill.");
-                    }
-                }
-                else
-                {
+                String generatedDrillName = "vmf_medevac_" + nowMillis;
+
+
+                try {
+                    // need to figure out and create location object by parsing vmf message
+                    // but for now defaulting it to San Diego Lat Long
+                    HashMap<String, String> location = new HashMap<String, String>();
+                    location.put("latitude", "32.7157");
+                    location.put("longitude", "117.1611");
+                    User vmf = new User("VMF", -1, "VMF", "VMF");
+                    this.createByType(-1, "medevac", generatedDrillName, true, vmf, location);
+                } catch(DuplicateItemException d) {
                     System.err.println("Unable to create battle drill for MEDEVAC VMF message - unable to generate a unique name for new battle drill.");
                 }
                 
@@ -270,25 +309,19 @@ public class BattleDrillManager {
         }
     }
     
-    public BattleDrill createByType(String type, String name, boolean start, User user, Map<String, String> location) throws DuplicateItemException    {
-        if(activeBattleDrills.containsKey(name))
-        {
-            throw new DuplicateItemException("Battle drill with name: " + name + " already exists");
-        }
+    public BattleDrill createByType(int creatorId, String type, String name, boolean start, User user, Map<String, String> location) throws DuplicateItemException {
         
         TemplateManager manager = TemplateManager.getInstance();
         BattleDrillTemplate template = manager.getByType(type);
         BattleDrill battleDrill = null;
         
-        if(null == template)
-        {
+        if (null == template) {
             System.err.println("BattleDrillManager::createByType - Unable to find template with type: " + type);
             return null;
         }
 
         // Clone the template object into a new Battle Drill instance
-        try
-        {
+        try {
             String templateJson = JsonUtils.writeValue(template);
             InjectableValues.Std inject = new InjectableValues.Std();
             inject.addValue(JacksonInjectableValues.NEW_TASK, true);
@@ -296,110 +329,118 @@ public class BattleDrillManager {
             battleDrill = new ObjectMapper().reader(inject).forType(BattleDrill.class).readValue(templateJson);
 
             battleDrill.setName(name);
-            battleDrill.setCreatorName(user.getRole()); // change this to username later, maybe add another key for role
+            battleDrill.setCreatorId(creatorId);
+            battleDrill.setCreatorName(user.getName()); // change this to username later, maybe add another key for role
             battleDrill.setLocation(location);
+            
+            // get the id of the newly created drill
+            String drillId = battleDrill.getId();
 
             ReportsManager rMgr = ReportsManager.getInstance();
-            rMgr.createInitialReport(name, battleDrill.getNumTasks());
+            rMgr.createInitialReport(drillId, battleDrill.getNumTasks());
 
-            activeBattleDrills.put(battleDrill.getName(), battleDrill);
-            orderedActiveBattleDrills.add(name);
+            activeBattleDrills.put(drillId, battleDrill);
+            Map<String, String> orderedActiveDrill = new HashMap<>();
+            orderedActiveDrill.put("id", drillId);
+            orderedActiveDrill.put("name", name);
+            orderedActiveBattleDrills.add(orderedActiveDrill);
             saveOrderedDrills();
 
             if (start) {
                 // startBattleDrill saves to file itself
-                startBattleDrill(name, user);
+                startBattleDrill(drillId, user);
             } else {
-                saveBattleDrill(battleDrill, false);
+                saveBattleDrill(drillId, false);
             }
-            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, name);
-            Notify.sendNotificationToAllExcluding(drillNotification);
-            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, drillNotification));
-            System.out.println("Successfully created battle drill: " + battleDrill);
-        }
-        catch(Exception e)
-        {
+            // TODO: update notifications to use drill ids
+//            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, name);
+//            Notify.sendNotificationToAllExcluding(drillNotification);
+//            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, drillNotification));
+//            System.out.println("Successfully created battle drill: " + battleDrill);
+        } catch (Exception e) {
             System.err.println("DIANA unable to create battle drill from template: " + e);
         }
         
         return battleDrill;
     }
 
-    public boolean isBattleDrillStarted(String name) throws ItemNotFoundException {
-        if (activeBattleDrills.containsKey(name) == false) {
-            throw new ItemNotFoundException("Unable to check battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
+    public boolean isBattleDrillStarted(String drillId) throws ItemNotFoundException {
+        if (activeBattleDrills.containsKey(drillId) == false) {
+            throw new ItemNotFoundException("Unable to check battle drill with id: " + drillId + " - active battle drill list does not contain a battle drill with this drillId");
         }
 
-        BattleDrill bd = activeBattleDrills.get(name);
+        BattleDrill bd = activeBattleDrills.get(drillId);
         return null != bd && bd.getStartTime() != null;
     }
 
-    public LocalDateTime startBattleDrill(String name, User user) throws ItemNotFoundException {
-        if (activeBattleDrills.containsKey(name) == false) {
-            throw new ItemNotFoundException("Unable to start battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
+    public LocalDateTime startBattleDrill(String drillId, User user) throws ItemNotFoundException {
+        if (activeBattleDrills.containsKey(drillId) == false) {
+            throw new ItemNotFoundException("Unable to start battle drill with drillId: " + drillId + " - active battle drill list does not contain a battle drill with this drillId");
         }
         
-        BattleDrill bd = activeBattleDrills.get(name);
+        BattleDrill bd = activeBattleDrills.get(drillId);
         if (null != bd) {
             // dont need to set report startTime here because bd.start() calls startAllTasks which sets it
             LocalDateTime time = bd.start();
-            saveBattleDrill(name, false);
-            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, name);
-            Notify.sendNotificationToAllExcluding(drillNotification);
-            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.START, drillNotification));
+            saveBattleDrill(drillId, false);
+            // TODO:
+//            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, name);
+//            Notify.sendNotificationToAllExcluding(drillNotification);
+//            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.START, drillNotification));
             return time;
         }
         return null;
     }
     
-    public void stopBattleDrill(String name, User user) throws ItemNotFoundException    {
-        if(activeBattleDrills.containsKey(name) == false)
-        {
-            throw new ItemNotFoundException("Unable to stop battle drill with name: " + name + " - active battle drill list does not contain a battle drill with this name");
+    public void stopBattleDrill(String drillId, User user) throws ItemNotFoundException    {
+        if(activeBattleDrills.containsKey(drillId) == false) {
+            throw new ItemNotFoundException("Unable to stop battle drill with drillId: " + drillId + " - active battle drill list does not contain a battle drill with this drillId");
         }
         
-        BattleDrill bd = activeBattleDrills.get(name);
-        if(null != bd)
-        {
+        BattleDrill bd = activeBattleDrills.get(drillId);
+        if (null != bd) {
             ReportsManager rMgr = ReportsManager.getInstance();
-            Report rep = rMgr.getReport(name);
+            Report rep = rMgr.getReportByDrillId(drillId);
             LocalDateTime endTime = bd.stop();
             rep.setAllTaskEndTimes(endTime);
             rep.setEndTime(endTime);
             rMgr.saveReport(rep);
-            try
-            {
+            try {
                 archiveCompletedBattleDrill(bd);
-                Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, name);
-                Notify.sendNotificationToAllExcluding(drillNotification);
-                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.STOP, drillNotification));
-            }
-            catch(Exception e)
-            {
-                System.err.println("Unable to archive completed battle drill: " + bd.getName() + ", error is: " + e);
+//                TODO:
+//                Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, name);
+//                Notify.sendNotificationToAllExcluding(drillNotification);
+//                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.STOP, drillNotification));
+            } catch(Exception e) {
+                System.err.println("Unable to archive completed battle drill: " + bd.getId() + ", error is: " + e);
             }
         }
     }
     
-    private void archiveCompletedBattleDrill(BattleDrill battleDrill) throws JsonProcessingException
-    {
+    private void archiveCompletedBattleDrill(BattleDrill battleDrill) throws JsonProcessingException {
         String bdName = battleDrill.getName();
-        activeBattleDrills.remove(bdName);
-        orderedActiveBattleDrills.remove(bdName);
+        String drillId = battleDrill.getId();
+        activeBattleDrills.remove(drillId);
         
-//        String contents = DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
+        Iterator<Map<String,String>> iterator = orderedActiveBattleDrills.iterator();
+        while (iterator.hasNext()) {
+            Map<String, String> orderedActiveDrill = iterator.next();
+            if (orderedActiveDrill.containsKey("id") && orderedActiveDrill.get("id").equals(drillId)) {
+                iterator.remove();
+            }
+        }
+       
+        
         String contents = JsonUtils.writeValue(battleDrill);
         
-        File sourceFile = new File(getFullFilename(bdName, false));
-        File destinationFile = new File(getFullFilename(bdName, true));
+        File sourceFile = new File(getFullFilename(drillId, false));
+        File destinationFile = new File(getFullFilename(drillId, true));
         
-        // A completed battle drill already exists with this name.  Generate a unique name by adding an integer value to the end.
-        if(completedBattleDrills.containsKey(bdName) && destinationFile.exists())
-        {
+        // A completed battle drill already exists with this id.  Generate a unique name by adding an integer value to the end.
+        if (completedBattleDrills.containsKey(drillId) && destinationFile.exists()) {
             int i = 0;
             String newName = bdName;
-            while(destinationFile.exists())
-            {
+            while (destinationFile.exists()) {
                 newName = bdName + "_" + i++;
                 destinationFile = new File(getFullFilename(newName, true));
             }
@@ -407,78 +448,101 @@ public class BattleDrillManager {
             battleDrill.setName(newName);
         }
         
-        try
-        {
+        try {
             FileUtils.writeStringToFile(destinationFile, contents, StandardCharsets.UTF_8);
-            completedBattleDrills.put(battleDrill.getName(), battleDrill);
-            orderedCompletedBattleDrills.add(battleDrill.getName());
+            completedBattleDrills.put(battleDrill.getId(), battleDrill);
+            Map<String, String> orderedCompletedDrill = new HashMap<>();
+            orderedCompletedDrill.put("id", drillId);
+            orderedCompletedDrill.put("name", bdName);
+            orderedCompletedBattleDrills.add(orderedCompletedDrill);
             saveOrderedDrills();
             
-            if(sourceFile.exists())
-            {
+            if (sourceFile.exists()) {
                 sourceFile.delete();
             }
-        }
-        catch(IOException ioe)
-        {
+        } catch(IOException ioe) {
             System.err.println("Unable to move battle drill into completed folder: " + bdName + ", error is: " + ioe);
         }
     }
     
-    public void updateBattleDrillOrder(User user, ArrayList<String> active, ArrayList<String> completed)
-    {
+    public void updateBattleDrillOrder(User user, ArrayList<Map<String, String>> active, ArrayList<Map<String, String>> completed) {
         // Either active or completed will be empty (front-end passes only one list, either active or completed)
-        if (!active.isEmpty())
-        {
+        if (!active.isEmpty()) {
             orderedActiveBattleDrills.clear();
             orderedActiveBattleDrills.addAll(active);
-        }
-        else if (!completed.isEmpty())
-        {
+        } else if (!completed.isEmpty()) {
             orderedCompletedBattleDrills.clear();
             orderedCompletedBattleDrills.addAll(completed);
         }
         saveOrderedDrills();
-        Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.REORDER, user, getAllDrillNames());
-        Notify.sendNotificationToAllExcluding(drillNotification);
-        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, drillNotification));
+//        Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.REORDER, user, getAllDrillNames());
+//        Notify.sendNotificationToAllExcluding(drillNotification);
+//        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, drillNotification));
     }
     
-    public BattleDrill getByName(String name, boolean isActive)
-    {
-        return (isActive)?activeBattleDrills.get(name):completedBattleDrills.get(name);
+    public BattleDrill editDrillNameById(String drillId, String newName) {
+        BattleDrill bd = getById(drillId);
+        bd.setName(newName);
+        
+        if (null != activeBattleDrills.get(drillId)) {
+            activeBattleDrills.get(drillId).setName(newName);
+            orderedActiveBattleDrills.forEach((orderedActiveDrill) -> {
+                if (orderedActiveDrill.get("id").equals(drillId)) {
+                    orderedActiveDrill.replace("name", newName);
+                }
+            });
+            saveBattleDrill(bd, false);
+        } else {
+            completedBattleDrills.get(drillId).setName(newName);
+            orderedCompletedBattleDrills.forEach((orderedCompletedDrill) -> {
+                if (orderedCompletedDrill.get("id").equals(drillId)) {
+                    orderedCompletedDrill.replace("name", newName);
+                }
+            });
+            saveBattleDrill(bd, true);
+        }
+        saveOrderedDrills();
+        return bd;
     }
     
-    public BattleDrill getByName(String name)
-    {
-        if(activeBattleDrills.containsKey(name))
-        {
-            return activeBattleDrills.get(name);
-        }
-        else if(completedBattleDrills.containsKey(name))
-        {
-            return completedBattleDrills.get(name);
-        }
-        else
-        {
+    public BattleDrill getByName(String name, boolean isActive) {
+        return (isActive) ? activeBattleDrills.get(name) : completedBattleDrills.get(name);
+    }
+    
+    public BattleDrill getById(String id, boolean isActive) {
+        return (isActive) ? activeBattleDrills.get(id) : completedBattleDrills.get(id);
+    }
+    
+    public BattleDrill getById(String id) {
+        if (activeBattleDrills.containsKey(id)) {
+            return activeBattleDrills.get(id);
+        } else if (completedBattleDrills.containsKey(id)) {
+            return completedBattleDrills.get(id);
+        } else {
             return null;
         }
     }
     
-    public BattleDrill createByType(BattleDrillRestParams params) throws DuplicateItemException       
-    {
-        return createByType(params.getType(), params.getName(), params.getStart(), params.getUser(), params.getLocation());
+    public BattleDrill getByName(String name) {
+        if(activeBattleDrills.containsKey(name)) {
+            return activeBattleDrills.get(name);
+        } else if(completedBattleDrills.containsKey(name)) {
+            return completedBattleDrills.get(name);
+        } else {
+            return null;
+        }
     }
     
-    public void updateBattleDrillOrder(OrderedDrillsRestParams params)
-    {
+    public BattleDrill createByType(BattleDrillRestParams params) throws DuplicateItemException {
+        return createByType(params.getCreatorId(), params.getType(), params.getName(), params.getStart(), params.getUser(), params.getLocation());
+    }
+    
+    public void updateBattleDrillOrder(OrderedDrillsRestParams params) {
         updateBattleDrillOrder(params.getUser(), params.getOrderedActiveDrills(), params.getOrderedCompletedDrills());
     }
     
-    private void saveOrderedDrills() 
-    {
-        try
-        {  
+    private void saveOrderedDrills() {
+        try {  
             // Manually create two entries into a json object and write them to a file as a json string
             ObjectMapper mapper = new ObjectMapper();
             JsonNode drill = mapper.createObjectNode();
@@ -487,70 +551,52 @@ public class BattleDrillManager {
             ((ObjectNode) drill).set("active", activeDrills);
             ((ObjectNode) drill).set("completed", completedDrills);
 
-
-//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(drill);
             String contents = JsonUtils.writeValue(drill);
             String fullname = getOrderedDrillsFilename();
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
-        }
-        catch(Exception e)
-        {
+        } catch(Exception e) {
             System.err.println("Unable to save ordered drills, error is: " + e);
         }
     }
     
-    private void saveBattleDrill(BattleDrill bd, boolean isCompleted)
-    {
-        try
-        {
+    private void saveBattleDrill(BattleDrill bd, boolean isCompleted) {
+        try {
             String contents = JsonUtils.writeValue(bd);
-//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
-            String fullname = getFullFilename(bd.getName(), isCompleted);
+            String fullname = getFullFilename(bd.getId(), isCompleted);
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
-        }
-        catch(Exception e)
-        {
-            System.err.println("Unable to save new battle drill " + bd.getName() + ", error is: " + e);
+        } catch(Exception e) {
+            System.err.println("Unable to save new battle drill " + bd.getId() + ", error is: " + e);
         }
     }
     
-    public void saveBattleDrill(String battleDrillName, boolean isCompleted) throws ItemNotFoundException
-    {
-        if(StringUtils.isBlank(battleDrillName))
-        {
-            throw new InvalidParameterException("Unable to save battle drill - battleDrillName parameter cannot be blank");
+    public void saveBattleDrill(String drillId, boolean isCompleted) throws ItemNotFoundException {
+        if (StringUtils.isBlank(drillId)){
+            throw new InvalidParameterException("Unable to save battle drill - drillId parameter cannot be blank");
         }
         
-        BattleDrill bd = getByName(battleDrillName);
-        if(null == bd)
-        {
-            throw new ItemNotFoundException("Unable to save battle drill with name: " + battleDrillName + " - battle drill with that name not found");
+        BattleDrill bd = getById(drillId);
+        if (null == bd) {
+            throw new ItemNotFoundException("Unable to save battle drill with drillId: " + drillId + " - battle drill with that drillId not found");
         }
         
-        try
-        {
+        try {
             String contents = JsonUtils.writeValue(bd);
-//            String contents = DEFAULT_JSON_WRITER.writeValueAsString(bd);
-            String fullname = getFullFilename(bd.getName(), isCompleted);
+            String fullname = getFullFilename(bd.getId(), isCompleted);
             File file = FileUtils.getFile(fullname);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
-        }
-        catch(Exception e)
-        {
-            System.err.println("Unable to save battle drill " + bd.getName() + ", error is: " + e);
+        } catch(Exception e) {
+            System.err.println("Unable to save battle drill " + bd.getId() + ", error is: " + e);
         }
     }
     
-    public String getFullFilename(String battleDrillName, boolean isCompleted)
-    {
-        String fullname = (isCompleted)?BattleDrillsConfig.getCompletedBattleDrillsDir():BattleDrillsConfig.getActiveBattleDrillsDir();
-        return fullname + "/" + battleDrillName + ".json";
+    public String getFullFilename(String drillId, boolean isCompleted) {
+        String fullname = (isCompleted) ? BattleDrillsConfig.getCompletedBattleDrillsDir() : BattleDrillsConfig.getActiveBattleDrillsDir();
+        return fullname + "/" + drillId + ".json";
     }
     
-    public String getOrderedDrillsFilename()
-    {
+    public String getOrderedDrillsFilename() {
         return BattleDrillsConfig.getOrderedBattleDrillsDir() + "/orderedBattleDrills.json";
     }
 }

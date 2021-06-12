@@ -1,8 +1,9 @@
 {
 	"type": "medevac",
-	"participants": ["CO", "WO", "S-3", "IO", "AirO", "S-2", "FSCC", "S-6", "LOC", "BAS", "S-4", "S-1"],
+	"participants": [1, 15, 12, 6, 3, 11, 4, 14, 7, 5, 13, 10],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 675,
 			"y": 15
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 675,
 					"y": 70
@@ -33,6 +35,7 @@
 				"children": [
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 140,
 							"y": 140
@@ -46,15 +49,16 @@
 								"description": "W/O to QRF and nearest unit to site"
 							},
 							{
-								"description": "Notify higher & adjacent units"
+								"description": "Notify adjacent/supporting units"
 							},
 							{
-								"description": "Monitor mission & assess need for reinforcements"
+								"description": "Monitor mission and assess need for reinforcements"
 							}
 						],
 						"children": [
 							{
 								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 70,
 									"y": 185
@@ -79,6 +83,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 365,
 							"y": 460
@@ -96,6 +101,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 420,
 							"y": 160
@@ -106,12 +112,13 @@
 						},
 						"tasks": [
 							{
-								"description": "Plot location  develop pattern"
+								"description": "Plot location and develop pattern analysis"
 							}
 						]
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 550,
 							"y": 140
@@ -122,7 +129,7 @@
 						},
 						"tasks": [
 							{
-								"description": "Coordinate FS w/ nearest unit"
+								"description": "Coordinate FS with nearest unit"
 							},
 							{
 								"description": "Build FSCMs (ACA/RFA)"
@@ -137,6 +144,7 @@
 					},
 					{
 						"title": "S-6",
+						"roleId": 14,
 						"self_coordinates": {
 							"x": 675,
 							"y": 140
@@ -156,6 +164,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 795,
 							"y": 370
@@ -164,6 +173,7 @@
 						"children": [
 							{
 								"title": "BAS",
+								"roleId": 5,
 								"self_coordinates": {
 									"x": 685,
 									"y": 425
@@ -186,6 +196,7 @@
 							},
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 855,
 									"y": 425
@@ -196,10 +207,10 @@
 								},
 								"tasks": [
 									{
-										"description": "Notify RCT of required support"
+										"description": "Notify RCT of any required support"
 									},
 									{
-										"description": "Redirect movement, if required"
+										"description": "Redirect movement if required"
 									},
 									{
 										"description": "If convoy is nearest force, BPT retask to secure site, search for survivors, rescue COMSEC equipment & treat wounded"
@@ -214,6 +225,7 @@
 							},
 							{
 								"title": "S-1",
+								"roleId": 10,
 								"self_coordinates": {
 									"x": 1010,
 									"y": 425

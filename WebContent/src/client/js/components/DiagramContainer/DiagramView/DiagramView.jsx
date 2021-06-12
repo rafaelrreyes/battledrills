@@ -63,40 +63,40 @@ const DiagramView = ({ diagram, graph }) => {
 		let lastElementInteracted = null;
 
 		paperRef.current.on("element:mouseenter", (element) => {
-			// hide the icon of the last visited owner element
+			// hide the icon of the last visited role element
 			if (lastElementInteracted !== null) {
-				const editOwnerIcon = lastElementInteracted.$box.find("span.owner-title").find("i.edit-owner-icon");
-				editOwnerIcon.css("display", "none");
+				const editRoleIcon = lastElementInteracted.$box.find("span.role-title").find("i.edit-role-icon");
+				editRoleIcon.css("display", "none");
 			}
 
 			// set the current element being hovered over to the current
 			lastElementInteracted = element;
 
 			// get the dom element of the current
-			const editOwnerIcon = element.$box.find("span.owner-title").find("i.edit-owner-icon");
+			const editRoleIcon = element.$box.find("span.role-title").find("i.edit-role-icon");
 
 			// show the edit icon on hover
-			editOwnerIcon.css("display", "inline");
+			editRoleIcon.css("display", "inline");
 
 			// on hover, enable pointer events
-			editOwnerIcon.hover(() => {
-				editOwnerIcon.css("display", "inline");
-				element.$box.find("div.owner-container").css("pointer-events", "auto");
+			editRoleIcon.hover(() => {
+				editRoleIcon.css("display", "inline");
+				element.$box.find("div.role-container").css("pointer-events", "auto");
 			});
 		});
 
 		// hide the edit icon when leaving element
 		paperRef.current.on("element:mouseleave", (element) => {
-			const editOwnerIcon = element.$box.find("span.owner-title").find("i.edit-owner-icon");
-			editOwnerIcon.css("display", "none");
-			element.$box.find("div.owner-container").css("pointer-events", "auto");
+			const editRoleIcon = element.$box.find("span.role-title").find("i.edit-role-icon");
+			editRoleIcon.css("display", "none");
+			element.$box.find("div.role-container").css("pointer-events", "auto");
 		});
 
 		// hide the edit of last element hovered if clicking on the blank area of diagram
 		paperRef.current.on("blank:pointerup", () => {
 			if (lastElementInteracted !== null) {
-				const editOwnerIcon = lastElementInteracted.$box.find("span.owner-title").find("i.edit-owner-icon");
-				editOwnerIcon.css("display", "none");
+				const editRoleIcon = lastElementInteracted.$box.find("span.role-title").find("i.edit-role-icon");
+				editRoleIcon.css("display", "none");
 			}
 		});
 
@@ -172,17 +172,17 @@ const DiagramView = ({ diagram, graph }) => {
 				return;
 			}
 
-			const { owner, coordinateType } = element.model.get("attrs").diagramData;
+			const { roleId, coordinateType } = element.model.get("attrs").diagramData;
 			const requestBody = {
-				battleDrillName: selectedDrill.name,
-				owner,
+				drillId: selectedDrill.id,
+				roleId,
 				coordinateType,
 				x: tempPosition.x,
 				y: tempPosition.y
 			};
 			// need to update the diagram coords in reducer
 			API.updateDiagramCoordinates(requestBody, () => {
-				dispatch(editCoordinates(owner, coordinateType, { x: tempPosition.x, y: tempPosition.y }));
+				dispatch(editCoordinates(roleId, coordinateType, { x: tempPosition.x, y: tempPosition.y }));
 			});
 		});
 	};

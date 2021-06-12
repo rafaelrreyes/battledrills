@@ -118,31 +118,31 @@ const stopDrill = (name, params, onSuccess, onError) => {
 };
 
 /**
- * Gets a battle drill's complete source of truth by its name (which should be its unique identifier... -___-).
- * @param {String} name, The name of the battle drill.
+ * Gets a battle drill's complete source of truth by its ID.
+ * @param {String} id, The ID of the battle drill.
  * @param {Object} params, filter parameters if necessary
  * @param {Function} onSuccess
  * @param {Function} onError
  *
  * @returns Data retrieved if any
  */
-const getDrillByName = (name, params, onSuccess, onError) => {
-	const endpoint = `/${BATTLE_DRILLS}/${BATTLE_DRILL}/${encodeURIComponent(name)}`;
+const getDrillById = (id, params, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/${BATTLE_DRILL}/${encodeURIComponent(id)}`;
 	return get(endpoint, params, onSuccess, onError);
 };
 
 /**
- * Gets a subtree (data associated with) by owner and battle drill name.
- * @param {Object} data, Should consist of drillName and owner
+ * Gets a subtree (data associated with) by role and battle drill name.
+ * @param {Object} data, Should consist of drillName and role
  * @param {Object} params, Filter params if specified
  * @param {Function} onSuccess
  * @param {Function} onError
  *
  * @returns Data retrieved if any
  */
-const getSubtreeByOwner = (data, params, onSuccess, onError) => {
-	const { drillName, owner } = data;
-	const endpoint = `/${BATTLE_DRILLS}/${encodeURIComponent(drillName)}/subtree/${owner}`;
+const getSubtreeByRole = (data, params, onSuccess, onError) => {
+	const { drillId, roleId } = data;
+	const endpoint = `/${BATTLE_DRILLS}/${encodeURIComponent(drillId)}/subtree/${roleId}`;
 	return get(endpoint, params, onSuccess, onError);
 };
 
@@ -173,16 +173,29 @@ const createDrill = (requestBody, onComplete, onError) => {
 };
 
 /**
- * Deletes a battle drill.
- * @param {String} drillName
+ * Edits a drills name by its id.
+ * @param {int} id
+ * @param {Object} requestBody
+ * @param {Function} onComplete
+ * @param {Function} onError
+ * @returns
+ */
+const editDrillNameById = (id, requestBody, onComplete, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/battledrill/${encodeURIComponent(id)}`;
+	return post(endpoint, requestBody, onComplete, onError);
+};
+
+/**
+ * Deletes a battle drill by its id.
+ * @param {String} id
  * @param {Object} requestBody
  * @param {Function} onSuccess
  * @param {Function} onError
  *
  * @returns Data retrieved if any
  */
-const deleteDrill = (drillName, requestBody, onSuccess, onError) => {
-	const endpoint = `/${BATTLE_DRILLS}/${BATTLE_DRILL}/${drillName}`;
+const deleteDrillById = (id, requestBody, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/${BATTLE_DRILL}/${id}`;
 	return del(endpoint, requestBody, onSuccess, onError);
 };
 
@@ -254,15 +267,15 @@ const addTaskNote = (requestBody = {}, onSuccess, onError) => {
 };
 
 /**
- * Gets a billet by owner (or role).
- * @param {String} owner
+ * Gets a billet by billet id (or role id).
+ * @param {String} roleId
  * @param {Function} onSuccess
  * @param {Function} onError
  *
  * @returns Data retrieved, if any
  */
-const getOwnerBillet = (owner, params, onSuccess, onError) => {
-	const endpoint = `/${TASK}/billet/${encodeURIComponent(owner)}`;
+const getBilletByRoleId = (billetId, params, onSuccess, onError) => {
+	const endpoint = `/${TASK}/billet/${encodeURIComponent(billetId)}`;
 	return get(endpoint, params, onSuccess, onError);
 };
 
@@ -349,35 +362,35 @@ const downloadAttachment = (params, onSuccess, onError) => {
 };
 
 /**
- * Adds a new task to an owner.
+ * Adds a new task to a role.
  * @param {Object} requestBody
  * @param {Function} onSuccess
  * @param {Function} onError
  */
-const addTaskToOwner = (requestBody, onSuccess, onError) => {
+const addTaskToRole = (requestBody, onSuccess, onError) => {
 	const endpoint = `/${TASK}`;
 	return post(endpoint, requestBody, onSuccess, onError);
 };
 
 /**
- * Adds a new subordinate to an owner.
+ * Adds a new subordinate to an role.
  * @param {Object} requestBody
  * @param {Function} onSuccess
  * @param {Function} onError
  */
-const addSubordinateToOwner = (requestBody, onSuccess, onError) => {
-	const endpoint = `/${BATTLE_DRILLS}/owner`;
+const addRoleToDrill = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/role`;
 	return post(endpoint, requestBody, onSuccess, onError);
 };
 
 /**
- * Deletes an owner and all of its associated tasks and subordinates.
+ * Deletes a role and all of its associated tasks and subordinates.
  * @param {Object} requestBody
  * @param {Function} onSuccess
  * @param {Function} onError
  */
-const deleteOwner = (requestBody, onSuccess, onError) => {
-	const endpoint = `/${BATTLE_DRILLS}/owner`;
+const deleteRoleFromDrill = (requestBody, onSuccess, onError) => {
+	const endpoint = `/${BATTLE_DRILLS}/role`;
 	return del(endpoint, requestBody, onSuccess, onError);
 };
 
@@ -398,7 +411,7 @@ const editTask = (requestBody, onSuccess, onError) => {
  * @param {Function} onSuccess
  * @param {Function} onError
  */
-const saveTemplateByDrillName = (requestBody, onSuccess, onError) => {
+const saveTemplateByDrillId = (requestBody, onSuccess, onError) => {
 	const endpoint = `/${TEMPLATES}/save`;
 	return post(endpoint, requestBody, onSuccess, onError);
 };
@@ -456,6 +469,26 @@ const deleteDrillTemplates = (requestBody, onSuccess, onError) => {
 const revertDrillTemplate = (requestBody, onSuccess, onError) => {
 	const endpoint = `${TEMPLATES}/revert`;
 	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const getTaskTemplates = (onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/tasks`;
+	return get(endpoint, {}, onSuccess, onError);
+};
+
+const getTasksByRoleId = (id, requestBody, onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/tasks/role/${encodeURIComponent(id)}`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const addTasksToFavorites = (requestBody, onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/tasks`;
+	return post(endpoint, requestBody, onSuccess, onError);
+};
+
+const removeTasksFromFavorites = (requestBody, onSuccess, onError) => {
+	const endpoint = `${TEMPLATES}/tasks`;
+	return del(endpoint, requestBody, onSuccess, onError);
 };
 
 /*
@@ -664,16 +697,17 @@ export const API = {
 	startTask,
 	stopTask,
 	getTaskById,
-	deleteDrill,
+	deleteDrillById,
 	deleteTaskById,
 	stop,
-	getDrillByName,
+	getDrillById,
 	all,
-	getSubtreeByOwner,
+	getSubtreeByRole,
 	reorder,
 	createDrill,
+	editDrillNameById,
 	addTaskNote,
-	getOwnerBillet,
+	getBilletByRoleId,
 	getMetrics,
 	updateTaskStatus,
 	updateDiagramCoordinates,
@@ -681,16 +715,20 @@ export const API = {
 	uploadAttachment,
 	deleteAttachment,
 	downloadAttachment,
-	addTaskToOwner,
-	addSubordinateToOwner,
-	deleteOwner,
+	addTaskToRole,
+	addRoleToDrill,
+	deleteRoleFromDrill,
 	editTask,
 	createDrillTemplate,
-	saveTemplateByDrillName,
+	saveTemplateByDrillId,
 	saveTemplate,
 	deleteDrillTemplate,
 	deleteDrillTemplates,
 	revertDrillTemplate,
+	getTaskTemplates,
+	getTasksByRoleId,
+	addTasksToFavorites,
+	removeTasksFromFavorites,
 	getReport,
 	getPermissionTypes,
 	getRoles,

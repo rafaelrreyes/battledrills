@@ -1,8 +1,9 @@
 {
 	"type": "lost_communication_with_unit",
-	"participants": ["CO", "WO", "S-2", "S-3", "AirO", "S-6", "S-4"],
+	"participants": [1, 15, 11, 12, 3, 14, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 635,
 			"y": 20
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 635,
 					"y": 75
@@ -30,6 +32,7 @@
 				"children": [
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 70,
 							"y": 145
@@ -47,6 +50,7 @@
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 260,
 							"y": 145
@@ -63,13 +67,14 @@
 								"description": "Contact nearest unit to site to attempt comm"
 							},
 							{
-								"description": "W/O to QRF"
+								"description": "W/O to QRF and nearest unit to site"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 450,
 							"y": 145
@@ -87,6 +92,7 @@
 					},
 					{
 						"title": "S-6",
+						"roleId": 14,
 						"self_coordinates": {
 							"x": 645,
 							"y": 145
@@ -107,6 +113,7 @@
 					},
 					{
 						"title": "S-4",
+						"roleId": 13,
 						"self_coordinates": {
 							"x": 782,
 							"y": 145
@@ -117,7 +124,7 @@
 						},
 						"tasks": [
 							{
-								"description": "Redirect movement, if required"
+								"description": "Redirect movement if required"
 							},
 							{
 								"description": "Direct convoys to attempt comm relay"

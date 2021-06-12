@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.restparams;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ngc.battledrills.data.User;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -19,19 +20,19 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrderedDrillsRestParams {
     private User user; // person requesting the reorder
-    private ArrayList<String> orderedActiveDrills = new ArrayList<>();
-    private ArrayList<String> orderedCompletedDrills = new ArrayList<>();
+    private ArrayList<Map<String, String>> orderedActiveDrills = new ArrayList<>();
+    private ArrayList<Map<String, String>> orderedCompletedDrills = new ArrayList<>();
     
     @JsonProperty("user")
     public User getUser() {
         return user;
     }
 
-    public ArrayList<String> getOrderedActiveDrills() {
+    public ArrayList<Map<String, String>> getOrderedActiveDrills() {
         return orderedActiveDrills;
     }
     
-    public ArrayList<String> getOrderedCompletedDrills() {
+    public ArrayList<Map<String, String>> getOrderedCompletedDrills() {
         return orderedCompletedDrills;
     }
         
@@ -40,11 +41,11 @@ public class OrderedDrillsRestParams {
         this.user = user;
     }
             
-    public void setOrderedActiveDrills(ArrayList<String> orderedActiveDrills) {
+    public void setOrderedActiveDrills(ArrayList<Map<String, String>> orderedActiveDrills) {
         this.orderedActiveDrills = orderedActiveDrills;
     }
     
-    public void setOrderedCompletedDrills(ArrayList<String> orderedCompletedDrills) {
+    public void setOrderedCompletedDrills(ArrayList<Map<String, String>> orderedCompletedDrills) {
         this.orderedCompletedDrills = orderedCompletedDrills;
     }
 

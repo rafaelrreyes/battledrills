@@ -43,7 +43,7 @@ $dropdown-border-color-hover: $border-color-hover;
 		position: absolute;
 		left: 0;
 		background-color: $dropdown-background-color;
-		width: 8em;
+		width: fit-content;
 
 		.filter-item {
 			color: $white;

@@ -19,6 +19,7 @@ public class ChatNotification extends Notification {
         // User for chat notifications isn't used because we aren't doing toasts with them as of right now, 
         // but is needed for abstract class constructor so we pass null
         super(NotifyTypes.OBJECT_TYPES.CHAT, operationType, null);
+        System.out.println(payload.getReceiverId() + " " + payload.getSenderId()+ " " + payload.getMessage());
         if (!payload.isValid()) {
             throw new InvalidParameterException("Unable to send chat notification - message parameters cannot be blank");
         }
@@ -33,8 +34,8 @@ public class ChatNotification extends Notification {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Sender: ").append(getMessage().getSender()).append(System.lineSeparator());
-        sb.append("Target: ").append(getMessage().getTarget()).append(System.lineSeparator());
+        sb.append("Sender ID: ").append(getMessage().getSenderId()).append(System.lineSeparator());
+        sb.append("Receiver ID: ").append(getMessage().getReceiverId()).append(System.lineSeparator());
         sb.append("Message: ").append(getMessage().getMessage()).append(System.lineSeparator());
         sb.append("Object type: ").append(getObjectType()).append(System.lineSeparator());
         sb.append("Operation type: ").append(getOperationType()).append(System.lineSeparator());

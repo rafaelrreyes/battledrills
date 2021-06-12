@@ -15,6 +15,7 @@ import com.ngc.battledrills.exception.ItemNotFoundException;
 import com.ngc.battledrills.util.BattleDrillConstants;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,62 +133,51 @@ public class TaskRepo {
         masterTasks.replace(task.getId(), task);
     }
     
-    public static Map<String, List<Task>> getTasksByBillet(String billet)
-    {
-        Map<String, List<Task>> tasksByBillet = new LinkedHashMap<>();
+    public static ArrayList<Map<String, Object>> getTasksByBillet(int billet) {
+        ArrayList<Map<String, Object>> tasksByBillet = new ArrayList<>();
         
         BattleDrillManager bdMgr = BattleDrillManager.getInstance();
-        ArrayList<String> activeDrillNames = bdMgr.getActiveDrillNames().get("active");
-        for(String bdName : activeDrillNames)
-        {
-            List<Task> tasks = bdMgr.getByName(bdName).getTasksByOwner(billet);
-            if(null != tasks)
-            {
-                tasksByBillet.put(bdName, tasks);
-            }
-        }
-        
+        ArrayList<String> activeDrillIds = bdMgr.getAllDrillIds().get("active");
+        activeDrillIds.forEach((drillId) -> {
+            BattleDrill currentDrill = bdMgr.getById(drillId);
+            Map<String, Object> tasksTarget = new HashMap<>();
+            tasksTarget.put("id", drillId);
+            tasksTarget.put("name", currentDrill.getName());
+            tasksTarget.put("tasks", currentDrill.getTasksByRoleId(billet));
+            tasksByBillet.add(tasksTarget);
+        });
         return tasksByBillet;
     }
     
     // The task needs to be deleted from both this current task list and the containing battle drill as well
-    public static void deleteTask(String taskId, User user) throws ItemNotFoundException
-    {
-        if(StringUtils.isBlank(taskId))
-        {
+    public static void deleteTask(String taskId, User user) throws ItemNotFoundException {
+        if(StringUtils.isBlank(taskId)) {
             throw new InvalidParameterException("Unable to delete task - taskId parameter cannot be blank.");
         }
         
-        if(masterTasks.containsKey(taskId))
-        {
-            if(masterTasks.containsKey(taskId) == false)
-            {
+        if (masterTasks.containsKey(taskId)) {
+            if(masterTasks.containsKey(taskId) == false) {
                 throw new ItemNotFoundException("Unable to delete task.  Task with id: " + taskId + " not found in task repo.");
             }
             
             Task task = masterTasks.get(taskId);
-            String battleDrillName = task.getBattleDrillName();
+            String drillId = task.getBattleDrillId();
             
-            if(StringUtils.isBlank(battleDrillName))
-            {
-                throw new ItemNotFoundException("Unable to find battle drill that contains requested task to delete - The task does not have a valie battleDrillName parameter.  Task details: " + task);
+            if (StringUtils.isBlank(drillId)) {
+                throw new ItemNotFoundException("Unable to find battle drill that contains requested task to delete - The task does not have a valid drillId parameter.  Task details: " + task);
             }
             
             BattleDrillManager mgr = BattleDrillManager.getInstance();
-            BattleDrill battleDrill = mgr.getByName(battleDrillName);
+            BattleDrill battleDrill = mgr.getById(drillId);
 
-            if (null != battleDrill)
-            {
+            if (null != battleDrill) {
                 boolean success = battleDrill.deleteTask(taskId, user);
-                if(success)
-                {
+                if (success) {
                     masterTasks.remove(taskId);
-                    mgr.saveBattleDrill(battleDrillName, false);
+                    mgr.saveBattleDrill(drillId, false);
                 }
-            }
-            else
-            {
-                throw new ItemNotFoundException("Unable to delete task - battle drill with name: " + battleDrillName + " not found.");
+            } else {
+                throw new ItemNotFoundException("Unable to delete task - battle drill with id: " + drillId + " not found.");
             }
         }
     }

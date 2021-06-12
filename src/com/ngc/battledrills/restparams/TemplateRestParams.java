@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.restparams;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,10 +20,11 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TemplateRestParams {
     private String type;
-    private String drillName;
+    private String drillId;
     private User user;
     private ArrayList<String> templatesToDelete;
     private String template;
+    private String taskDescription;
 
     public TemplateRestParams() {}
     
@@ -45,14 +46,14 @@ public class TemplateRestParams {
     public void setType(String type) {
         this.type = type;
     }
-
-    @JsonProperty("drillName")
-    public String getDrillName() {
-        return drillName;
+    
+    @JsonProperty("drillId")
+    public String getDrillId() {
+        return this.drillId;
     }
-
-    public void setDrillName(String drillName) {
-        this.drillName = drillName;
+    
+    public void setDrillId(String drillId) {
+        this.drillId = drillId;
     }
     
     @JsonProperty("templates")
@@ -72,5 +73,15 @@ public class TemplateRestParams {
     public void setUser(User user) {
         this.user = user;
     }
+    
+    @JsonProperty("taskDescription")
+    public String getTaskDescription() {
+        return this.taskDescription;
+    }
+    
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+    
     
 }

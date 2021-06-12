@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.restparams;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,21 +18,21 @@ import com.ngc.battledrills.data.User;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskRestParams {
     private User user;
-    private String owner;
+    private int roleId;
     private String description;
     private String taskId;
-    private String drillName;
+    private String drillId;
     
     public TaskRestParams() {}
     
     
-    public void setDrillName(String name) {
-        this.drillName = name;
+    public void setDrillId(String drillId) {
+        this.drillId = drillId;
     }
     
-    @JsonProperty("drillName")
-    public String getDrillName() {
-        return this.drillName;
+    @JsonProperty("drillId")
+    public String getDrillId() {
+        return this.drillId;
     }
     
     public void setUser(User user) {
@@ -44,13 +44,13 @@ public class TaskRestParams {
         return this.user;
     }
     
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
     
-    @JsonProperty("owner")
-    public String getOwner() {
-        return this.owner;
+    @JsonProperty("roleId")
+    public int getRoleId() {
+        return this.roleId;
     }
     
     public void setTaskId(String taskId) {

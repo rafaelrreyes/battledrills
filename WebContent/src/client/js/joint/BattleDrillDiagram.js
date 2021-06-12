@@ -25,17 +25,18 @@ export default class BattleDrillDiagram {
 		//clear the graph everytime a new drill is created or rendered
 		this.resetDiagramData();
 
-		//create the root owner
-		if (data && typeof data.title !== "undefined") {
-			const owner = currentDrillElements.addContributorRectangle({
-				title: data.title,
+		//create the root role
+		if (data && typeof data.roleId !== "undefined") {
+			const role = currentDrillElements.addContributorRectangle({
+				roleName: data.roleName,
+				roleId: data.roleId,
 				self_coordinates: data.self_coordinates,
 				isTemplate
 			});
 
-			//create root owner and its children/action items recursively
-			this.createChildren(owner, data.children, selectedTask, isTemplate);
-			this.createTaskItems(owner, data.tasks, data.tasks_coordinates, selectedTask, isTemplate);
+			//create root role and its children/action items recursively
+			this.createChildren(role, data.children, selectedTask, isTemplate);
+			this.createTaskItems(role, data.tasks, data.tasks_coordinates, selectedTask, isTemplate);
 		}
 
 		this.cells = currentDrillElements.getElements().concat(currentDrillElements.getLinks());
@@ -61,7 +62,8 @@ export default class BattleDrillDiagram {
 			children.forEach((child) => {
 				const currentChild = child;
 				const childRectangle = battleDrillElements.addContributorRectangle({
-					title: currentChild.title,
+					roleId: currentChild.roleId,
+					roleName: currentChild.roleName,
 					self_coordinates: currentChild.self_coordinates,
 					isTemplate
 				});

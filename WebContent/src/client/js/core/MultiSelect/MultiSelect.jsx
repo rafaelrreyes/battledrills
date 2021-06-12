@@ -29,9 +29,9 @@ export const MultiSelect = ({
 	useEffect(() => {
 		handleSelection(selectedOptions);
 		if (selectedOptions.length === 1) {
-			setLabel(selectedOptions[0]);
+			setLabel(`1 Drill Selected`);
 		} else if (selectedOptions.length > 1) {
-			setLabel(`${selectedOptions.length} selected`);
+			setLabel(`${selectedOptions.length} Drills Selected`);
 		} else {
 			setLabel(dropdownLabel);
 		}
@@ -57,7 +57,7 @@ export const MultiSelect = ({
 	};
 
 	const isChecked = (option) => {
-		return selectedOptions.includes(option);
+		return typeof option === "object" ? selectedOptions.includes(option.id) : selectedOptions.includes(option);
 	};
 
 	const renderOptions = () => {
@@ -65,6 +65,32 @@ export const MultiSelect = ({
 			let items = options.map((option) => {
 				// don't check if the content overflows here yet, but can do it with more work
 				// will make a tooltip for all options
+				if (typeof option === "object") {
+					const { name, id } = option;
+					return (
+						<ArrowTooltip title={name} placement={TooltipPlacement.RIGHT} key={id}>
+							<li className="select-item">
+								<Checkbox
+									label={name}
+									initChecked={isChecked(option)}
+									onChangeHandler={(checked) => {
+										if (checked) {
+											setSelectedOptions((prevOptions) => {
+												return [...prevOptions, id];
+											});
+										} else {
+											setSelectedOptions((prevOptions) => {
+												return prevOptions.filter((val, index) => {
+													return val !== id;
+												});
+											});
+										}
+									}}
+								/>
+							</li>
+						</ArrowTooltip>
+					);
+				}
 				return (
 					<ArrowTooltip title={option} placement={TooltipPlacement.RIGHT} key={option}>
 						<li className="select-item">

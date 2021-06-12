@@ -1,8 +1,9 @@
 {
 	"type": "assassination_of_iraqi_government_official",
-	"participants": ["CO", "WO", "S-2", "S-3", "S-4", "IO"],
+	"participants": [1, 15, 11, 12, 13, 6],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 525,
 			"y": 25
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 525,
 					"y": 85
@@ -30,6 +32,7 @@
 				"children": [
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 70,
 							"y": 120
@@ -53,6 +56,7 @@
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 245,
 							"y": 120
@@ -79,6 +83,7 @@
 					},
 					{
 						"title": "S-4",
+						"roleId": 13,
 						"self_coordinates": {
 							"x": 420,
 							"y": 120
@@ -96,6 +101,7 @@
 					},
 					{
 						"title": "IO",
+						"roleId": 6,
 						"self_coordinates": {
 							"x": 605,
 							"y": 145

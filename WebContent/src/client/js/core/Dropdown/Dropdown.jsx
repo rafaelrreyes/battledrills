@@ -74,6 +74,13 @@ export const Dropdown = forwardRef(
 		const renderOptions = () => {
 			return options.map((option, index) => {
 				// if options items are arrays, then they are grouped
+				if (typeof option === "object") {
+					return (
+						<option key={option.id + index} value={option.id}>
+							{option.name}
+						</option>
+					);
+				}
 				if (Array.isArray(option)) {
 					return (
 						<optgroup key={groups[index] + index} className="c2pc-dropdown-opt-label" label={groups[index]}>

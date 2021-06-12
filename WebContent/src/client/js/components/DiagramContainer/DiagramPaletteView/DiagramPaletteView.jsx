@@ -1,8 +1,9 @@
 import React, { useState, useRef } from "react";
 import { useHistory } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { API, MaterialIconNames, Routes } from "UTILITIES";
+import { API, MaterialIconNames, Routes, LinkStyles, LinkSmoothness } from "UTILITIES";
 import { ModalContentTypes, Icon, DROPDOWN_DEFAULT, TooltipPlacement } from "CORE";
+import { useClickOutside } from "HOOKS";
 import {
 	getUser,
 	getSelectedDrill,
@@ -12,7 +13,9 @@ import {
 	setLinkStyle,
 	getSelectedTask,
 	setLinkSmoothness,
-	updateAllDrills
+	updateAllDrills,
+	getLinkStyle,
+	getLinkSmoothness
 } from "REDUX";
 
 // scss
@@ -24,12 +27,12 @@ const DiagramPaletteView = ({ diagram }) => {
 	const [showLinkStyles, setShowLinkStyles] = useState(false);
 	const [showLinkSmoothness, setShowLinkSmoothness] = useState(false);
 
-	// const linkStylesRef = useClickOutside(() => {
-	// 	setShowLinkStyles(false);
-	// });
-	// const linkSmoothnessRef = useClickOutside(() => {
-	// 	setShowLinkSmoothness(false);
-	// });
+	const linkStylesRef = useClickOutside(() => {
+		setShowLinkStyles(false);
+	});
+	const linkSmoothnessRef = useClickOutside(() => {
+		setShowLinkSmoothness(false);
+	});
 
 	const dispatch = useDispatch();
 	const history = useHistory();
@@ -37,29 +40,29 @@ const DiagramPaletteView = ({ diagram }) => {
 	const user = useSelector(getUser);
 	const selectedDrill = useSelector(getSelectedDrill);
 	const selectedTask = useSelector(getSelectedTask);
-	const drillName = selectedDrill.name;
-	// const linkStyle = useSelector(getLinkStyle);
-	// const linkSmoothness = useSelector(getLinkSmoothness);
+	const drillId = selectedDrill.id;
+	const linkStyle = useSelector(getLinkStyle);
+	const linkSmoothness = useSelector(getLinkSmoothness);
 
 	const addRoleHandler = () => {
 		dispatch(
-			showModal(ModalContentTypes.NEW_OWNER, {
+			showModal(ModalContentTypes.NEW_ROLE, {
 				title: `Add New Role`,
 				icon: MaterialIconNames.ACCOUNT,
 				fromTemplate: false,
 				fromPalette: true,
-				action: ({ role, parent }) => {
+				action: ({ roleId, parentId }) => {
 					const requestBody = {
-						owner: role, // retrieved from drop down selection
-						drillName,
-						parent: parent !== DROPDOWN_DEFAULT && parent ? parent : null,
+						roleId,
+						drillId,
+						parentId: parentId !== DROPDOWN_DEFAULT && parentId > 0 ? parentId : 0,
 						user
 					};
 
-					API.addSubordinateToOwner(requestBody, () => {
+					API.addRoleToDrill(requestBody, () => {
 						// successfully added a subordinate
-						API.getDrillByName(
-							drillName,
+						API.getDrillById(
+							drillId,
 							{},
 							(drill) => {
 								// successfully updated selected drill
@@ -87,16 +90,16 @@ const DiagramPaletteView = ({ diagram }) => {
 				icon: MaterialIconNames.TASK,
 				fromTemplate: false,
 				fromPalette: true,
-				action: ({ description, role }) => {
+				action: ({ description, roleId }) => {
 					const requestBody = {
-						drillName,
+						drillId,
 						description,
-						owner: role,
+						roleId,
 						user
 					};
 
-					API.addTaskToOwner(requestBody, () => {
-						API.getDrillByName(drillName, {}, (drill) => {
+					API.addTaskToRole(requestBody, () => {
+						API.getDrillById(drillId, {}, (drill) => {
 							dispatch(setSelectedDrill(drill));
 						});
 					});
@@ -111,23 +114,23 @@ const DiagramPaletteView = ({ diagram }) => {
 			return;
 		}
 
-		// get the root owner, then delete it and all of its tasks/subordinates
-		const owner = selectedDrill.data.title;
+		// get the root role, then delete it and all of its tasks/subordinates
+		const { roleId, roleName } = selectedDrill.data;
 
 		dispatch(
 			showModal(ModalContentTypes.CONFIRMATION, {
 				title: `Delete Role`,
-				description: `Deleting this role will delete all of its subordinates and associated tasks. Are you sure you want to delete ${owner}?`,
+				description: `Deleting this role will delete all of its subordinates and associated tasks. Are you sure you want to delete ${roleName}?`,
 				icon: MaterialIconNames.DELETE_FOREVER,
 				action: (role) => {
 					const requestBody = {
-						owner,
-						drillName,
+						roleId,
+						drillId,
 						user
 					};
-					API.deleteOwner(requestBody, () => {
-						// successfully deleted root owner
-						API.getDrillByName(drillName, {}, (drill) => {
+					API.deleteRoleFromDrill(requestBody, () => {
+						// successfully deleted root role
+						API.getDrillById(drillId, {}, (drill) => {
 							// successfully updated selected drill
 							dispatch(setSelectedDrill(drill));
 						});
@@ -152,12 +155,12 @@ const DiagramPaletteView = ({ diagram }) => {
 		dispatch(
 			showModal(ModalContentTypes.CONFIRMATION, {
 				icon: MaterialIconNames.START,
-				title: `Drill: ${drillName}`,
+				title: `Drill: ${selectedDrill.name}`,
 				description: "Are you sure you want to start this drill?",
 				acceptText: "Start",
 				action: () => {
-					API.startDrill(drillName, user, (response) => {
-						API.getDrillByName(drillName, {}, (response) => {
+					API.startDrill(drillId, user, (response) => {
+						API.getDrillById(drillId, {}, (response) => {
 							dispatch(setSelectedDrill(response));
 						});
 					});
@@ -171,10 +174,10 @@ const DiagramPaletteView = ({ diagram }) => {
 		dispatch(
 			showModal(ModalContentTypes.CONFIRMATION, {
 				icon: MaterialIconNames.STOP,
-				title: `Stop drill "${drillName}"?`,
+				title: `Stop drill "${selectedDrill.name}"?`,
 				acceptText: "Stop",
 				action: () => {
-					API.stopDrill(drillName, user, (response) => {
+					API.stopDrill(drillId, user, (response) => {
 						dispatch(setSelectedDrill(response));
 						// remove this later and just transfer active drill to completed in Redux
 						API.all({}, (res) => {
@@ -188,73 +191,73 @@ const DiagramPaletteView = ({ diagram }) => {
 		);
 	};
 
-	// const toggleLinkStylesHandler = () => {
-	// 	setShowLinkStyles(!showLinkStyles);
-	// };
+	const toggleLinkStylesHandler = () => {
+		setShowLinkStyles(!showLinkStyles);
+	};
 
-	// const toggleLinkSmoothnessHandler = () => {
-	// 	setShowLinkSmoothness(!showLinkSmoothness);
-	// };
+	const toggleLinkSmoothnessHandler = () => {
+		setShowLinkSmoothness(!showLinkSmoothness);
+	};
 
-	// const renderLinkStyles = () => {
-	// 	const options = [LinkStyles.NORMAL, LinkStyles.MANHATTAN, LinkStyles.ORTHOGONAL, LinkStyles.METRO];
-	// 	return (
-	// 		showLinkStyles && (
-	// 			<span className="link-style-options-container">
-	// 				<ul className="link-style-options">
-	// 					{options.map((option, index) => {
-	// 						return (
-	// 							<li
-	// 								key={option + index}
-	// 								className="link-style-item"
-	// 								onClick={() => {
-	// 									linkStyleHandler(option);
-	// 								}}
-	// 							>
-	// 								<Icon>
-	// 									{option === linkStyle
-	// 										? MaterialIconNames.RADIO_BUTTON_CHECKED
-	// 										: MaterialIconNames.RADIO_BUTTON_UNCHECKED}
-	// 								</Icon>
-	// 								<span className="link-style-item-label">{option}</span>
-	// 							</li>
-	// 						);
-	// 					})}
-	// 				</ul>
-	// 			</span>
-	// 		)
-	// 	);
-	// };
+	const renderLinkStyles = () => {
+		const options = [LinkStyles.NORMAL, LinkStyles.MANHATTAN, LinkStyles.ORTHOGONAL, LinkStyles.METRO];
+		return (
+			showLinkStyles && (
+				<span className="link-style-options-container">
+					<ul className="link-style-options">
+						{options.map((option, index) => {
+							return (
+								<li
+									key={option + index}
+									className="link-style-item"
+									onClick={() => {
+										linkStyleHandler(option);
+									}}
+								>
+									<Icon>
+										{option === linkStyle
+											? MaterialIconNames.RADIO_BUTTON_CHECKED
+											: MaterialIconNames.RADIO_BUTTON_UNCHECKED}
+									</Icon>
+									<span className="link-style-item-label">{option}</span>
+								</li>
+							);
+						})}
+					</ul>
+				</span>
+			)
+		);
+	};
 
-	// const renderLinkSmoothness = () => {
-	// 	if (showLinkSmoothness) {
-	// 		const options = [LinkSmoothness.NORMAL, LinkSmoothness.SMOOTH, LinkSmoothness.ROUNDED];
-	// 		return (
-	// 			<span className="link-style-options-container">
-	// 				<ul className="link-style-options">
-	// 					{options.map((option, index) => {
-	// 						return (
-	// 							<li
-	// 								key={option + index}
-	// 								className="link-style-item"
-	// 								onClick={() => {
-	// 									linkSmoothnessHandler(option);
-	// 								}}
-	// 							>
-	// 								<Icon>
-	// 									{option === linkSmoothness
-	// 										? MaterialIconNames.RADIO_BUTTON_CHECKED
-	// 										: MaterialIconNames.RADIO_BUTTON_UNCHECKED}
-	// 								</Icon>
-	// 								<span className="link-style-item-label">{option}</span>
-	// 							</li>
-	// 						);
-	// 					})}
-	// 				</ul>
-	// 			</span>
-	// 		);
-	// 	}
-	// };
+	const renderLinkSmoothness = () => {
+		if (showLinkSmoothness) {
+			const options = [LinkSmoothness.NORMAL, LinkSmoothness.SMOOTH, LinkSmoothness.ROUNDED];
+			return (
+				<span className="link-style-options-container">
+					<ul className="link-style-options">
+						{options.map((option, index) => {
+							return (
+								<li
+									key={option + index}
+									className="link-style-item"
+									onClick={() => {
+										linkSmoothnessHandler(option);
+									}}
+								>
+									<Icon>
+										{option === linkSmoothness
+											? MaterialIconNames.RADIO_BUTTON_CHECKED
+											: MaterialIconNames.RADIO_BUTTON_UNCHECKED}
+									</Icon>
+									<span className="link-style-item-label">{option}</span>
+								</li>
+							);
+						})}
+					</ul>
+				</span>
+			);
+		}
+	};
 
 	const renderStartStopButton = () => {
 		if (typeof selectedDrill.startTime === "undefined") {
@@ -324,27 +327,44 @@ const DiagramPaletteView = ({ diagram }) => {
 	};
 
 	const renderLinkButtons = () => {
+		return (
+			<span className="link-style-container">
+				<label className="link-style-label">Links</label>
+				<span className="link-style-dropdown-container">
+					<div ref={linkStylesRef} className="link-style-button" onClick={toggleLinkStylesHandler}>
+						<span>Style: {linkStyle}</span>
+					</div>
+					{renderLinkStyles()}
+				</span>
+				<span className="link-style-dropdown-container">
+					<div ref={linkSmoothnessRef} className="link-style-button" onClick={toggleLinkSmoothnessHandler}>
+						<span>Smoothness: {linkSmoothness}</span>
+					</div>
+					{renderLinkSmoothness()}
+				</span>
+			</span>
+		);
 		{
 			/* TODO: Add this later when we persist these on a user basis */
 		}
 		{
-			/* <span className="link-style-container">
-					<label className="link-style-label">
-						<Icon>{MaterialIconNames.STYLE}</Icon>Links
-					</label>
-					<span className="link-style-dropdown-container">
-						<div ref={linkStylesRef} className="link-style-button" onClick={toggleLinkStylesHandler}>
-							<span>Style: {linkStyle}</span>
-						</div>
-						{renderLinkStyles()}
-					</span>
-					<span className="link-style-dropdown-container">
-						<div ref={linkSmoothnessRef} className="link-style-button" onClick={toggleLinkSmoothnessHandler}>
-							<span>Smoothness: {linkSmoothness}</span>
-						</div>
-						{renderLinkSmoothness()}
-					</span>
-				</span> */
+			// <span className="link-style-container">
+			// 	<label className="link-style-label">
+			// 		<Icon>{MaterialIconNames.STYLE}</Icon>Links
+			// 	</label>
+			// 	<span className="link-style-dropdown-container">
+			// 		<div ref={linkStylesRef} className="link-style-button" onClick={toggleLinkStylesHandler}>
+			// 			<span>Style: {linkStyle}</span>
+			// 		</div>
+			// 		{renderLinkStyles()}
+			// 	</span>
+			// 	<span className="link-style-dropdown-container">
+			// 		<div ref={linkSmoothnessRef} className="link-style-button" onClick={toggleLinkSmoothnessHandler}>
+			// 			<span>Smoothness: {linkSmoothness}</span>
+			// 		</div>
+			// 		{renderLinkSmoothness()}
+			// 	</span>
+			// </span>;
 		}
 		{
 			/* <div
@@ -367,6 +387,7 @@ const DiagramPaletteView = ({ diagram }) => {
 					{renderStartStopButton()}
 					{renderAddRoleButton()}
 					{renderAddTaskButton()}
+					{renderLinkButtons()}
 					{renderDeleteAllButton()}
 				</div>
 			)

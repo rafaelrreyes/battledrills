@@ -1,12 +1,33 @@
-import React, { useCallback, useState } from "react";
-import { MaterialIconNames, iso8061ToReadable, parseType, AttachmentTypes, saveTemplateByDrillName } from "UTILITIES";
-import { conditionalTooltipRender, Icon } from "CORE";
+import React, { useCallback, useState, useEffect } from "react";
+import {
+	MaterialIconNames,
+	iso8061ToReadable,
+	parseType,
+	AttachmentTypes,
+	saveTemplateByDrillId,
+	API
+} from "UTILITIES";
+import { conditionalTooltipRender, Icon, Input, InputSizes } from "CORE";
 import { AttachmentsView } from "COMPONENTS";
 import "./DrillData.scss";
 
-const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill, deleteDrill }) => {
+const DrillData = ({
+	isEditingDrill = false,
+	onDrillNameChange = () => {},
+	drillInfo,
+	activeDrills,
+	elapsedTime,
+	startDrill,
+	stopDrill,
+	deleteDrill
+}) => {
+	const [drillName, setDrillName] = useState(drillInfo.name);
 	const [drillNameRef, setDrillNameRef] = useState(null);
 	const [drillTypeRef, setDrillTypeRef] = useState(null);
+
+	useEffect(() => {
+		onDrillNameChange(drillName);
+	}, [drillName]);
 
 	// not using useRef here because the object ref doesn't notify about changes to the current ref value
 	// in this case, you could use useRef, but I use the callback for an example (:
@@ -26,6 +47,17 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 	const isDisabled = !Array.isArray(activeDrills) || !activeDrills.length || drillInfo.endTime;
 
 	const renderDrillName = () => {
+		if (isEditingDrill) {
+			return (
+				<Input
+					initValue={drillInfo.name}
+					inputSize={InputSizes.LARGE}
+					onChange={(value) => {
+						setDrillName(value);
+					}}
+				/>
+			);
+		}
 		let drillNameElement = (
 			<div className="data-value overflow-data" ref={drillNameRefCallback}>
 				{drillInfo.name}
@@ -49,7 +81,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 			return (
 				<div className="data-info-final">
 					<div className="data-key">Save As Template</div>
-					<button className="no-button drill-data-icon-hover data-icon" onClick={saveTemplateByDrillName}>
+					<button className="no-button drill-data-icon-hover data-icon" onClick={saveTemplateByDrillId}>
 						<Icon className="md-20">{MaterialIconNames.SAVE}</Icon>
 					</button>
 				</div>
@@ -78,7 +110,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 						<button
 							className="no-button drill-data-icon-hover data-icon"
 							onClick={() => {
-								startDrill(drillInfo.name);
+								startDrill(drillInfo.id);
 							}}
 						>
 							<Icon className="md-20">{MaterialIconNames.START}</Icon>
@@ -92,7 +124,7 @@ const DrillData = ({ drillInfo, activeDrills, elapsedTime, startDrill, stopDrill
 							className={`no-button data-icon ${isDisabled ? `` : `drill-data-icon-hover`}`}
 							disabled={isDisabled}
 							onClick={() => {
-								stopDrill(drillInfo.name);
+								stopDrill(drillInfo.id);
 							}}
 						>
 							<Icon className="md-20">{MaterialIconNames.STOP}</Icon>

@@ -19,6 +19,7 @@ public class BattleDrillsConfig {
     private static final String DEV_CONTEXT  = "C:/h/C2PCWebApp/webapps/battledrills/";
     private static final String TEMPLATE_DIR = "secure/data/battle_drill_templates/";
     private static final String CUSTOM_TEMPLATE_DIR = "secure/data/custom_templates/";
+    private static final String TASK_FAVORITES_FILE = "secure/data/task_templates/task_favorites.json";
     private static final String FILE_DIR = "secure/data/files/";
     private static final String BATTLE_DRILLS_DIR = "secure/data/battle_drills/";
     private static final String DATA_DIR = "secure/data/";
@@ -53,6 +54,11 @@ public class BattleDrillsConfig {
     public static final String getCustomTemplateDir() {
         String runningContext = (devMode) ? DEV_CONTEXT : CONTEXT;
         return runningContext + CUSTOM_TEMPLATE_DIR;
+    }
+    
+    public static final String getTaskFavoritesFile() {
+        String runningContext = (devMode) ? DEV_CONTEXT : CONTEXT;
+        return runningContext + TASK_FAVORITES_FILE;
     }
     
     public static final String getActiveBattleDrillsDir()

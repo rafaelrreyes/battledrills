@@ -19,53 +19,44 @@ import org.apache.commons.lang3.StringUtils;
  * @author admin
  */
 public class Owner {
-    private String billet = "";
+    private int billetId = 0;
     private Map<String, List<Task>> tasksByBattleDrill; // BattleDrill x Tasks
     
-    public Owner(String billet)
-    {
-        if(StringUtils.isBlank(billet))
-        {
-            throw new InvalidParameterException("Unable to construct Owner - billet parameter cannot be empty");
+    public Owner(int billetId) {
+        if (billetId < 1) {
+            throw new InvalidParameterException("Unable to construct Owner - billet ID parameter must be defined in roles.");
         }
-        this.billet = billet;
+        
+        this.billetId = billetId;
         tasksByBattleDrill = new HashMap<>();
     }
     
-    public void addTasks(String battleDrillName, List<Task> tasks)
-    {
-        if(tasksByBattleDrill.containsKey(battleDrillName))
-        {
-            List<Task> existingTasks = tasksByBattleDrill.get(battleDrillName);
+    public void addTasksToDrillById(String drillId, List<Task> tasks) {
+        if (tasksByBattleDrill.containsKey(drillId)) {
+            List<Task> existingTasks = tasksByBattleDrill.get(drillId);
             existingTasks.addAll(tasks);
-        }
-        else
-        {
-            tasksByBattleDrill.put(battleDrillName, tasks);
+        } else {
+            tasksByBattleDrill.put(drillId, tasks);
         }
     }
     
     @JsonIgnore
-    public String getBillet()
-    {
-        return billet;
+    public int getBilletId() {
+        return this.billetId;
     }
     
     @JsonAnyGetter
-    public Map<String, List<Task>> getTasksXOwner()
-    {
+    public Map<String, List<Task>> getTasksByDrillIDs() {
         return tasksByBattleDrill;
     }
     
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(billet).append(System.lineSeparator());
-        for(String battleDrillName : tasksByBattleDrill.keySet())
-        {
-            sb.append(battleDrillName).append(System.lineSeparator());
-            sb.append(tasksByBattleDrill.get(battleDrillName));
+        sb.append(this.billetId).append(System.lineSeparator());
+        for (String drillId : tasksByBattleDrill.keySet()) {
+            sb.append(drillId).append(System.lineSeparator());
+            sb.append(tasksByBattleDrill.get(drillId));
         }
         
         return sb.toString();

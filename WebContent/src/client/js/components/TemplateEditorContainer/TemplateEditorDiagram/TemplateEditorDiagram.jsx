@@ -127,12 +127,12 @@ const TemplateEditorDiagram = ({ diagram, graph, isGridEnabled = false }) => {
 				return;
 			}
 
-			const { owner, coordinateType } = element.model.get("attrs").diagramData;
+			const { roleId, coordinateType } = element.model.get("attrs").diagramData;
 
 			if (coordinateType === "self") {
-				dispatch(editRoleCoordinatesTemplate(owner, { x: tempPosition.x, y: tempPosition.y }));
+				dispatch(editRoleCoordinatesTemplate(roleId, { x: tempPosition.x, y: tempPosition.y }));
 			} else {
-				dispatch(editTaskCoordinatesTemplate(owner, { x: tempPosition.x, y: tempPosition.y }));
+				dispatch(editTaskCoordinatesTemplate(roleId, { x: tempPosition.x, y: tempPosition.y }));
 			}
 		});
 	};

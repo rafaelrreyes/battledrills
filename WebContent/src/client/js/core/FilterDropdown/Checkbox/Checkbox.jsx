@@ -3,24 +3,19 @@ import { MaterialIconNames } from "UTILITIES";
 import { Icon } from "CORE";
 import "./Checkbox.scss";
 
-const Checkbox = ({ selectedFilters, onChangeHandler, label }) => {
-	const [checked, setChecked] = useState(selectedFilters.has(label));
-
-	useEffect(() => {
-		setChecked(selectedFilters.has(label));
-	}, [selectedFilters]);
+const Checkbox = ({ isChecked = false, onChangeHandler = () => {}, label = "", value = 0 }) => {
+	const [checked, setChecked] = useState(isChecked);
 
 	return (
 		<label className="checkbox-component">
-			{getCheckmarkIcon(checked)}
+			{getCheckmarkIcon(isChecked)}
 			<span className="checkbox-label">{label}</span>
 			<input
 				type="checkbox"
-				checked={checked}
-				value={label}
+				checked={isChecked}
 				onChange={() => {
 					setChecked(!checked);
-					onChangeHandler(label, checked);
+					onChangeHandler(value, !checked);
 				}}
 			/>
 		</label>

@@ -8,7 +8,7 @@ import {
 	getCurrentView,
 	showModal,
 	closeModal,
-	getSelectedDrillName,
+	getSelectedDrillId,
 	setActiveBillet,
 	getSelectedTaskTemplate,
 	setSelectedTaskTemplate,
@@ -50,7 +50,7 @@ export const selectTaskTemplate = (task) => {
 export const deleteTask = (taskId) => {
 	const user = getUser(store.getState());
 	const currentView = getCurrentView(store.getState());
-	const selectedDrillName = getSelectedDrillName(store.getState());
+	const selectedDrillId = getSelectedDrillId(store.getState());
 
 	store.dispatch(
 		showModal(ModalContentTypes.CONFIRMATION, {
@@ -64,13 +64,13 @@ export const deleteTask = (taskId) => {
 
 				// delete task and update
 				API.deleteTaskById(requestBody, () => {
-					API.getDrillByName(selectedDrillName, {}, (drill) => {
+					API.getDrillById(selectedDrillId, {}, (drill) => {
 						store.dispatch(setSelectedDrill(drill));
 						store.dispatch(resetSelectedTask());
 					});
 
 					if (currentView === Routes.MY_REPORT) {
-						API.getOwnerBillet(user.role, {}, (data) => {
+						API.getBilletByRoleId(user.id, {}, (data) => {
 							store.dispatch(setActiveBillet(data));
 						});
 					}

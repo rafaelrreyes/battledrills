@@ -5,14 +5,14 @@ import $ from "jquery";
 import _ from "lodash";
 import { getTaskItemStyle, getLiElement } from "./BattleDrillHelper";
 import { StatusTypes, selectTask, selectTaskTemplate } from "UTILITIES";
-import { TaskActionsMenu, OwnerActionsMenu } from "COMPONENTS";
+import { TaskActionsMenu, RoleActionsMenu } from "COMPONENTS";
 
 joint.shapes.html = {};
 
-joint.shapes.html.OwnerBlock = joint.shapes.standard.Rectangle.extend({
+joint.shapes.html.RoleBlock = joint.shapes.standard.Rectangle.extend({
 	defaults: joint.util.deepSupplement(
 		{
-			type: "html.Owner",
+			type: "html.Role",
 			attrs: {
 				rect: { stroke: "none", "fill-opacity": 0 }
 			}
@@ -21,8 +21,8 @@ joint.shapes.html.OwnerBlock = joint.shapes.standard.Rectangle.extend({
 	)
 });
 
-joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
-	template: ['<div class="owner-container">', '<div><span class="owner-title"></span></div>', "</div>"].join(""),
+joint.shapes.html.RoleView = joint.dia.ElementView.extend({
+	template: ['<div class="role-container">', '<div><span class="role-title"></span></div>', "</div>"].join(""),
 	initialize: function () {
 		joint.dia.ElementView.prototype.initialize.apply(this, arguments);
 		this.$box = $(_.template(this.template)());
@@ -33,14 +33,15 @@ joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
 	},
 	updateBox: function () {
 		var bbox = this.model.getBBox();
-		let owner = this.model.get("attrs").title;
+		let roleName = this.model.get("attrs").roleName;
+		let roleId = this.model.get("attrs").roleId;
 		let isTemplate = this.model.get("attrs").diagramData.isTemplate;
 
-		let editIconClass = isTemplate ? "template-edit-owner-icon" : "edit-owner-icon";
+		let editIconClass = isTemplate ? "template-edit-role-icon" : "edit-role-icon";
 
 		this.$box
-			.find("span.owner-title")
-			.html(`${owner}<i class="material-icons ${editIconClass}">edit</i><div class="filler-div"></div>`);
+			.find("span.role-title")
+			.html(`${roleName}<i class="material-icons ${editIconClass}">edit</i><div class="filler-div"></div>`);
 
 		this.$box.find("i").on("click", (event) => {
 			const dropdownAlreadyOpen = ReactDOM.unmountComponentAtNode(event.target.nextSibling);
@@ -48,14 +49,15 @@ joint.shapes.html.OwnerView = joint.dia.ElementView.extend({
 				return;
 			}
 			ReactDOM.render(
-				<OwnerActionsMenu
+				<RoleActionsMenu
 					isTemplate={isTemplate}
 					closeMenu={() => {
 						if (typeof event.target !== "undefined") {
 							ReactDOM.unmountComponentAtNode(event.target.nextSibling);
 						}
 					}}
-					owner={owner}
+					roleId={roleId}
+					roleName={roleName}
 				/>,
 				event.target.nextSibling
 			);

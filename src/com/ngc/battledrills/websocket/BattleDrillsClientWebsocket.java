@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngc.battledrills.vmf.VmfManager;

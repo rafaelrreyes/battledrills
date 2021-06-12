@@ -13,9 +13,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ngc.battledrills.data.Task;
 import java.util.ArrayList;
 import java.util.List;
 import com.ngc.battledrills.util.JsonUtils;
+import java.security.InvalidParameterException;
 
 /**
  *
@@ -28,29 +30,35 @@ public class BattleDrillTemplate {
     private String type = "";
     private String permission = "";
     private String name = "";
-    private List<String> participants = new ArrayList<>();
+    private String id = "";
+    private List<Integer> participants = new ArrayList<>();
     
     @JsonManagedReference
     protected Node root;
     
     public BattleDrillTemplate(){}
     
-    public void setType(String type)
-    {
+    public void setType(String type) {
         this.type = type;
     }
     
-    public String getType()
-    {
+    public String getType() {
         return this.type;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
+    public String getId() {
+        return this.id;
     }
     
     public void setName(String name) {
         this.name = name;
     }
     
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
@@ -75,13 +83,22 @@ public class BattleDrillTemplate {
         return this.permission;
     }
     
+    @JsonIgnore
+    public List<Task> getTasksByRoleId(int roleId) {
+        if (roleId < 1) {
+            throw new InvalidParameterException("Unable to get tasks by role ID - role ID parameter must be defined in DB");
+        }
+        
+        Node root = this.getRoot();
+        return null == root ? null : ( root.getRoleId() == roleId ? root.getTasks() : root.getTasksByRoleId(roleId));
+    }
         
     @JsonProperty("participants")
-    public void setParticipants(List<String> participants) {
+    public void setParticipants(List<Integer> participants) {
         this.participants = participants;
     }
     
-    public List<String> getParticipants() {
+    public List<Integer> getParticipants() {
         return this.participants;
     }
     
@@ -91,22 +108,21 @@ public class BattleDrillTemplate {
     }
     
     @JsonIgnore
-    public void addParticipant(String owner) {
-        this.participants.add(owner);
+    public void addParticipant(int participantId) {
+        this.participants.add(participantId);
     }
     
     @JsonIgnore
-    public void deleteParticipant(String owner) {
+    public void deleteParticipant(int participantId) {
         for (int i = 0; i < this.participants.size(); i++) {
-            if (this.participants.get(i).equalsIgnoreCase(owner)) {
+            if (this.participants.get(i) == participantId) {
                 this.participants.remove(i);
             }
         }
     }
     
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Type: ").append(this.type).append(System.lineSeparator());
         sb.append("Permission: ").append(this.permission).append(System.lineSeparator());

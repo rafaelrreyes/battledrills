@@ -2,18 +2,20 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Switch from "react-switch";
 
+import "./ToggleSwitch.scss";
+
 export const ToggleSwitch = ({ label, defaultToggle = false, onToggleProp, disabled = false }) => {
 	const [checked, setChecked] = useState(defaultToggle);
 
 	const onToggle = (checked) => {
 		setChecked(checked);
 		if (typeof onToggleProp === "function") {
-			onToggleProp();
+			onToggleProp(checked);
 		}
 	};
 
 	return (
-		<label>
+		<label className="toggle-switch-container">
 			{label !== "" && <span>{label}</span>}
 			<Switch
 				checked={checked}

@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ngc.battledrills.BattleDrillsConfig;
 import com.ngc.battledrills.data.BattleDrill;
+import com.ngc.battledrills.data.Node;
+import com.ngc.battledrills.data.Task;
 import com.ngc.battledrills.data.User;
 import com.ngc.battledrills.exception.DuplicateItemException;
 import com.ngc.battledrills.template.BattleDrillTemplate;
@@ -25,7 +27,11 @@ import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
@@ -42,8 +48,7 @@ public class TemplateManager {
     private static final Map<String, BattleDrillTemplate> custom_templates = new HashMap<>();
     private static final Map<String, String> overwritten_templates = new HashMap<>();
     
-    private TemplateManager()
-    {
+    private TemplateManager(){
         loadAllTemplates();
     }
     
@@ -84,11 +89,9 @@ public class TemplateManager {
         return types;
     }
     
-    private void loadAllTemplates()
-    {
+    private void loadAllTemplates() {
         // load all default and custom templates into their respective containers
-        try
-        {
+        try {
             File defaultDirectory = new File(BattleDrillsConfig.getTemplateDir());
             File customDirectory = new File(BattleDrillsConfig.getCustomTemplateDir());
             File[] defaultFiles = defaultDirectory.listFiles((d, name) -> name.endsWith(".json"));
@@ -97,6 +100,7 @@ public class TemplateManager {
             for(File file : defaultFiles) {
                 String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 BattleDrillTemplate template = loadFromJson(fileContents, false);
+                loadTaskRecursive(template.getRoot());
                 default_templates.put(template.getType(), template);
             }
             
@@ -118,8 +122,23 @@ public class TemplateManager {
         }
     }
     
-    private BattleDrillTemplate loadFromJson(String json, boolean isSaveTemplate) throws IOException
-    {
+    private void loadTaskRecursive(Node node) {
+        // if the current node has tasks, add to templates list
+        if (node.getTasks().size() > 0) {
+            node.getTasks().forEach((task) -> {
+                TaskTemplateManager.getInstance().addTaskTemplate(task.getDescription());
+            });
+        }
+        
+        // go thru each child of the current node and load task templates recursively
+        if (node.getChildNodes().size() > 0) {
+            node.getChildNodes().forEach((currentNode) -> {
+                loadTaskRecursive(currentNode);
+            });
+        }
+    }
+    
+    private BattleDrillTemplate loadFromJson(String json, boolean isSaveTemplate) throws IOException {
         InjectableValues.Std inject = new InjectableValues.Std();
         inject.addValue(JacksonInjectableValues.NEW_TASK, false);
         inject.addValue(JacksonInjectableValues.SAVE_AS_TEMPLATE, isSaveTemplate);
@@ -199,17 +218,17 @@ public class TemplateManager {
     /**
      * Saves a template, whether that means overwriting an existing one or creating a new one.
      * @param templateType
-     * @param drillName
+     * @param drillId
      * @throws ItemNotFoundException
      * @throws JsonProcessingException 
      */
-    public void saveTemplate(String templateType, String drillName, User user) throws ItemNotFoundException, JsonProcessingException {
+    public void saveTemplate(String templateType, String drillId, User user) throws ItemNotFoundException, JsonProcessingException {
         
         String formattedType = getFormattedType(templateType);
         
         // get the battle drill
         BattleDrillManager bdManager = BattleDrillManager.getInstance();
-        BattleDrill drill = bdManager.getByName(drillName);
+        BattleDrill drill = bdManager.getById(drillId);
         
         // need to turn the drill into a template, meaning remove all properties not needed in a drill template
         
@@ -218,12 +237,11 @@ public class TemplateManager {
         }
         
         try {            
-
             JsonFilterProvider jsonFilterProvider = new JsonFilterProvider();
             jsonFilterProvider.addFilter(JsonUtils.DefinedFilters.BATTLE_DRILL_TEMPLATE_FILTER, new String [] {"type", "attachments", "data", "participants"});
             jsonFilterProvider.addFilter(JsonUtils.DefinedFilters.BATTLE_DRILL_FILTER, new String[] {"type", "attachments", "data", "participants"} );
             jsonFilterProvider.addFilter(JsonUtils.DefinedFilters.TASK_FILTER, new String[] {"description"});
-            jsonFilterProvider.addFilter(JsonUtils.DefinedFilters.NODE_FILTER, new String[] {"title", "self_coordinates", "tasks_coordinates", "tasks", "children"});
+            jsonFilterProvider.addFilter(JsonUtils.DefinedFilters.NODE_FILTER, new String[] {"roleId", "self_coordinates", "tasks_coordinates", "tasks", "children"});
             
             // change type temporarily
             String typeHolder = drill.getType();
@@ -298,6 +316,12 @@ public class TemplateManager {
         }
         
         // TODO maybe we can return a new object here on response instead of chaining
+    }
+    
+    public List<Task> getTasksByRoleId(String drillType, int roleId) {
+        BattleDrillTemplate template = getByType(drillType);
+        List<Task> targetTasks = template.getTasksByRoleId(roleId);
+        return targetTasks;
     }
     
     private void removeCustomTemplate(String type) {

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.websocket;
 
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +35,7 @@ public class BattleDrillsWebsocket {
         BattleDrillsWebsocketService.addSession(session);
         System.out.println("Session added: " + session.getId());
         // Change this to be dynamic for role and username when a login system is implemented
-        User user = new User(session.getId(), "role placeholder", "username placeholder");
+        User user = new User(session.getId(), 1, "role placeholder", "username placeholder");
         Notify.sendNotificationToSessionId(NotifyManager.createWebsocketNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, null));
     }
     

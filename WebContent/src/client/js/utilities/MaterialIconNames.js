@@ -36,6 +36,7 @@ export const MaterialIconNames = {
 	ERROR: "error",
 	ERROR_OUTLINE: "error_outline",
 	EXPAND_MORE: "expand_more",
+	FAVORITE: "star",
 	FILTER: "filter_list",
 	GRID_ON: "grid_on",
 	GRID_OFF: "grid_off",
@@ -69,6 +70,7 @@ export const MaterialIconNames = {
 	TASK: "assignment_turned_in",
 	TASK_LIST: "assignment",
 	UNDO: "undo",
+	UNFAVORITE: "star_border",
 	UPLOAD: "vertical_align_top",
 	WARNING: "warning"
 };

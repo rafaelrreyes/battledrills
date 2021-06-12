@@ -50,9 +50,9 @@ export const changeTaskState = (status, selectedTask) => {
 
 	API.updateTaskStatus(updatedSelectedTask, (response) => {
 		store.dispatch(editTask(selectedDrill, response, response.taskId));
-		store.dispatch(editActiveBillet(selectedDrill.name, response));
+		store.dispatch(editActiveBillet(selectedDrill.id, response));
 		store.dispatch(resetSelectedTask());
-		API.getDrillByName(selectedDrill.name, {}, (drill) => {
+		API.getDrillById(selectedDrill.id, {}, (drill) => {
 			store.dispatch(setSelectedDrill(drill));
 		});
 	});

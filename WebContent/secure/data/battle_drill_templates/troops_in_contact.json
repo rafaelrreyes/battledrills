@@ -1,10 +1,9 @@
 {
-	"id": "12345",
-	"participants": ["CO", "WO", "XO", "S-2", "S-3", "AirO", "IO", "FSCC", "LOC", "S-1", "S-4", "SAS"],
+	"participants": [1, 15, 2, 11, 12, 6, 3, 4, 7, 10, 13, 9],
 	"type": "troops_in_contact",
 	"attachments": [],
 	"data": {
-		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 685,
 			"y": 20
@@ -12,7 +11,7 @@
 		"tasks_coordinates": {},
 		"children": [
 			{
-				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 685,
 					"y": 80
@@ -37,7 +36,7 @@
 				],
 				"children": [
 					{
-						"title": "XO",
+						"roleId": 2,
 						"self_coordinates": {
 							"x": 85,
 							"y": 110
@@ -56,7 +55,7 @@
 						]
 					},
 					{
-						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 247,
 							"y": 110
@@ -75,7 +74,7 @@
 						]
 					},
 					{
-						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 425,
 							"y": 110
@@ -91,7 +90,7 @@
 						],
 						"children": [
 							{
-								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 365,
 									"y": 330
@@ -102,7 +101,7 @@
 								},
 								"tasks": [
 									{
-										"description": "Combat correspondent document attack"
+										"description": "Combat Correspondent documents attack"
 									},
 									{
 										"description": "IO prepare IO FRAGO"
@@ -112,7 +111,7 @@
 						]
 					},
 					{
-						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 565,
 							"y": 110
@@ -129,12 +128,12 @@
 								"description": "Assess ability to provide continuous CAS"
 							},
 							{
-								"description": "Monitor A/C mvmt & Coordinate w/ BAS for CASEVAC"
+								"description": "Monitor A/C movement & Coordinate with BAS for CASEVAC"
 							}
 						]
 					},
 					{
-						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 670,
 							"y": 155
@@ -156,7 +155,7 @@
 						]
 					},
 					{
-						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 880,
 							"y": 135
@@ -165,7 +164,7 @@
 						"tasks": [],
 						"children": [
 							{
-								"title": "S-1",
+								"roleId": 10,
 								"self_coordinates": {
 									"x": 880,
 									"y": 225
@@ -176,7 +175,7 @@
 								},
 								"tasks": [
 									{
-										"description": "Submit PCR\"s for 3/2 casualties"
+										"description": "Submit PCR\"s for any 3/2 casualties"
 									},
 									{
 										"description": "Accountability report from units/sections & Report to XO"
@@ -184,7 +183,7 @@
 								]
 							},
 							{
-								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 1045,
 									"y": 225
@@ -195,7 +194,7 @@
 								},
 								"tasks": [
 									{
-										"description": "Notify RCT of required support"
+										"description": "Notify RCT of any required support"
 									},
 									{
 										"description": "Redirect logistical mvmt if required"
@@ -203,7 +202,7 @@
 								],
 								"children": [
 									{
-										"title": "SAS",
+										"roleId": 9,
 										"self_coordinates": {
 											"x": 1045,
 											"y": 305

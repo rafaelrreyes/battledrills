@@ -1,9 +1,9 @@
 import { BilletConstants } from "./BilletConstants";
 
-export const editActiveBillet = (drillName, updatedTask) => {
+export const editActiveBillet = (drillId, updatedTask) => {
 	return {
 		type: BilletConstants.EDIT_BILLET,
-		payload: { drillName, updatedTask }
+		payload: { drillId, updatedTask }
 	};
 };
 

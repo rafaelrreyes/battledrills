@@ -12,7 +12,7 @@ import {
 	setCurrentView,
 	getSelectedDrill,
 	getActiveBillet,
-	getRole,
+	getUser,
 	getSelectedTask
 } from "REDUX";
 import "./MyDrillsContainer.scss";
@@ -24,7 +24,7 @@ const MyDrillsContainer = () => {
 	const selectedDrill = useSelector(getSelectedDrill);
 	const selectedTask = useSelector(getSelectedTask);
 	const billet = useSelector(getActiveBillet);
-	const role = useSelector(getRole);
+	const role = useSelector(getUser);
 
 	useEffect(() => {
 		dispatch(setCurrentView(Routes.MY_DRILLS)); // only do this on mount
@@ -34,15 +34,18 @@ const MyDrillsContainer = () => {
 		dispatch(resetSelectedTask());
 
 		//temporary
-		if (typeof role === "undefined") {
-			dispatch(setUser({ username: "WO", role: "WO" }));
+		if (typeof role.id === "undefined") {
+			dispatch(setUser({ username: "WO", name: "WO", id: 15 }));
 		}
 
-		getNewOwnerReportHandler(role);
+		// TODO
+		if (typeof role.id !== "undefined" && role.id !== 0) {
+			getNewRoleReportHandler(role);
+		}
 	}, [role]);
 
-	const getNewOwnerReportHandler = (role) => {
-		API.getOwnerBillet(role, {}, (data) => {
+	const getNewRoleReportHandler = (role) => {
+		API.getBilletByRoleId(role.id, {}, (data) => {
 			dispatch(setActiveBillet(data));
 		});
 	};
@@ -71,7 +74,7 @@ const MyDrillsContainer = () => {
 				<div className="drill-reports-main">
 					<div className="drill-reports-left">
 						<MyDrillsStatistics drills={billet} role={role} />
-						<div className="drill-owner-table">
+						<div className="drill-role-table">
 							<MyDrillsView drills={billet} />
 						</div>
 					</div>

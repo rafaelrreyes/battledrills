@@ -12,7 +12,7 @@ import java.util.List;
  * @author dustin
  */
 public class TaskStatusSummaryXY extends TaskXY {
-    public TaskStatusSummaryXY(String x, List<Long> y, String owner, String description) {
-        super(x, y, owner, description);
+    public TaskStatusSummaryXY(String x, List<Long> y, int roleId, String description) {
+        super(x, y, roleId, description);
     }
 }

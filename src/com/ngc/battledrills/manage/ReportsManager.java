@@ -25,9 +25,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,10 +59,10 @@ public class ReportsManager {
             for (File file : files) {
                 String fileContents = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 Report report = loadFromJson(fileContents);
-                allReports.put(report.getDrillName(), report);
+                allReports.put(report.getDrillId(), report);
             }
         } catch (IOException i) {
-            System.err.println("DUSTIN unable to load template: " + i);
+            System.err.println("Unable to load template: " + i);
         }
     }
 
@@ -78,38 +76,38 @@ public class ReportsManager {
         return report;
     }
 
-    public Report createInitialReport(String drillName, int numTasks) {
-        Report initReport = new Report(drillName, numTasks);
+    public Report createInitialReport(String drillId, int numTasks) {
+        Report initReport = new Report(drillId, numTasks);
         saveReport(initReport);
-        allReports.put(drillName, initReport);
+        allReports.put(drillId, initReport);
         return initReport;
     }
 
     public void saveReport(Report report) {
         try {
             String contents = JsonUtils.writeValue(report);
-            String fullname = getFullFilename(report.getDrillName());
-            File file = FileUtils.getFile(fullname);
+            String drillId = getFullFilename(report.getDrillId());
+            File file = FileUtils.getFile(drillId);
             FileUtils.writeStringToFile(file, contents, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            System.err.println("Unable to save new report " + report.getDrillName() + ", error is: " + e);
+            System.err.println("Unable to save new report " + report.getDrillId() + ", error is: " + e);
         }
     }
 
-    public void addReport(String drillName, Report report) {
-        allReports.put(drillName, report);
+    public void addReport(String drillId, Report report) {
+        allReports.put(drillId, report);
     }
 
-    public Report getReport(String drillName) {
-        return allReports.get(drillName);
+    public Report getReportByDrillId(String drillId) {
+        return allReports.get(drillId);
     }
 
-    public List<TimeToCompletion> getTimeToCompletion(String drillName, List<String> compareDrillNames) {
-        compareDrillNames.add(0, drillName);
+    public List<TimeToCompletion> getTimeToCompletion(String drillId, List<String> compareDrillIds) {
+        compareDrillIds.add(0, drillId);
         List<TimeToCompletion> ttcDatasets = new ArrayList<>();
-        for (int i = 0; i < compareDrillNames.size(); i++) {
-            String name = compareDrillNames.get(i);
-            Report drillReport = getReport(name);
+        for (int i = 0; i < compareDrillIds.size(); i++) {
+            String id = compareDrillIds.get(i);
+            Report drillReport = getReportByDrillId(id);
             if (drillReport == null) {
                 System.out.println("REPORT DOESN'T EXIST");
                 return null;
@@ -122,14 +120,15 @@ public class ReportsManager {
             }
 
             int numTasks = drillReport.getNumTasks();
-            TimeToCompletion ttc = new TimeToCompletion(name, totalTimeString);
-            TimeToCompletionXY initZero = new TimeToCompletionXY("00:00:00", "0", "", "");
+            TimeToCompletion ttc = new TimeToCompletion(id, totalTimeString);
+            // have to add an initial point placeholder
+            TimeToCompletionXY initZero = new TimeToCompletionXY("00:00:00", "0", -1, "");
             ttc.addDataPoint(initZero);
             for (ReportData data : drillReport.getData().values()) {
                 Duration x = data.getTaskDuration();
                 if (x != null) {
                     String xTimeString = ConvenienceUtils.durationToHHmmss(x);
-                    TimeToCompletionXY xy = new TimeToCompletionXY(xTimeString, "", data.getOwner(), data.getDescription());
+                    TimeToCompletionXY xy = new TimeToCompletionXY(xTimeString, "", data.getRoleId(), data.getDescription());
                     ttc.addDataPoint(xy);
                 }
             }
@@ -150,15 +149,15 @@ public class ReportsManager {
         return ttcDatasets;
     }
 
-    public TaskStatusSummary getTaskStatusSummary(String drillName) {
-        Report drillReport = getReport(drillName);
+    public TaskStatusSummary getTaskStatusSummary(String drillId) {
+        Report drillReport = getReportByDrillId(drillId);
         if (drillReport == null) {
             System.out.println("REPORT DOESN'T EXIST");
         } else {
             TaskStatusSummary tss = new TaskStatusSummary();
             for (ReportData data : drillReport.getData().values()) {
                 List<Long> times = data.getTimeInStatuses();
-                TaskStatusSummaryXY tssXY = new TaskStatusSummaryXY(data.getOwner(), times, data.getOwner(), data.getDescription());
+                TaskStatusSummaryXY tssXY = new TaskStatusSummaryXY(data.getRoleName(), times, data.getRoleId(), data.getDescription());
                 tss.addDataEntry(tssXY);
             }
             tss.getData().sort(CustomComparators.TaskStatusSummary());

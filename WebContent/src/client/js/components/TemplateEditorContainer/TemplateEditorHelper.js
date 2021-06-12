@@ -29,7 +29,7 @@ export const promptCurrentEditSave = (callback) => {
  * Perform callback after successful save.
  * @param {Function} callback
  */
-export const saveTemplate = (callback) => {
+export const saveTemplate = (callback = () => {}) => {
 	// TODO get available names and show error message on save template modal
 	// getAvailableName();
 	const selectedTemplate = getSelectedTemplate(store.getState());

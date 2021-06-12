@@ -1,8 +1,9 @@
 {
 	"type": "attack_on_critical_infrastructure",
-	"participants": ["CO", "WO", "XO", "AirO", "FSCC", "S-1", "S-2", "S-4", "S-3", "LOC"],
+	"participants": [1, 15, 2, 11, 12, 3, 4, 7, 10, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 590,
 			"y": 15
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 590,
 					"y": 75
@@ -30,6 +32,7 @@
 				"children": [
 					{
 						"title": "XO",
+						"roleId": 2,
 						"self_coordinates": {
 							"x": 70,
 							"y": 120
@@ -50,6 +53,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 195,
 							"y": 120
@@ -66,13 +70,14 @@
 								"description": "Reposition ISR"
 							},
 							{
-								"description": "Assess threat"
+								"description": "Assess Threat"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 360,
 							"y": 120
@@ -90,6 +95,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 505,
 							"y": 120
@@ -113,6 +119,7 @@
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 605,
 							"y": 145
@@ -139,6 +146,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 805,
 							"y": 145
@@ -148,6 +156,7 @@
 						"children": [
 							{
 								"title": "S-1",
+								"roleId": 10,
 								"self_coordinates": {
 									"x": 755,
 									"y": 240
@@ -161,7 +170,7 @@
 										"description": "Submit PCR\"s for any 3/2 casualties"
 									},
 									{
-										"description": "Accountability report from unit"
+										"description": "Accountability report from units/sections"
 									},
 									{
 										"description": "Report to XO"
@@ -171,6 +180,7 @@
 							},
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 940,
 									"y": 240
@@ -184,7 +194,7 @@
 										"description": "Identify loss of equipment"
 									},
 									{
-										"description": "Coordinate with RCT for required Spt"
+										"description": "Coordinate with RCT for required support"
 									},
 									{
 										"description": "Coordinate Engr Spt"

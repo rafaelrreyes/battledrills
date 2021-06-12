@@ -24,7 +24,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Report {
-    private String drillName = "";
+    private String drillId = "";
     private int numTasks = 0;
     private int numCompletedTasks = 0;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -37,20 +37,19 @@ public class Report {
     // Map of taskId to all info (description, statuses)
     private Map<String, ReportData> data = new HashMap<>();
 
-    public Report() {
-    }
+    public Report() {}
 
-    public Report(String drillName, int numTasks) {
-        this.drillName = drillName;
+    public Report(String drillId, int numTasks) {
+        this.drillId = drillId;
         this.numTasks = numTasks;
     }
 
-    public String getDrillName() {
-        return drillName;
+    public String getDrillId() {
+        return drillId;
     }
 
-    public void setDrillName(String drillName) {
-        this.drillName = drillName;
+    public void setDrillId(String drillId) {
+        this.drillId = drillId;
     }
 
     public Map<String, ReportData> getData() {
@@ -149,7 +148,7 @@ public class Report {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Drill Name: ").append(this.getDrillName()).append(System.lineSeparator());
+        sb.append("Drill ID: ").append(this.getDrillId()).append(System.lineSeparator());
         sb.append("Num Tasks: ").append(this.getNumTasks()).append(System.lineSeparator());
         sb.append("Num Completed Tasks: ").append(this.getNumCompletedTasks()).append(System.lineSeparator());
         sb.append("Start Time: ").append(this.getStartTime()).append(System.lineSeparator());

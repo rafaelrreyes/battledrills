@@ -5,6 +5,7 @@
  */
 package com.ngc.battledrills.rest;
 
+import com.ngc.battledrills.restparams.AttachmentRestParams;
 import com.ngc.battledrills.manage.AttachmentManager;
 import static com.ngc.battledrills.manage.AttachmentManager.AttachmentTypes;
 import java.io.InputStream;
@@ -166,10 +167,10 @@ public class AttachmentService {
                 // the path should just be to the drills directory
                 directoryPath = id + "/";
             } else {
-                // the path should be the taskId as the directory name, stored inside of the owner drills directory
+                // the path should be the taskId as the directory name, stored inside of the roles drills directory
                 // ex. /troops_in_contact_5a/1234_5678/
                 Task task = TaskRepo.getTask(id);
-                String drill = task.getBattleDrillName();
+                String drill = task.getBattleDrillId();
                 directoryPath = drill + "/" + id + "/";
             }
             

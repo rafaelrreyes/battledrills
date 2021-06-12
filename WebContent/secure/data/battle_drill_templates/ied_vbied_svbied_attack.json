@@ -1,8 +1,9 @@
 {
 	"type": "ied_vbied_svbied_attack",
-	"participants": ["CO", "WO", "S-1", "S-2", "S-3", "IO", "AirO", "FSCC", "LOC", "S-4"],
+	"participants": [1, 15, 10, 11, 12, 6, 3, 4, 7, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 610,
 			"y": 40
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 610,
 					"y": 95
@@ -30,6 +32,7 @@
 				"children": [
 					{
 						"title": "S-1",
+						"roleId": 10,
 						"self_coordinates": {
 							"x": 45,
 							"y": 190
@@ -50,6 +53,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 235,
 							"y": 190
@@ -63,13 +67,14 @@
 								"description": "Coordinate ISR support with RCT S-2 WO"
 							},
 							{
-								"description": "Assess threat"
+								"description": "Assess Threat"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 335,
 							"y": 412
@@ -80,12 +85,13 @@
 						},
 						"tasks": [
 							{
-								"description": "W/O to QRF and to nearest unit"
+								"description": "W/O to QRF and nearest unit to site"
 							}
 						],
 						"children": [
 							{
 								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 285,
 									"y": 445
@@ -108,6 +114,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 425,
 							"y": 190
@@ -118,13 +125,14 @@
 						},
 						"tasks": [
 							{
-								"description": "Coordinate air CASEVAC, if required"
+								"description": "Coordinate air CASEVAC if required"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 595,
 							"y": 190
@@ -151,6 +159,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 850,
 							"y": 175
@@ -160,6 +169,7 @@
 						"children": [
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 940,
 									"y": 260

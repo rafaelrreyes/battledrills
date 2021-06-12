@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.ngc.battledrills.manage.RolesManager;
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -28,6 +29,7 @@ public class Attachment {
     private String name = "";
     private String type = "";
     private String uploader = "";
+    private int uploaderId = 0;
     private LocalDateTime lastModified = null;
     
     public Attachment() {
@@ -63,8 +65,17 @@ public class Attachment {
         this.type = type;
     }
     
+    public int getUploaderId() {
+        return this.uploaderId;
+    }
+    
+    public void setUploaderId(int uploaderId) {
+        this.uploaderId = uploaderId;
+    }
+    
     public String getUploader() {
-        return this.uploader;
+        RolesManager mgr = RolesManager.getInstance();
+        return mgr.getRolenameById(this.uploaderId);
     }
     
     public void setUploader(String uploader) {
@@ -97,6 +108,7 @@ public class Attachment {
         sb.append("Attachment name: ").append(this.name).append(System.lineSeparator());
         sb.append("Attachment type: ").append(this.type).append(System.lineSeparator());
         sb.append("Attachment uploader: ").append(this.uploader).append(System.lineSeparator());
+        sb.append("Attachment uploader ID: ").append(this.uploaderId).append(System.lineSeparator());
         sb.append("Last Modified: ").append(this.lastModified).append(System.lineSeparator());
         return sb.toString();
     }

@@ -5,8 +5,8 @@
  */
 package com.ngc.battledrills.rest;
 
+import com.ngc.battledrills.restparams.ReportsRestParams;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ngc.battledrills.BattleDrillsConfig;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,24 +30,22 @@ public class ReportsService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response getReports(ReportsRestParams params) {
-        if (StringUtils.isBlank(params.getDrillName())
+        if (StringUtils.isBlank(params.getDrillId())
                 || StringUtils.isBlank((params.getReportType()))) {
-            throw new WebApplicationException("Parameters must contain a battle drill name and report type", Response.Status.BAD_REQUEST);
+            throw new WebApplicationException("Parameters must contain a battle drill ID and report type", Response.Status.BAD_REQUEST);
         }
         ReportsManager rMgr = ReportsManager.getInstance();
         try {
             String response = "";
             if (params.getReportType().equalsIgnoreCase(ReportTypes.TimeToCompletion)) {
-                List<TimeToCompletion> ttcDatasets = rMgr.getTimeToCompletion(params.getDrillName(), params.getCompareDrillNames());
+                List<TimeToCompletion> ttcDatasets = rMgr.getTimeToCompletion(params.getDrillId(), params.getCompareDrillIds());
                 if (ttcDatasets == null) {
-                    return Response.status(400, "Error: Report not found for " + params.getDrillName()).build();
+                    return Response.status(400, "Error: Report not found for " + params.getDrillId()).build();
                 }
                 response = JsonUtils.writeValue(ttcDatasets);
-//                response = BattleDrillsConfig.DEFAULT_JSON_WRITER.writeValueAsString(ttcDatasets);
             } else if (params.getReportType().equalsIgnoreCase(ReportTypes.TaskStatusSummary)) {
-                TaskStatusSummary tss = rMgr.getTaskStatusSummary(params.getDrillName());
+                TaskStatusSummary tss = rMgr.getTaskStatusSummary(params.getDrillId());
                 response = JsonUtils.writeValue(tss);
-//                response = BattleDrillsConfig.DEFAULT_JSON_WRITER.writeValueAsString(tss);
             }
 
             return Response.ok(response).build();

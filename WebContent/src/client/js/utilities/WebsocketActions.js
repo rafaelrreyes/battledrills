@@ -1,6 +1,6 @@
 import store from "REDUX/store";
 import { API, AttachmentTypes } from "UTILITIES/";
-import { getSelectedDrillName, getRole, getSelectedTask, getSelectedDrill, getAllChats } from "REDUX/index";
+import { getSelectedDrillName, getUser, getSelectedTask, getSelectedDrill, getAllChats } from "REDUX/index";
 import {
 	setActiveBillet,
 	setAllStatuses,
@@ -21,6 +21,7 @@ import {
 } from "CORE/Modal/ModalContent/index";
 import { getCurrentView } from "REDUX/index";
 import { Routes } from "./Constants";
+import { getUsername } from "REDUX/index";
 
 export const newDrillCreated = (websocketReponse) => {
 	const { drillName } = websocketReponse;
@@ -61,9 +62,9 @@ export const drillStopped = (websocketReponse) => {
 			break;
 		case Routes.MY_DRILLS:
 			// drill completed on my_drills view
-			const role = getRole(store.getState()).toUpperCase();
-			API.getOwnerBillet(
-				role,
+			const role = getUser(store.getState()).toUpperCase();
+			API.getBilletByRoleId(
+				role.id,
 				{},
 				(response) => {
 					let drills = [];
@@ -164,17 +165,17 @@ export const newNoteAdded = (websocketResponse) => {
 
 /**
  * When a task is updated, update subscriber client's corresponding task.
- * This means that owner billet, status, and diagram view all need to be updated.
+ * This means that role billet, status, and diagram view all need to be updated.
  * @param {object} websocketResponse
  */
 export const taskUpdated = (websocketResponse) => {
 	const { taskData, drillName, noteId, timestamp, user } = websocketResponse;
 
-	const role = getRole(store.getState()).toUpperCase();
+	const role = getUsername(store.getState()).toUpperCase();
 	const selectedDrill = getSelectedDrill(store.getState());
 	const selectedTask = getSelectedTask(store.getState());
 
-	API.getOwnerBillet(role, {}, (data) => {
+	API.getBilletByRoleId(role.id, {}, (data) => {
 		store.dispatch(setActiveBillet(data));
 	});
 
@@ -225,10 +226,10 @@ export const taskUpdated = (websocketResponse) => {
 export const taskDeleted = (websocketResponse) => {
 	const { taskData } = websocketResponse;
 
-	const role = getRole(store.getState()).toUpperCase();
+	const role = getUser(store.getState()).toUpperCase();
 	const selectedTask = getSelectedTask(store.getState());
 
-	API.getOwnerBillet(role, {}, (data) => {
+	API.getBilletByRoleId(role.id, {}, (data) => {
 		store.dispatch(setActiveBillet(data));
 	});
 
@@ -244,11 +245,11 @@ export const taskDeleted = (websocketResponse) => {
 export const taskDescriptionUpdated = (websocketResponse) => {
 	const { taskData, drillName, noteId, timestamp, user } = websocketResponse;
 
-	const role = getRole(store.getState()).toUpperCase();
+	const role = getUser(store.getState()).toUpperCase();
 	const selectedDrill = getSelectedDrill(store.getState());
 	const selectedTask = getSelectedTask(store.getState());
 
-	API.getOwnerBillet(role, {}, (data) => {
+	API.getBilletByRoleId(role.id, {}, (data) => {
 		store.dispatch(setActiveBillet(data));
 	});
 
@@ -302,31 +303,28 @@ export const taskDescriptionUpdated = (websocketResponse) => {
  */
 export const chatMessageReceived = (websocketResponse) => {
 	const chats = getAllChats(store.getState());
-	let role = getRole(store.getState()).toUpperCase();
-	let { sender, target, message, timestampMillis } = websocketResponse.message;
-
-	target = target.toUpperCase();
-	sender = sender.toUpperCase();
+	let role = getUser(store.getState());
+	let { senderId, receiverId, message, timestampMillis } = websocketResponse.message;
 
 	// checks to see if the chat socket is already open between sender and target
 	let alreadyOpened = chats.find((currentChat) => {
-		let currentChatRole = currentChat.role.toUpperCase();
-		return currentChatRole === target || (currentChatRole === sender && target !== "ALL");
+		let currentChatRoleId = currentChat.receiverId;
+		return currentChatRoleId === receiverId || (currentChatRoleId === senderId && receiverId !== "*");
 	});
 
 	// chat is already open, just update chat reducer
 	if (typeof alreadyOpened !== "undefined") {
-		if (target === role || (target === "ALL" && sender !== role)) {
-			store.dispatch(updateChat({ sender, target, message, timestampMillis }));
+		if (receiverId === role.id || (receiverId === "*" && senderId !== role.id)) {
+			store.dispatch(updateChat({ senderId, receiverId, message, timestampMillis }));
 		}
 
 		// add a new chat if isn't open yet
 	} else {
-		if (target === role || target === "ALL") {
+		if (receiverId === role.id || receiverId === "*") {
 			store.dispatch(
 				addChat({
-					sender,
-					target: target === "ALL" ? "All" : sender,
+					senderId,
+					receiverId: receiverId === "*" ? "All" : senderId,
 					message,
 					timestampMillis
 				})

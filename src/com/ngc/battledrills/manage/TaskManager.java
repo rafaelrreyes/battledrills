@@ -27,34 +27,27 @@ import org.apache.commons.lang3.StringUtils;
 public class TaskManager {
     private TaskManager(){}
     
-    public static Map<String, Owner> getTaskMetrics()
-    {
+    public static Map<Integer, Owner> getTaskMetrics() {
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        Map<String, Owner> metrics = new HashMap<>();
+        Map<Integer, Owner> metrics = new HashMap<>();
         List<BattleDrill> activeDrills = mgr.getActiveDrills();
         
         // For each active battle drill, obtain a map of owners/billets and their associated tasks.
-        // If this owner/billet has not been recorded yet, createa a new Owner opbject and add the tasks from each battle drill to it
+        // If this owner/billet has not been recorded yet, createa a new Owner object and add the tasks from each battle drill to it
         // If this owner/billet has already been recorded, add the tasks for the current battle drill loop value to the existing Owner object
-        for(BattleDrill bd : activeDrills)
-        {
-            Map<String, List<Task>> tasksXowner = bd.getTasksXOwner(); // Map<Owner_Billet, List<Task>>
+        for (BattleDrill bd : activeDrills) {
+            Map<Integer, List<Task>> tasksByRole = bd.getTasksByRole(); // Map<Owner_Billet, List<Task>>
             
-            for(String ownerName : tasksXowner.keySet())
-            {
+            for (int roleId : tasksByRole.keySet()) {
                 // Only add the battle drill entry to this owner's list if there are actually tasks assigned to this owner in the battle drill
-                if(tasksXowner.get(ownerName).size() > 0) 
-                {
-                    if(metrics.containsKey(ownerName)) // It we have already recorded this owner/billet for another battle drill, add to the existing Owner object
-                    {
-                        Owner o = metrics.get(ownerName);
-                        o.addTasks(bd.getName(), tasksXowner.get(ownerName));
-                    }
-                    else // The owner/billet hasn't been recorded yet for any battle drills, so we'll create one here
-                    {
-                        Owner o = new Owner(ownerName);
-                        o.addTasks(bd.getName(), tasksXowner.get(ownerName));
-                        metrics.put(ownerName, o);
+                if (tasksByRole.get(roleId ).size() > 0) {
+                    if(metrics.containsKey(roleId )) {
+                        Owner o = metrics.get(roleId );
+                        o.addTasksToDrillById(bd.getId(), tasksByRole.get(roleId));
+                    } else {
+                        Owner o = new Owner(roleId);
+                        o.addTasksToDrillById(bd.getId(), tasksByRole.get(roleId ));
+                        metrics.put(roleId , o);
                     }
                 }
             }
@@ -63,10 +56,8 @@ public class TaskManager {
     }
     
     
-    public static void startTask(String taskId) throws ItemNotFoundException
-    {
-        if(StringUtils.isBlank(taskId))
-        {
+    public static void startTask(String taskId) throws ItemNotFoundException {
+        if (StringUtils.isBlank(taskId)) {
             throw new InvalidParameterException("Unable to start task - taskId parameter cannot be blank");
         }
         
@@ -74,10 +65,8 @@ public class TaskManager {
         task.start();
     }
     
-    public static void stopTask(String taskId) throws ItemNotFoundException
-    {
-        if(StringUtils.isBlank(taskId))
-        {
+    public static void stopTask(String taskId) throws ItemNotFoundException {
+        if (StringUtils.isBlank(taskId)) {
             throw new InvalidParameterException("Unable to stop task - taskId parameter cannot be blank");
         }
         

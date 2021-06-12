@@ -1,8 +1,9 @@
 {
 	"type": "tactical_maneuver",
-	"participants": ["Convoy Commander", "WO", "S-2", "S-3", "AirO", "FSCC", "LOC", "S-1", "S-4", "BAS"],
+	"participants": [16, 15, 11, 12, 3, 4, 7, 10, 13, 5],
 	"data": {
 		"title": "Convoy Commander",
+		"roleId": 16,
 		"self_coordinates": {
 			"x": 530,
 			"y": 20
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 70,
 					"y": 70
@@ -30,6 +32,7 @@
 			},
 			{
 				"title": "S-2",
+				"roleId": 11,
 				"self_coordinates": {
 					"x": 235,
 					"y": 70
@@ -46,6 +49,7 @@
 			},
 			{
 				"title": "S-3",
+				"roleId": 12,
 				"self_coordinates": {
 					"x": 365,
 					"y": 70
@@ -65,6 +69,7 @@
 			},
 			{
 				"title": "AirO",
+				"roleId": 3,
 				"self_coordinates": {
 					"x": 485,
 					"y": 70
@@ -87,6 +92,7 @@
 			},
 			{
 				"title": "FSCC",
+				"roleId": 4,
 				"self_coordinates": {
 					"x": 620,
 					"y": 110
@@ -106,6 +112,7 @@
 			},
 			{
 				"title": "LOC",
+				"roleId": 7,
 				"self_coordinates": {
 					"x": 800,
 					"y": 90
@@ -113,6 +120,7 @@
 				"children": [
 					{
 						"title": "S-1",
+						"roleId": 10,
 						"self_coordinates": {
 							"x": 720,
 							"y": 160
@@ -129,6 +137,7 @@
 					},
 					{
 						"title": "S-4",
+						"roleId": 13,
 						"self_coordinates": {
 							"x": 845,
 							"y": 160
@@ -145,6 +154,7 @@
 						"children": [
 							{
 								"title": "BAS",
+								"roleId": 5,
 								"self_coordinates": {
 									"x": 845,
 									"y": 270

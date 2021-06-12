@@ -5,11 +5,12 @@ import {
 	CreateDrillContainer,
 	Version,
 	Confirmation,
-	NewOwnerContainer,
+	NewRoleContainer,
 	NewTaskContainer,
 	CreateTemplateContainer,
 	SaveTemplateContainer,
-	ManageTemplatesContainer
+	ManageTemplatesContainer,
+	ConfigureTasksContainer
 } from "./ModalContent/";
 import { getModalContentType, getModalContentData, closeModal } from "REDUX";
 
@@ -17,11 +18,12 @@ export const ModalContentTypes = {
 	NEW_DRILL: "NEW_DRILL",
 	VERSION: "VERSION",
 	CONFIRMATION: "CONFIRMATION",
-	NEW_OWNER: "NEW_OWNER",
+	NEW_ROLE: "NEW_ROLE",
 	NEW_TASK: "NEW_TASK",
 	CREATE_TEMPLATE: "CREATE_TEMPLATE",
 	SAVE_TEMPLATE: "SAVE_TEMPLATE",
-	MANAGE_TEMPLATES: "MANAGE_TEMPLATES"
+	MANAGE_TEMPLATES: "MANAGE_TEMPLATES",
+	CONFIGURE_TASKS: "CONFIGURE_TASKS"
 };
 
 export const ModalContainer = () => {
@@ -83,9 +85,9 @@ export const ModalContainer = () => {
 						description={contentData.description}
 					/>
 				);
-			case ModalContentTypes.NEW_OWNER:
+			case ModalContentTypes.NEW_ROLE:
 				return (
-					<NewOwnerContainer
+					<NewRoleContainer
 						{...contentData}
 						updateData={updateData}
 						updateDisableSubmit={updateDisableSubmit}
@@ -124,6 +126,15 @@ export const ModalContainer = () => {
 				);
 			case ModalContentTypes.MANAGE_TEMPLATES:
 				return <ManageTemplatesContainer title={contentData.title} icon={contentData.icon} />;
+			case ModalContentTypes.CONFIGURE_TASKS:
+				return (
+					<ConfigureTasksContainer
+						{...contentData}
+						updateData={updateData}
+						title={contentData.title}
+						icon={contentData.icon}
+					/>
+				);
 			default:
 				return (
 					<Confirmation

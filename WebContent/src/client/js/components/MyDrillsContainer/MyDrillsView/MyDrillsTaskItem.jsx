@@ -5,7 +5,7 @@ import { setSelectedTask, setSelectedDrill, getSelectedTask } from "REDUX";
 import { API, TASK_DESCRIPTION_PLACEHOLDER } from "UTILITIES";
 import "./MyDrillsTaskItem.scss";
 
-const MyDrillsTaskItem = ({ drillName, task }) => {
+const MyDrillsTaskItem = ({ drillId, task }) => {
 	// destructured props
 	const { taskId, description, currentStatus } = task;
 
@@ -26,7 +26,7 @@ const MyDrillsTaskItem = ({ drillName, task }) => {
 			}
 		});
 
-		API.getDrillByName(drillName, {}, (response) => {
+		API.getDrillById(drillId, {}, (response) => {
 			if (response !== null) {
 				dispatch(setSelectedDrill(response));
 			}

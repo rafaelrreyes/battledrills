@@ -6,7 +6,7 @@ import "./MyDrillsStatistics.scss";
 const MyDrillsStatistics = ({ drills, role }) => {
 	return (
 		<div className="tasks-reports-statistics">
-			<span className="tasks-reports-statistics-user badge">{role}</span>
+			<span className="tasks-reports-statistics-user badge">{role.name}</span>
 			{renderStatistics(drills)}
 		</div>
 	);
@@ -21,28 +21,31 @@ const renderStatistics = (drills) => {
 	let completedTasks = 0;
 
 	drills.forEach((drill) => {
-		let tasks = Object.values(drill)[0];
-		totalDrills++;
-		tasks.forEach((task) => {
-			const { status } = task.currentStatus;
-			switch (status) {
-				case StatusTypes.PENDING:
-					pendingTasks++;
-					break;
-				case StatusTypes.IN_PROGRESS:
-					inProgressTasks++;
-					break;
-				case StatusTypes.BLOCKED:
-					blockedTasks++;
-					break;
-				case StatusTypes.COMPLETED:
-					completedTasks++;
-					break;
-				default:
-					break;
-			}
-			totalTasks++;
-		});
+		const { tasks } = drill;
+
+		if (tasks !== undefined && tasks !== null) {
+			totalDrills++;
+			tasks.forEach((task) => {
+				const { status } = task.currentStatus;
+				switch (status) {
+					case StatusTypes.PENDING:
+						pendingTasks++;
+						break;
+					case StatusTypes.IN_PROGRESS:
+						inProgressTasks++;
+						break;
+					case StatusTypes.BLOCKED:
+						blockedTasks++;
+						break;
+					case StatusTypes.COMPLETED:
+						completedTasks++;
+						break;
+					default:
+						break;
+				}
+				totalTasks++;
+			});
+		}
 	});
 
 	return (

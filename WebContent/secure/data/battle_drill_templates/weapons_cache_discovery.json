@@ -1,8 +1,9 @@
 {
 	"type": "weapon_cache_discovery",
-	"participants": ["CO", "WO", "S-3", "IO", "AirO", "S-2", "FSCC", "LOC", "S-4"],
+	"participants": [1, 15, 12, 6, 3, 11, 4, 7, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 700,
 			"y": 20
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 700,
 					"y": 85
@@ -27,6 +29,7 @@
 				"children": [
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 70,
 							"y": 140
@@ -43,7 +46,7 @@
 								"description": "W/O to Engineer Plt"
 							},
 							{
-								"description": "Notify Adjacent/Supporting Units"
+								"description": "Notify adjacent/supporting units"
 							},
 							{
 								"description": "Monitor mission and assess need for reinforcements"
@@ -52,6 +55,7 @@
 						"children": [
 							{
 								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 28,
 									"y": 365
@@ -65,7 +69,7 @@
 										"description": "Ensure Combat Correspondent documents site"
 									},
 									{
-										"description": "EW-coord EMS localized suppresion"
+										"description": "EW-coord EMS localized suppression"
 									}
 								]
 							}
@@ -73,6 +77,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 305,
 							"y": 130
@@ -90,6 +95,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 480,
 							"y": 125
@@ -100,13 +106,14 @@
 						},
 						"tasks": [
 							{
-								"description": "Plot location & develop pattern analysis"
+								"description": "Plot location and develop pattern analysis"
 							}
 						],
 						"children": []
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 617,
 							"y": 125
@@ -133,6 +140,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 800,
 							"y": 155
@@ -142,6 +150,7 @@
 						"children": [
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 800,
 									"y": 215

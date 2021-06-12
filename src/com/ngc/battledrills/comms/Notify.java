@@ -6,7 +6,7 @@
 package com.ngc.battledrills.comms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ngc.battledrills.rest.BattleDrillsWebsocketService;
+import com.ngc.battledrills.websocket.BattleDrillsWebsocketService;
 import com.ngc.battledrills.util.JsonUtils;
 
 /**

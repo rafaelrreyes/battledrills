@@ -82,16 +82,19 @@ public class Task {
     public boolean addAttachment(Attachment attachment, User user) throws ItemNotFoundException {
         this.attachments.add(attachment);
         // create a new Note and add to the notes of this task
+        
+        // TODO notes notif
         Note statusNote = new Note(user, attachment.getFilename());
         statusNote.setType(Note.NoteTypes.AUTO_GENERATED);
         statusNote.setAutoType(Note.AutoGenTypes.ATTACHMENT_UPLOAD);
-        addNote(statusNote);
+//        addNote(statusNote);
         
+        // TODO:
         // send attachment upload notification
-        Notification attachmentNotification = 
-                NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, getBattleDrillName(), getTaskData(), AttachmentTypes.TASK, attachment.getFilename());
-        Notify.sendNotificationToAllExcluding(attachmentNotification);
-        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, attachmentNotification));
+//        Notification attachmentNotification = 
+//                NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.CREATE, user, getBattleDrillName(), getTaskData(), AttachmentTypes.TASK, attachment.getFilename());
+//        Notify.sendNotificationToAllExcluding(attachmentNotification);
+//        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, attachmentNotification));
         return true;
     }
     
@@ -128,12 +131,12 @@ public class Task {
                 Note statusNote = new Note(user, fileName);
                 statusNote.setType(Note.NoteTypes.AUTO_GENERATED);
                 statusNote.setAutoType(Note.AutoGenTypes.ATTACHMENT_DELETE);
-                addNote(statusNote);
+//                addNote(statusNote);
                 // send attachment delete notification
-                Notification attachmentNotification = 
-                        NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getBattleDrillName(), getTaskData(), AttachmentTypes.TASK, fileName);
-                Notify.sendNotificationToAllExcluding(attachmentNotification);
-                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, attachmentNotification));
+//                Notification attachmentNotification = 
+//                        NotifyManager.createAttachmentNotification(NotifyTypes.OPERATION_TYPES.DELETE, user, getBattleDrillName(), getTaskData(), AttachmentTypes.TASK, fileName);
+//                Notify.sendNotificationToAllExcluding(attachmentNotification);
+//                Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.DELETE, attachmentNotification));
                 isDeleted = true;
                 
                 break;
@@ -143,14 +146,17 @@ public class Task {
     }
     
     @JsonIgnore
-    public String getBattleDrillName()
-    {
-        return (null != parent)?parent.getBattleDrillName():"";
+    public String getBattleDrillId() {
+        return (null != parent) ? parent.getBattleDrillId() : "";
     }
     
-    public String getOwner()
-    {
-        return (null != parent)?parent.getOwner():"";
+    @JsonIgnore
+    public String getBattleDrillName() {
+        return (null != parent) ? parent.getBattleDrillName():"";
+    }
+    
+    public int getRoleId() {
+        return (null != parent) ? parent.getRoleId() : 0;
     }
     
     /**
@@ -162,15 +168,17 @@ public class Task {
      */
     public Task changeCurrentStatus(User user, String status) throws ItemNotFoundException {
         BattleDrillManager bdMgr = BattleDrillManager.getInstance();
-        String bdName = getBattleDrillName();
+        String drillId = getBattleDrillId();
         LocalDateTime currDateTime = LocalDateTime.now();
+        
         // start battle drill if task status is changed and the battle drill hasn't been started
         if (this.currentStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.PENDING)
-                && !bdMgr.isBattleDrillStarted(bdName)) {
-            currDateTime = bdMgr.startBattleDrill(bdName, user);
-            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, bdName);
+                && !bdMgr.isBattleDrillStarted(drillId)) {
+            currDateTime = bdMgr.startBattleDrill(drillId, user);
+            // TODO
+//            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.START, user, bdName);
             // send specifically to user who changed status since startBattleDrill sends to everyone but user who changed
-            Notify.sendNotificationToSessionId(drillNotification);
+//            Notify.sendNotificationToSessionId(drillNotification);
         }
 
         // if status was completed, but changed back to a non completed state, end time must be set back to null, to return -1
@@ -195,41 +203,42 @@ public class Task {
 
         ReportsManager rMgr = ReportsManager.getInstance();
         String drillName = getBattleDrillName();
-        int numCompleted = rMgr.getReport(drillName).getNumCompletedTasks();
+        int numCompleted = rMgr.getReportByDrillId(drillId).getNumCompletedTasks();
 
         // new state is COMPLETED, so set the task's endTime in reportData
         if (newStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
-            rMgr.getReport(drillName).setTaskEndTime(this.id, newStatus.getStartTime());
-            rMgr.getReport(drillName).setNumCompletedTasks(++numCompleted);
+            rMgr.getReportByDrillId(drillId).setTaskEndTime(this.id, newStatus.getStartTime());
+            rMgr.getReportByDrillId(drillId).setNumCompletedTasks(++numCompleted);
         } else if (this.currentStatus.getStatus().equalsIgnoreCase(Status.StatusTypes.COMPLETED)) {
             // set the overall task end time back to null when task is changed from COMPLETED to something else
-            rMgr.getReport(drillName).setTaskEndTime(this.id, null);
-            rMgr.getReport(drillName).setNumCompletedTasks(--numCompleted);
+            rMgr.getReportByDrillId(drillId).setTaskEndTime(this.id, null);
+            rMgr.getReportByDrillId(drillId).setNumCompletedTasks(--numCompleted);
         }
 
-        rMgr.getReport(drillName).addStatus(this.id, newStatus);
-        rMgr.saveReport(rMgr.getReport(drillName));
+        rMgr.getReportByDrillId(drillId).addStatus(this.id, newStatus);
+        rMgr.saveReport(rMgr.getReportByDrillId(drillId));
 
         setCurrentStatus(newStatus);
-
-        // create a new Note and add to the notes of this task
-        String automatedNoteStatusText = newStatus.getStatus().toUpperCase();
-        Note statusNote = new Note(user, automatedNoteStatusText);
-        statusNote.setType(Note.NoteTypes.AUTO_GENERATED);
-        statusNote.setAutoType(Note.AutoGenTypes.STATUS_CHANGE);
-        addNote(statusNote);
-        
-        // send task edit notification
-        Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, Task.EditableKeys.STATUS, user, getBattleDrillName(), getTaskData(), statusNote.getId());
-        Notify.sendNotificationToAllExcluding(taskNotification);
-        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, taskNotification));
+//
+//        // create a new Note and add to the notes of this task
+//        String automatedNoteStatusText = newStatus.getStatus().toUpperCase();
+//        Note statusNote = new Note(user, automatedNoteStatusText);
+//        statusNote.setType(Note.NoteTypes.AUTO_GENERATED);
+//        statusNote.setAutoType(Note.AutoGenTypes.STATUS_CHANGE);
+//        addNote(statusNote);
+//        
+//        // send task edit notification
+//        Notification taskNotification = NotifyManager.createTaskNotification(NotifyTypes.OPERATION_TYPES.EDIT, Task.EditableKeys.STATUS, user, getBattleDrillName(), getTaskData(), statusNote.getId());
+//        Notify.sendNotificationToAllExcluding(taskNotification);
+//        Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, taskNotification));
 
         // final task was set to COMPLETE
-        if (numCompleted == rMgr.getReport(drillName).getNumTasks()) {
-            bdMgr.stopBattleDrill(drillName, user);
-            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, bdName);
+        if (numCompleted == rMgr.getReportByDrillId(drillId).getNumTasks()) {
+            bdMgr.stopBattleDrill(drillId, user);
+            // TODO: notification
+//            Notification drillNotification = NotifyManager.createDrillNotification(NotifyTypes.OPERATION_TYPES.STOP, user, bdName);
             // send specifically to user who changed status since stopBattleDrill sends to everyone but user who changed
-            Notify.sendNotificationToSessionId(drillNotification);
+//            Notify.sendNotificationToSessionId(drillNotification);
         }
 
         return this;
@@ -258,23 +267,19 @@ public class Task {
         return this.notes;
     }
     
-    public void addNote(Note note) throws ItemNotFoundException
-    {
-        if(null == notes)
-        {
+    public void addNote(Note note) throws ItemNotFoundException {
+        if (null == notes) {
             notes = new ArrayList<>();
         }
-        
-        System.out.println("DIANA adding note to task, battleDrillName is: " + getBattleDrillName());
 
         notes.add(note);
-        if (!note.getType().equals(Note.NoteTypes.AUTO_GENERATED)) {
-            Notification noteNotification = NotifyManager.createNoteNotification(NotifyTypes.OPERATION_TYPES.CREATE, note.getUser(), getBattleDrillName(), getTaskData(), note);
-            Notify.sendNotificationToAllExcluding(noteNotification);
-            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, noteNotification));
-        }
+//        if (!note.getType().equals(Note.NoteTypes.AUTO_GENERATED)) {
+//            Notification noteNotification = NotifyManager.createNoteNotification(NotifyTypes.OPERATION_TYPES.CREATE, note.getUser(), getBattleDrillName(), getTaskData(), note);
+//            Notify.sendNotificationToAllExcluding(noteNotification);
+//            Notify.sendNotification(NotifyManager.createToastNotification(NotifyTypes.OPERATION_TYPES.CREATE, noteNotification));
+//        }
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        mgr.saveBattleDrill(getBattleDrillName(), false);
+        mgr.saveBattleDrill(getBattleDrillId(), false);
     }
     
     public Note getNote(String noteId)

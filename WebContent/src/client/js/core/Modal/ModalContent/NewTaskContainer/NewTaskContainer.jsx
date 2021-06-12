@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Input, InputSizes, InputTypes, Dropdown, DropdownSizes, DropdownTypes, Icon } from "CORE";
+import { API } from "UTILITIES";
 import { getSelectedDrill, getSelectedTemplate } from "REDUX";
 import "./NewTaskContainer.scss";
 
@@ -12,28 +13,43 @@ const NewTaskContainer = ({
 	updateData,
 	updateDisableSubmit,
 	submit,
-	parentRole = "",
+	parentId = 0,
 	title,
 	icon
 }) => {
 	const [description, setDescription] = useState("");
 	const [error, setError] = useState({ isError: false });
-	const [role, setRole] = useState("");
+	const [roleId, setRoleId] = useState(0);
+	const [dropdownRoles, setDropdownRoles] = useState([]);
 
 	const { participants } = fromTemplate ? useSelector(getSelectedTemplate) : useSelector(getSelectedDrill);
 
 	useEffect(() => {
 		if (fromPalette) {
-			if (role === "" || typeof participants === "undefined") {
+			if (roleId === 0 || typeof participants === "undefined") {
 				updateDisableSubmit(true);
 			} else {
 				updateDisableSubmit(false);
-				updateData({ description, role });
+				updateData({ description, roleId });
 			}
 		} else {
-			updateData({ description });
+			updateData({ description, roleId: parentId });
 		}
-	}, [description, role]);
+	}, [description, roleId]);
+
+	useEffect(() => {
+		if (typeof participants !== "undefined" && fromPalette) {
+			API.getRoles((roles) => {
+				const dropdownOptions = [];
+				roles.forEach((role) => {
+					if (participants.includes(role.id)) {
+						dropdownOptions.push({ id: role.id, name: role.name });
+					}
+				});
+				setDropdownRoles(dropdownOptions);
+			});
+		}
+	}, []);
 
 	const onDescriptionChange = (value) => {
 		if (value.length > MAX_TASK_DESCRIPTION_LENGTH) {
@@ -53,16 +69,8 @@ const NewTaskContainer = ({
 		}
 	};
 
-	const onRoleChange = (role) => {
-		setRole(role);
-	};
-
-	const configureRoleOptions = () => {
-		if (typeof participants === "undefined") {
-			return [];
-		}
-
-		return participants;
+	const onRoleChange = (roleId) => {
+		setRoleId(parseInt(roleId));
 	};
 
 	const renderRoleDropdown = () => {
@@ -71,7 +79,7 @@ const NewTaskContainer = ({
 				<Dropdown
 					dropdownType={DropdownTypes.REGULAR}
 					dropdownSize={DropdownSizes.FILL}
-					options={configureRoleOptions()}
+					options={dropdownRoles}
 					onChange={onRoleChange}
 					firstOption="Add new task to existing role*"
 					firstValid={false}
@@ -98,8 +106,7 @@ const NewTaskContainer = ({
 				/>
 			</div>
 			<span className="confirmation-message">
-				{(role !== "" || parentRole !== "") &&
-					`Are you sure you want to add this task to ${role || parentRole}?`}
+				{(roleId !== 0 || parentId !== 0) && `Are you sure you want to add this task?`}
 			</span>
 		</div>
 	);

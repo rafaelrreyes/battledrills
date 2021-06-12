@@ -7,7 +7,7 @@ import "./Account.scss";
 
 const Account = () => {
 	const user = useSelector(getUser);
-	const [username, setUsername] = useState(user.username);
+	const [username, setUsername] = useState(user.name);
 
 	const usernameChangeHandler = (name) => {
 		// if keeping username in redux, probably dispatch update here
@@ -42,7 +42,7 @@ const Account = () => {
 						inputType={InputTypes.REGULAR}
 						inputSize={InputSizes.LARGE}
 						onChange={usernameChangeHandler}
-						initValue={user.role}
+						initValue={user.roleName}
 						disabled={true}
 					/>
 				</div>

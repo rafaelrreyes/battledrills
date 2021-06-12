@@ -20,6 +20,7 @@ public class Group {
     private int id;
     private String name;
     private ArrayList<Integer> roles = new ArrayList<Integer>();
+    private ArrayList<String> roleNames;
     
     private Group() {}
     
@@ -65,6 +66,10 @@ public class Group {
             mappedRolesNames.add(roleMgr.getRolesMap().get(roleId).getName());
         });
         return mappedRolesNames;
+    }
+    
+    public void setRoleNames(ArrayList<String> roleNames) {
+        this.roleNames = roleNames;
     }
 
     @Override

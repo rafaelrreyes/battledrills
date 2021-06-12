@@ -45,10 +45,7 @@ const ChatContainer = () => {
 	useEffect(() => {
 		// anytime the roles is changed in app state, fetch most updated roles
 		API.getRoles((roles) => {
-			const roleNames = roles.map((role) => {
-				return role.name;
-			});
-			setAllRoles(roleNames);
+			setAllRoles(roles);
 		});
 	}, [reduxRoles]);
 
@@ -115,45 +112,44 @@ const ChatContainer = () => {
 
 	const getContacts = () => {
 		let contacts = [];
-		const userRole = user.role;
-
+		const { id, name } = user;
 		// Always add default "All" for All Chat Option
-		contacts.push("All", ...allRoles);
+		contacts.push({ id: "*", name: "All" }, ...allRoles);
 
 		if (userSearchString !== "") {
 			return contacts
 				.filter(
 					(contact) =>
-						contact.toUpperCase().includes(userSearchString.toUpperCase()) &&
-						contact.toUpperCase() !== userRole.toUpperCase()
+						contact.name.toUpperCase().includes(userSearchString.toUpperCase()) &&
+						contact.name.toUpperCase() !== user.name.toUpperCase()
 				)
 				.map((contact) => {
 					return (
 						<li
-							key={contact}
+							key={`chat-contact-${contact.id}`}
 							className="contact-item"
 							onClick={(e) => {
 								openNewChatHandler(contact);
 							}}
 						>
-							{contact}
+							{contact.name}
 						</li>
 					);
 				});
 		}
 
 		return contacts
-			.filter((contact) => contact.toUpperCase() !== userRole.toUpperCase())
+			.filter((contact) => contact.name.toUpperCase() !== user.name.toUpperCase())
 			.map((contact) => {
 				return (
 					<li
-						key={contact}
+						key={`chat-contact-${contact.id}`}
 						className="contact-item"
 						onClick={(e) => {
 							openNewChatHandler(contact);
 						}}
 					>
-						{contact}
+						{contact.name}
 					</li>
 				);
 			});
@@ -161,12 +157,12 @@ const ChatContainer = () => {
 
 	const openNewChatHandler = (targetRole) => {
 		// check if state already includes an open chat for this contact
-		if (chats.find((currentChat) => targetRole.toUpperCase() === currentChat.role.toUpperCase())) {
+		if (chats.find((currentChat) => targetRole.id === currentChat.id)) {
 			return;
 		}
 
 		// TODO probably needs some work for later
-		dispatch(addChat({ sender: user, target: targetRole }));
+		dispatch(addChat({ senderId: user.id, receiverId: targetRole.id, receiverName: targetRole.name }));
 	};
 
 	const toggleSpilloverMenuHandler = () => {
@@ -207,6 +203,7 @@ const ChatContainer = () => {
 
 	const renderExtraChatsDropdown = (extraChats) => {
 		let extraChatsHTML = extraChats.map((chat, index) => {
+			console.log(chat);
 			return (
 				<li
 					className="open-chats-spill-over-dropdown-item"

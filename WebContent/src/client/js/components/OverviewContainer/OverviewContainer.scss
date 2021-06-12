@@ -7,6 +7,28 @@
 	align-items: center;
 	align-content: space-between;
 	height: 100%;
+
+	.card-title {
+		position: relative;
+
+		.drill-info-header {
+			position: relative;
+		}
+
+		.edit-drill-button {
+			position: absolute;
+			right: 0;
+			margin-right: 0.5em;
+
+			i {
+				transition: 0.2s;
+
+				&:hover {
+					color: $cyan-700;
+				}
+			}
+		}
+	}
 }
 
 .active-drill-title-container {

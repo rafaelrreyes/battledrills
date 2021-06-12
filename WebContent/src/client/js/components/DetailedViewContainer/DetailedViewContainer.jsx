@@ -12,7 +12,7 @@ import {
 	getSelectedTask,
 	getUser,
 	getCurrentView,
-	getSelectedDrillName,
+	getSelectedDrillId,
 	setSelectedDrill,
 	setSelectedTask,
 	setActiveBillet
@@ -26,8 +26,8 @@ const DetailedViewContainer = () => {
 
 	// redux selectors
 	const selectedTask = useSelector(getSelectedTask);
-	const selectedDrillName = useSelector(getSelectedDrillName);
-	const { taskId, description, notes, owner } = selectedTask;
+	const selectedDrillId = useSelector(getSelectedDrillId);
+	const { taskId, description, notes, roleId } = selectedTask;
 	const user = useSelector(getUser);
 	const currentView = useSelector(getCurrentView);
 
@@ -51,14 +51,14 @@ const DetailedViewContainer = () => {
 	const toggleEditHandler = () => {
 		if (editDescription) {
 			const requestBody = {
-				owner,
+				roleId,
 				description: newDescription,
 				taskId,
 				user
 			};
 
 			API.editTask(requestBody, () => {
-				API.getDrillByName(selectedDrillName, {}, (drill) => {
+				API.getDrillById(selectedDrillId, {}, (drill) => {
 					dispatch(setSelectedDrill(drill));
 				});
 
@@ -67,7 +67,7 @@ const DetailedViewContainer = () => {
 				});
 
 				if (currentView === Routes.MY_REPORT) {
-					API.getOwnerBillet(owner, {}, (data) => {
+					API.getBilletByRoleId(roleId, {}, (data) => {
 						dispatch(setActiveBillet(data));
 					});
 				} else if (currentView === Routes.ACTIVE_DIAGRAM) {
@@ -162,7 +162,10 @@ const DetailedViewContainer = () => {
 		// only allow saving if description has changed
 		let disabled = description === newDescription;
 		return (
-			<Icon className={`edit-description-icon ${disabled && editDescription ? "disabled" : ""}`}>
+			<Icon
+				onClick={toggleEditHandler}
+				className={`edit-description-icon ${disabled && editDescription ? "disabled" : ""}`}
+			>
 				{editDescription ? MaterialIconNames.SAVE : MaterialIconNames.EDIT}
 			</Icon>
 		);

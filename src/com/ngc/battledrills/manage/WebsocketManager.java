@@ -5,7 +5,7 @@
  */
 package com.ngc.battledrills.manage;
 
-import com.ngc.battledrills.data.WebsocketNode;
+import com.ngc.battledrills.websocket.WebsocketNode;
 import java.util.Arrays;
 import java.util.List;
 

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.ngc.battledrills.data.Status;
 import com.ngc.battledrills.data.Status.StatusTypes;
+import com.ngc.battledrills.manage.RolesManager;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,7 +27,8 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportData {
-    private String owner = ""; // task owner
+    private int roleId = 0;
+    private String roleName = "";
     private String description = ""; // task description
     private List<Status> statuses = new ArrayList<>();
 
@@ -37,22 +39,30 @@ public class ReportData {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endTime = null;
 
-    public ReportData() {
-    }
+    public ReportData() { }
 
-    public ReportData(String owner, String description, List<Status> status, LocalDateTime startTime) {
-        this.owner = owner;
+    public ReportData(int roleId, String description, List<Status> status, LocalDateTime startTime) {
+        this.roleId = roleId;
         this.description = description;
         this.statuses = status;
         this.startTime = startTime;
     }
-
-    public String getOwner() {
-        return owner;
+    
+    public int getRoleId() {
+        return this.roleId;
     }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
+    
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+    
+    public String getRoleName() {
+        RolesManager mgr = RolesManager.getInstance();
+        return mgr.getRolenameById(this.roleId);
+    }
+    
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public String getDescription() {
@@ -131,7 +141,7 @@ public class ReportData {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Owner: ").append(this.getOwner()).append(System.lineSeparator());
+        sb.append("Role ID: ").append(this.getRoleId()).append(System.lineSeparator());
         sb.append("Description: ").append(this.getDescription()).append(System.lineSeparator());
         sb.append("Statuses: ").append(this.getStatuses()).append(System.lineSeparator());
         sb.append("Start Time: ").append(this.getStartTime()).append(System.lineSeparator());

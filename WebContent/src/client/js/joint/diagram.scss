@@ -9,7 +9,7 @@
 	background-color: $blue-grey-800;
 }
 
-.owner-container {
+.role-container {
 	position: absolute;
 	display: flex;
 	flex-direction: row;
@@ -26,12 +26,12 @@
 	width: 100%;
 	text-align: left;
 
-	.owner-title {
+	.role-title {
 		@include heading-4;
 		color: $black;
 	}
 
-	.edit-owner-icon {
+	.edit-role-icon {
 		position: absolute;
 		display: none;
 		font-size: 0.85em;
@@ -45,7 +45,7 @@
 		}
 	}
 
-	.template-edit-owner-icon {
+	.template-edit-role-icon {
 		position: absolute;
 		display: inline-flex;
 		line-height: 1.5em;

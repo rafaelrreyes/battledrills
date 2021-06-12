@@ -6,7 +6,7 @@ const initialState = {
 	selectedDrill: {}
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
 	const { type, payload } = action;
 	switch (type) {
 		case SelectedDrillConstants.SET_SELECTED_DRILL: {
@@ -37,7 +37,7 @@ export default function(state = initialState, action) {
 				...state,
 				selectedDrill: {
 					...state.selectedDrill,
-					data: deepCoordinateUpdate(data, payload.owner, payload.coordinateType, payload.updatedCoordinates)
+					data: deepCoordinateUpdate(data, payload.roleId, payload.coordinateType, payload.updatedCoordinates)
 				}
 			};
 		}
@@ -134,17 +134,17 @@ const deepTaskUpdate = (node, updatedNode, targetTaskId) => {
 
 /**
  * Updates a deep coordinate nested inside of a drill data object.
- * Simply replaces the coordinates (tasks or owner/self) coordinates.
+ * Simply replaces the coordinates (tasks or role/self) coordinates.
  * @param {Object} drillData
- * @param {String} owner
+ * @param {String} roleId
  * @param {String} coordinateType
  * @param {Object} updatedCoordinates
  */
-const deepCoordinateUpdate = (drillData, owner, coordinateType, updatedCoordinates) => {
+const deepCoordinateUpdate = (drillData, roleId, coordinateType, updatedCoordinates) => {
 	const updatedData = Object.assign({}, drillData);
 	function recursiveUpdate(node) {
 		if (typeof node !== "undefined") {
-			if (node.title === owner) {
+			if (node.roleId === roleId) {
 				switch (coordinateType) {
 					case CoordinateTypes.SELF:
 						node.self_coordinates = { ...updatedCoordinates };

@@ -1,16 +1,16 @@
 @import "~CSS/index";
 
-.new-owner-container {
-	.new-owner-form {
+.new-role-container {
+	.new-role-form {
 		margin-bottom: 0.5em;
 
-		.new-owner-form-item {
+		.new-role-form-item {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			margin: 0.5em 0 0.5em 0;
 
-			.new-owner-label {
+			.new-role-label {
 				@include heading-3;
 				min-width: max-content;
 				margin-right: 0.5em;

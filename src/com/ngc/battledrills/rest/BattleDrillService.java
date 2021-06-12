@@ -5,6 +5,10 @@
  */
 package com.ngc.battledrills.rest;
 
+import com.ngc.battledrills.restparams.RoleRestParams;
+import com.ngc.battledrills.restparams.PositionRestParams;
+import com.ngc.battledrills.restparams.OrderedDrillsRestParams;
+import com.ngc.battledrills.restparams.BattleDrillRestParams;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ngc.battledrills.data.BattleDrill;
 import com.ngc.battledrills.manage.BattleDrillManager;
@@ -36,103 +40,111 @@ import org.apache.commons.lang3.StringUtils;
 @Path("/battledrills")
 public class BattleDrillService {
     @GET
-    public String getBattleDrillNames(@QueryParam("type") String type) throws JsonProcessingException {
+    public String getBattleDrills(@QueryParam("type") String type) throws JsonProcessingException {
         BattleDrillManager manager = BattleDrillManager.getInstance();
         if (type == null) {
-            return JsonUtils.writeValue(manager.getAllDrillNames());
-//            return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
+            return JsonUtils.writeValue(manager.getAllDrills());
         }
         switch (type) {
             case "active":
-                return JsonUtils.writeValue(manager.getActiveDrillNames());
-//                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getActiveDrillNames());
+                return JsonUtils.writeValue(manager.getActiveDrills());
             case "completed":
-                return JsonUtils.writeValue(manager.getCompletedDrillNames());
-//                return DEFAULT_JSON_WRITER.writeValueAsString(manager.getCompletedDrillNames());         
+                return JsonUtils.writeValue(manager.getCompletedDrills());
             default:
                 throw new WebApplicationException("Drill type is unknown", Response.Status.BAD_REQUEST);
         }
     }
     
     @GET
-    @Path("/battledrill/{name}")
-    @Produces("application/json")
-    public String getBattleDrillByName(@PathParam("name") String name) throws JsonProcessingException {
-        if (StringUtils.isBlank(name)) {
-            throw new WebApplicationException("Name parameter cannot be blank", Response.Status.BAD_REQUEST);
+    @Path("/battledrill/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getBattleDrillById(@PathParam("id") String id) throws JsonProcessingException {
+        if (StringUtils.isBlank(id)) {
+            throw new WebApplicationException("ID parameter cannot be blank", Response.Status.BAD_REQUEST);
         }
 
         BattleDrillManager manager = BattleDrillManager.getInstance();
-        return JsonUtils.writeValue(manager.getByName(name));
-//        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getByName(name));
+        return JsonUtils.writeValue(manager.getById(id));
     }
-
-    @DELETE
-    @Path("/battledrill/{name}")
-    public String deleteBattleDrillByName(@PathParam("name") String name, User user) throws JsonProcessingException {
-        if(StringUtils.isBlank(name) || user.isEmpty()) {
-            throw new WebApplicationException("Name path parameter and user cannot be blank", Response.Status.BAD_REQUEST);
+    
+    @POST
+    @Path("/battledrill/{id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String editDrillNameById(@PathParam("id") String id, BattleDrillRestParams params) throws JsonProcessingException {
+        if (StringUtils.isBlank(params.getName()) || StringUtils.isBlank(id)) {
+            throw new WebApplicationException("Name and ID parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
         
         BattleDrillManager manager = BattleDrillManager.getInstance();
-        manager.deleteBattleDrill(name, user); // not validated for allowed requestors as of now, but can later
-        return JsonUtils.writeValue(manager.getAllDrillNames());
-//        return DEFAULT_JSON_WRITER.writeValueAsString(manager.getAllDrillNames());
+        BattleDrill bd = manager.editDrillNameById(id, params.getName());
+        return JsonUtils.writeValue(bd);
+    }
+
+    @DELETE
+    @Path("/battledrill/{id}")
+    public String deleteBattleDrillById(@PathParam("id") String id, User user) throws JsonProcessingException {
+        if(StringUtils.isBlank(id) || user.isEmpty()) {
+            throw new WebApplicationException("ID path parameter and user cannot be blank", Response.Status.BAD_REQUEST);
+        }
+        
+        BattleDrillManager manager = BattleDrillManager.getInstance();
+        manager.deleteBattleDrill(id, user); // not validated for allowed requestors as of now, but can later
+        return JsonUtils.writeValue(manager.getAllDrills());
     }
     
     @GET
-    @Path("/{name}/subtree/{owner}")
-    public String getSubtreeByOwner(@PathParam("name") String name, @PathParam("owner") String owner) {
-        if (StringUtils.isBlank(name) || StringUtils.isBlank(owner)) {
-            throw new WebApplicationException("Parameters must contain a battle drill name and a subtree owner",
+    @Path("/{id}/subtree/{roleId}")
+    public String getSubtreeByRoleId(@PathParam("id") String id, @PathParam("roleId") int roleId) {
+        if (StringUtils.isBlank(id) || roleId < 1) {
+            throw new WebApplicationException("Parameters must contain a battle drill id and a role ID that is defined in roles DB.",
                     Response.Status.BAD_REQUEST);
         }
 
         BattleDrillManager manager = BattleDrillManager.getInstance();
-        BattleDrill bd = manager.getByName(name);
+        BattleDrill bd = manager.getById(id);
         if (null == bd) {
             throw new WebApplicationException(
-                    "Unable to get subtree by owner - battle drill with name " + name + " not found",
+                    "Unable to get subtree by role ID - battle drill with id " + id + " not found",
                     Response.Status.BAD_REQUEST);
         }
 
         try {
-            Node subtree = bd.getSubtreeByOwner(owner);
+            Node subtree = bd.getSubtreeByRoleId(roleId);
             return JsonUtils.writeValue(subtree);
-//            return DEFAULT_JSON_WRITER.writeValueAsString(subtree);
         } catch (JsonProcessingException j) {
-            System.err.println("Unable to subtree by owner: " + j);
-            throw new WebApplicationException("Unable to get subtree by owner", Response.Status.BAD_REQUEST);
+            System.err.println("Unable to subtree by role ID: " + j);
+            throw new WebApplicationException("Unable to get subtree by role ID", Response.Status.BAD_REQUEST);
         }
     }
 
     @PUT
-    @Path("/start/{name}")
+    @Path("/start/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public String startBattleDrill(@PathParam("name") String name, User user) throws JsonProcessingException {
-        if (StringUtils.isBlank(name) && user.isEmpty()) {
-            throw new WebApplicationException("Name and User parameters cannot be blank", Response.Status.BAD_REQUEST);
+    public String startBattleDrill(@PathParam("id") String id, User user) throws JsonProcessingException {
+        if (StringUtils.isBlank(id) && user.isEmpty()) {
+            throw new WebApplicationException("ID and User parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
 
         try {
             BattleDrillManager manager = BattleDrillManager.getInstance();
-            manager.startBattleDrill(name, user);
-            return JsonUtils.writeValue(manager.getByName(name));
+            manager.startBattleDrill(id, user);
+            return JsonUtils.writeValue(manager.getById(id));
         } catch (ItemNotFoundException b) {
             throw new WebApplicationException(b, Response.Status.BAD_REQUEST);
         }
     }
 
     @PUT
-    @Path("/stop/{name}")
-    public String stopBattleDrill(@PathParam("name") String name, User user) throws JsonProcessingException {
-        if (StringUtils.isBlank(name) && user.isEmpty()) {
-            throw new WebApplicationException("Name and User parameters cannot be blank", Response.Status.BAD_REQUEST);
+    @Path("/stop/{id}")
+    public String stopBattleDrill(@PathParam("id") String id, User user) throws JsonProcessingException {
+        if (StringUtils.isBlank(id) && user.isEmpty()) {
+            throw new WebApplicationException("ID and User parameters cannot be blank", Response.Status.BAD_REQUEST);
         }
         try {
             BattleDrillManager manager = BattleDrillManager.getInstance();
-            manager.stopBattleDrill(name, user);
-            return JsonUtils.writeValue(manager.getByName(name));
+            manager.stopBattleDrill(id, user);
+            return JsonUtils.writeValue(manager.getById(id));
         } catch (ItemNotFoundException b) {
             throw new WebApplicationException(b, Response.Status.BAD_REQUEST);
         }
@@ -143,16 +155,16 @@ public class BattleDrillService {
     @Path("/diagram/position")
     @Consumes(MediaType.APPLICATION_JSON)
     public void changeDiagramElementPosition(PositionRestParams params) {
-        if (StringUtils.isBlank(params.getBattleDrillName())
-                || StringUtils.isBlank((params.getOwner()))
+        if (StringUtils.isBlank(params.getDrillId())
+                || params.getRoleId() < 1
                 || StringUtils.isBlank(params.getCoordinateType())) {
-            throw new WebApplicationException("Parameters must contain a battle drill name, task owner, and a type", Response.Status.BAD_REQUEST);
+            throw new WebApplicationException("Parameters must contain a battle drill id, role ID of task owner, and a type", Response.Status.BAD_REQUEST);
         }
         
         BattleDrillManager manager = BattleDrillManager.getInstance();
         try {
-            BattleDrill battleDrill = manager.getByName(params.getBattleDrillName());
-            battleDrill.updateDiagramCoordinates(params.getOwner(), params.getCoordinateType(), params.getX(), params.getY());
+            BattleDrill battleDrill = manager.getById(params.getDrillId());
+            battleDrill.updateDiagramCoordinates(params.getRoleId(), params.getCoordinateType(), params.getX(), params.getY());
         } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
@@ -172,7 +184,6 @@ public class BattleDrillService {
         try {
             BattleDrill battleDrill = manager.createByType(params);
             return JsonUtils.writeValue(battleDrill);
-//            return DEFAULT_JSON_WRITER.writeValueAsString(battleDrill);
         } catch (DuplicateItemException | JsonProcessingException e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
@@ -190,60 +201,58 @@ public class BattleDrillService {
         }
 
         BattleDrillManager manager = BattleDrillManager.getInstance();
-        try 
-        {
+        try  {
             manager.updateBattleDrillOrder(params);
-        } catch (Exception e) 
-        {
+        } catch (Exception e) {
             throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
         }
     }
     
     @POST
-    @Path("/owner")
+    @Path("/role")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response addOwnerToDrill(OwnerRestParams params) {
+    public Response addRoleToDrill(RoleRestParams params) {
         
-        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
-            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        if (params.getRoleId() < 1 || StringUtils.isBlank(params.getDrillId()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when adding role to drill. Role ID, drill ID, and user object must all be defined.", Response.Status.BAD_REQUEST);
         }
         
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        BattleDrill drill = mgr.getByName(params.getDrillName());
-        boolean isSuccessful = drill.addOwner(params.getOwner(), params.getParent());
+        BattleDrill drill = mgr.getById(params.getDrillId());
+        boolean isSuccessful = drill.addRole(params.getRoleId(), params.getParentId());
         return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
     
     @PUT
-    @Path("/owner")
+    @Path("/role")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response editOwnerOnDrill(OwnerRestParams params) {
+    public Response editRoleOnDrill(RoleRestParams params) {
         
-        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getNewOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
-            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        if (params.getRoleId() < 1 || params.getNewRoleId() < 1 || StringUtils.isBlank(params.getDrillId()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when editting role on drill. Role ID, new role ID, drill ID, and user object must all be defined.", Response.Status.BAD_REQUEST);
         }
         
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        BattleDrill drill = mgr.getByName(params.getDrillName());
-        boolean isSuccessful = drill.editOwner(params.getOwner(), params.getNewOwner());
+        BattleDrill drill = mgr.getById(params.getDrillId());
+        boolean isSuccessful = drill.editRoleById(params.getRoleId(), params.getNewRoleId());
         return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
     
     @DELETE
-    @Path("/owner")
+    @Path("/role")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public Response deleteOwnerFromDrill(OwnerRestParams params) {
+    public Response deleteRoleFromDrill(RoleRestParams params) {
         
-        if(StringUtils.isBlank(params.getOwner()) || StringUtils.isBlank(params.getDrillName()) || null == params.getUser()) {
-            throw new WebApplicationException("Error when adding owner. Owner, drill name, and user object must all be defined.", Response.Status.BAD_REQUEST);
+        if (params.getRoleId() < 1 || StringUtils.isBlank(params.getDrillId()) || null == params.getUser()) {
+            throw new WebApplicationException("Error when deleting role from drill. Role ID, drill ID, and user object must all be defined.", Response.Status.BAD_REQUEST);
         }
         
         BattleDrillManager mgr = BattleDrillManager.getInstance();
-        BattleDrill drill = mgr.getByName(params.getDrillName());
-        boolean isSuccessful = drill.deleteOwner(params.getOwner());
+        BattleDrill drill = mgr.getById(params.getDrillId());
+        boolean isSuccessful = drill.deleteRoleById(params.getRoleId());
         return isSuccessful ? Response.status(Response.Status.OK).build() : Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
     }
 }

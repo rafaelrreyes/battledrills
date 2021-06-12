@@ -25,8 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChatMessage {
     
-    private String sender = "";
-    private String target = "";
+    private int senderId = 0;
+    private int receiverId = 0;
     private String message = "";
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -36,20 +36,20 @@ public class ChatMessage {
         this.timestamp = LocalDateTime.now();
     }
     
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setSenderId(int senderId) {
+        this.senderId = senderId;
     }
     
-    public String getSender() {
-        return this.sender;
+    public int getSenderId() {
+        return this.senderId;
     }
     
-    public void setTarget(String target) {
-        this.target = target;
+    public void setReceiverId(int receiverId) {
+        this.receiverId = receiverId;
     }
     
-    public String getTarget() {
-        return this.target;
+    public int getReceiverId() {
+        return this.receiverId;
     }
     
     public void setMessage(String message) {
@@ -69,14 +69,14 @@ public class ChatMessage {
     }
     
     public boolean isValid() {
-        return !(StringUtils.isBlank(sender) || StringUtils.isBlank(target) || StringUtils.isBlank(message) || timestamp == null);
+        return this.senderId != 0 && this.receiverId != 0 && null != timestamp;
     }
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Sender: ").append(this.getSender()).append(System.lineSeparator());
-        sb.append("Target: ").append(this.getTarget()).append(System.lineSeparator());
+        sb.append("Sender ID: ").append(this.getSenderId()).append(System.lineSeparator());
+        sb.append("Receiver ID: ").append(this.getReceiverId()).append(System.lineSeparator());
         sb.append("Message: ").append(this.getMessage()).append(System.lineSeparator());
         
         return sb.toString();

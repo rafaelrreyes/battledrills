@@ -2,11 +2,12 @@ import { UserConstants } from "./UserConstants";
 
 const initialState = {
 	username: "",
-	role: "",
+	name: "",
+	id: 0,
 	sessionId: ""
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
 	const { payload, type } = action;
 
 	switch (type) {

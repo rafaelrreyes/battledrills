@@ -1,8 +1,9 @@
 {
 	"type": "ied_discovered",
-	"participants": ["CO", "WO", "S-3", "S-4", "LOC", "FSCC", "S-2", "AirO", "IO"],
+	"participants": [1, 15, 12, 6, 3, 11, 4, 7, 13],
 	"data": {
 		"title": "CO",
+		"roleId": 1,
 		"self_coordinates": {
 			"x": 625,
 			"y": 20
@@ -11,6 +12,7 @@
 		"children": [
 			{
 				"title": "WO",
+				"roleId": 15,
 				"self_coordinates": {
 					"x": 625,
 					"y": 75
@@ -21,12 +23,13 @@
 				},
 				"tasks": [
 					{
-						"description": "Notify RCT SWO and pass UXO/IED report"
+						"description": "Notify RCT SWO and pass UXO/IED Report"
 					}
 				],
 				"children": [
 					{
 						"title": "S-3",
+						"roleId": 12,
 						"self_coordinates": {
 							"x": 150,
 							"y": 175
@@ -52,6 +55,7 @@
 						"children": [
 							{
 								"title": "IO",
+								"roleId": 6,
 								"self_coordinates": {
 									"x": 70,
 									"y": 225
@@ -65,7 +69,7 @@
 										"description": "PA-press release if civilians injured"
 									},
 									{
-										"description": "Ensure Combat Correspondent document site"
+										"description": "Ensure Combat Correspondent documents site"
 									},
 									{
 										"description": "EW-coord EMS localized suppression"
@@ -77,6 +81,7 @@
 					},
 					{
 						"title": "AirO",
+						"roleId": 3,
 						"self_coordinates": {
 							"x": 385,
 							"y": 175
@@ -94,6 +99,7 @@
 					},
 					{
 						"title": "S-2",
+						"roleId": 11,
 						"self_coordinates": {
 							"x": 560,
 							"y": 175
@@ -111,6 +117,7 @@
 					},
 					{
 						"title": "FSCC",
+						"roleId": 4,
 						"self_coordinates": {
 							"x": 715,
 							"y": 175
@@ -137,6 +144,7 @@
 					},
 					{
 						"title": "LOC",
+						"roleId": 7,
 						"self_coordinates": {
 							"x": 885,
 							"y": 175
@@ -146,6 +154,7 @@
 						"children": [
 							{
 								"title": "S-4",
+								"roleId": 13,
 								"self_coordinates": {
 									"x": 885,
 									"y": 230
@@ -156,7 +165,7 @@
 								},
 								"tasks": [
 									{
-										"description": "Redirect movement, if required"
+										"description": "Redirect movement if required"
 									},
 									{
 										"description": "Ensure convoy remains with IED until relieved"

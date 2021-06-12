@@ -44,10 +44,10 @@ $modal-message-error-text-color: $dark-text-primary;
 		position: relative;
 		background-color: $modal-background-color;
 		margin: $modal-top-margin auto;
-		border: $modal-border-width solid $modal-border-color;
 		max-height: $modal-max-height;
-		max-width: $modal-max-width;
-		width: 100%;
+		// max-width: $modal-max-width;
+		// width: 100%;
+		padding: 20px;
 		text-align: center;
 
 		.modal-close {

@@ -7,9 +7,27 @@
 	padding: 0.5em 2em;
 	align-items: center;
 
-	.drill-dropdown {
-		float: left;
-		display: block;
+	.filter-options {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+
+		.filter-options-main {
+			.drill-dropdown {
+				float: left;
+				display: block;
+			}
+		}
+
+		.filter-options-optional {
+			display: flex;
+			align-items: center;
+
+			.filter-options-label {
+				margin-right: 5px;
+			}
+		}
 	}
 
 	.all-status-filter-roles-label {

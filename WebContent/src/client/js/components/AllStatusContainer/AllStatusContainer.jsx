@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { DROPDOWN_DEFAULT } from "CORE";
+import { DROPDOWN_DEFAULT, Spinner } from "CORE";
 import { API, selectTask, Routes } from "UTILITIES";
-import {
-	getAllStatus,
-	getRolesFilter,
-	setAllStatuses,
-	updateAllDrills,
-	getAllDrills,
-	setRolesFilters,
-	deleteRoleFilter,
-	setCurrentView,
-	setSelectedDrill
-} from "REDUX";
+import { getAllStatus, setAllStatuses, updateAllDrills, getAllDrills, setCurrentView, setSelectedDrill } from "REDUX";
+import { useLocalStorage } from "HOOKS";
 
 import AllStatusTableView from "./AllStatusTableView/AllStatusTableView";
 import AllStatusFilterView from "./AllStatusFilterView/AllStatusFilterView";
@@ -24,15 +15,44 @@ const DEFAULT_DISPLAY_INDEX = 0;
 const DEFAULT_ACTIVE_INDEX = 1;
 
 const AllStatusContainer = () => {
+	const [isLoading, setIsLoading] = useState(false);
 	const [displayIndex, setDisplayIndex] = useState(DEFAULT_DISPLAY_INDEX);
 	const [activePageIndex, setActivePageIndex] = useState(DEFAULT_ACTIVE_INDEX);
 	const [drillsType, setDrillsType] = useState(DROPDOWN_DEFAULT);
+	const [showRolesWithoutTasks, setShowRolesWithoutTasks] = useLocalStorage("show-roles-without-tasks", false);
+
+	const [filteredRoles, setFilteredRoles] = useState([]);
 	const dispatch = useDispatch();
 
 	// redux selectors
 	const statuses = useSelector(getAllStatus);
-	const roles_filter = useSelector(getRolesFilter);
 	const drills = useSelector(getAllDrills);
+
+	useEffect(() => {
+		setIsLoading(true);
+		API.getRoles((roles) => {
+			const mappedRoles = roles
+				.map(({ id, name }) => {
+					return { id, name };
+				})
+				.sort((a, b) => {
+					let nameA = a.name.toUpperCase();
+					let nameB = b.name.toUpperCase();
+
+					if (nameA < nameB) {
+						return -1;
+					}
+
+					if (nameA > nameB) {
+						return 1;
+					}
+
+					return 0;
+				});
+			setFilteredRoles([...mappedRoles]);
+			setIsLoading(false);
+		});
+	}, []);
 
 	useEffect(() => {
 		dispatch(setCurrentView(Routes.STATUS)); // only do this on mount
@@ -49,11 +69,27 @@ const AllStatusContainer = () => {
 	}, [drillsType]);
 
 	const onSetRolesFilters = (filters) => {
-		dispatch(setRolesFilters(filters));
+		setFilteredRoles(
+			filters.sort((a, b) => {
+				let nameA = a.name.toUpperCase();
+				let nameB = b.name.toUpperCase();
+
+				if (nameA < nameB) {
+					return -1;
+				}
+
+				if (nameA > nameB) {
+					return 1;
+				}
+
+				return 0;
+			})
+		);
 	};
 
 	const onDeleteRoleFilter = (role) => {
-		dispatch(deleteRoleFilter(role));
+		// TODO: remove redux
+		// dispatch(deleteRoleFilter(role));
 	};
 
 	const onChangeDrillsType = (type) => {
@@ -85,8 +121,8 @@ const AllStatusContainer = () => {
 		setDisplayIndex(newIndex);
 	};
 
-	const onTaskLinkClick = (drillName, task) => {
-		API.getDrillByName(drillName, {}, (response) => {
+	const onTaskLinkClick = (drillId, task) => {
+		API.getDrillById(drillId, {}, (response) => {
 			dispatch(setSelectedDrill(response));
 			selectTask(task);
 		});
@@ -110,34 +146,55 @@ const AllStatusContainer = () => {
 		return filteredDrills;
 	};
 
-	return (
-		<div className="all-status-container">
-			<AllStatusFilterView
-				onFilterChange={onSetRolesFilters}
-				onFilterDelete={onDeleteRoleFilter}
-				onDrillsTypeChange={onChangeDrillsType}
-				roles_filter={roles_filter}
-			/>
-			{drills.length === 0 ? (
-				<div className="all-status-no-drills">No drills.</div>
-			) : (
-				<AllStatusTableView
-					statuses={statuses}
-					drills={getSlicedDrills()}
-					roles={Array.from(roles_filter).sort()}
-					onTaskLinkClick={onTaskLinkClick}
-				/>
-			)}
-			<AllStatusFooterView
-				numDrills={getDrillsByType().length}
-				maxPerPage={DEFAULT_MAX_COLUMNS}
-				displayIndex={displayIndex}
-				drillWindowSize={getSlicedDrills().length}
-				onDrillsPage={onDrillsPage}
-				activePageIndex={activePageIndex}
-			/>
-		</div>
-	);
+	const renderView = () => {
+		if (isLoading) {
+			return (
+				<div className="loading-status-placeholder">
+					<Spinner size="xl" />
+				</div>
+			);
+		} else {
+			const tableView =
+				drills.length === 0 ? (
+					<div className="all-status-no-drills">No drills.</div>
+				) : (
+					<AllStatusTableView
+						statuses={statuses}
+						drills={getSlicedDrills()}
+						roles={filteredRoles}
+						onTaskLinkClick={onTaskLinkClick}
+						showRolesWithoutTasks={showRolesWithoutTasks}
+					/>
+				);
+
+			return (
+				<>
+					<AllStatusFilterView
+						onFilterChange={onSetRolesFilters}
+						onFilterDelete={onDeleteRoleFilter}
+						onDrillsTypeChange={onChangeDrillsType}
+						roles_filter={filteredRoles}
+						onShowRolesWithoutTasks={(value) => {
+							setShowRolesWithoutTasks(value);
+						}}
+						showRolesWithoutTasks={showRolesWithoutTasks}
+					/>
+					{tableView}
+					<AllStatusFooterView
+						numDrills={getDrillsByType().length}
+						maxPerPage={DEFAULT_MAX_COLUMNS}
+						displayIndex={displayIndex}
+						drillWindowSize={getSlicedDrills().length}
+						onDrillsPage={onDrillsPage}
+						activePageIndex={activePageIndex}
+					/>
+					;
+				</>
+			);
+		}
+	};
+
+	return <div className="all-status-container">{renderView()}</div>;
 };
 
 export default AllStatusContainer;

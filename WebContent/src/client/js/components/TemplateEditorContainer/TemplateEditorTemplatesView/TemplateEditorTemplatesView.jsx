@@ -165,7 +165,7 @@ const TemplateEditorTemplatesView = ({ showTemplates }) => {
 	};
 
 	const tabSelectHandler = (value) => {
-		setSelectedTab(value.selectedName);
+		setSelectedTab(value.selected);
 	};
 
 	const templateSelectHandler = (id, successfulSelectCallback) => {

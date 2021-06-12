@@ -6,6 +6,7 @@
 package com.ngc.battledrills.data.reports;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ngc.battledrills.manage.RolesManager;
 
 /**
  *
@@ -16,14 +17,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public abstract class TaskXY<T> {
     private T x;
     private T y;
-    private String owner = "";
+    private int roleId = 0;
+    private String roleName = "";
     private String description = "";
 
-    public TaskXY(T x, T y, String owner, String description) {
+    public TaskXY(T x, T y, int roleId, String description) {
+        RolesManager mgr = RolesManager.getInstance();
         this.x = x;
         this.y = y;
-        this.owner = owner;
+        this.roleId = roleId;
         this.description = description;
+        if (roleId == -1) {
+            this.roleName = "";
+        } else {
+            this.roleName = mgr.getRolenameById(roleId);
+        }
     }
 
     public T getX() {
@@ -42,12 +50,25 @@ public abstract class TaskXY<T> {
         this.y = y;
     }
 
-    public String getOwner() {
-        return owner;
+    public int getRoleId() {
+        return this.roleId;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+    
+    public String getRoleName() {
+        RolesManager mgr = RolesManager.getInstance();
+        
+        if (this.roleId == -1) {
+            return "";
+        }
+        return mgr.getRolenameById(this.roleId);
+    }
+    
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 
     public String getDescription() {
@@ -61,7 +82,7 @@ public abstract class TaskXY<T> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Owner: ").append(this.getOwner()).append(System.lineSeparator());
+        sb.append("Role ID: ").append(this.getRoleId()).append(System.lineSeparator());
         sb.append("Description: ").append(this.getDescription()).append(System.lineSeparator());
         sb.append("X: ").append(this.getX()).append(System.lineSeparator());
         sb.append("Y: ").append(this.getY()).append(System.lineSeparator());

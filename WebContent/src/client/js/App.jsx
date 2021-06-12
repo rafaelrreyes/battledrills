@@ -14,7 +14,7 @@ import "./App.scss";
 
 const App = () => {
 	const dispatch = useDispatch();
-	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", { username: "WO", role: "WO" });
+	const [loggedInUser, setLoggedInUser] = useLocalStorage("user", { username: "WO", name: "WO", id: 15 });
 	let websocket;
 
 	useEffect(() => {

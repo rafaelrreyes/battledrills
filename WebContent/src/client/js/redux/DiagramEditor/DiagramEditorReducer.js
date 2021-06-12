@@ -22,7 +22,7 @@ const initialState = {
 export default function (state = initialState, action) {
 	const { type, payload } = action;
 
-	let role, owner, parent, task;
+	let roleId, roleName, parentId, task;
 
 	// make a copy of the state to add to past container before running through reducer
 	const templateBeforeEdit = state.selectedTemplate !== null ? deepClone(state.selectedTemplate) : null;
@@ -56,21 +56,22 @@ export default function (state = initialState, action) {
 			};
 		case DiagramEditorConstants.ADDED_ROLE_TO_TEMPLATE:
 			if (typeof payload !== "undefined") {
-				role = payload.role;
-				parent = payload.parent;
+				roleId = payload.roleId;
+				roleName = payload.roleName;
+				parentId = payload.parentId;
 			}
 			return {
 				...state,
 				past: [...state.past, { ...templateBeforeEdit }],
 				selectedTemplate: {
 					...state.selectedTemplate,
-					participants: [...state.selectedTemplate.participants, role],
-					data: addRole(state.selectedTemplate, role, parent)
+					participants: [...state.selectedTemplate.participants, roleId],
+					data: addRole(state.selectedTemplate, roleId, roleName, parentId)
 				}
 			};
 		case DiagramEditorConstants.ADDED_TASK_TO_TEMPLATE:
 			if (typeof payload !== "undefined") {
-				owner = payload.owner;
+				roleId = payload.roleId;
 				task = payload.task;
 			}
 			return {
@@ -78,7 +79,7 @@ export default function (state = initialState, action) {
 				past: [...state.past, { ...templateBeforeEdit }],
 				selectedTemplate: {
 					...state.selectedTemplate,
-					data: addTask(state.selectedTemplate, task, owner)
+					data: addTask(state.selectedTemplate, task, roleId)
 				}
 			};
 		case DiagramEditorConstants.EDITED_TASK_DESCRIPTION_TEMPLATE:
@@ -154,7 +155,7 @@ export default function (state = initialState, action) {
 				past: [...state.past, { ...templateBeforeEdit }],
 				selectedTemplate: {
 					...state.selectedTemplate,
-					data: editRoleCoordinates(state.selectedTemplate, payload.role, payload.coordinates)
+					data: editRoleCoordinates(state.selectedTemplate, payload.roleId, payload.coordinates)
 				}
 			};
 		case DiagramEditorConstants.EDITED_TASK_COORDINATES_TEMPLATE:
@@ -163,7 +164,7 @@ export default function (state = initialState, action) {
 				past: [...state.past, { ...templateBeforeEdit }],
 				selectedTemplate: {
 					...state.selectedTemplate,
-					data: editTaskCoordinates(state.selectedTemplate, payload.role, payload.coordinates)
+					data: editTaskCoordinates(state.selectedTemplate, payload.roleId, payload.coordinates)
 				}
 			};
 		case DiagramEditorConstants.OPEN_NEW_TEMPLATE:

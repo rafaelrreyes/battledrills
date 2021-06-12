@@ -5,3 +5,7 @@ export const getSelectedDrill = (store) => {
 export const getSelectedDrillName = (store) => {
 	return store.SelectedDrill.selectedDrill.name;
 };
+
+export const getSelectedDrillId = (store) => {
+	return store.SelectedDrill.selectedDrill.id;
+};

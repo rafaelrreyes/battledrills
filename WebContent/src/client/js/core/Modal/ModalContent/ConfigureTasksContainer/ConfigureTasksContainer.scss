@@ -1,0 +1,75 @@
+@import "~CSS/index";
+
+.configure-tasks-container {
+	.configure-tasks-header {
+		font-size: 16px;
+		color: $white;
+		font-family: Roboto;
+		display: flex;
+		justify-content: space-evenly;
+	}
+
+	.configure-tasks-view {
+		.drag-drop-container {
+			display: flex;
+			align-items: center;
+			width: 100%;
+
+			.task-list-container {
+				width: 33%;
+				margin: 10px;
+
+				.task-list-header {
+					font-size: 16px;
+					font-weight: bolder;
+					margin: 5px;
+					color: $white;
+					font-family: Roboto;
+				}
+
+				.task-list {
+					background: $blue-grey-700;
+					width: 100%;
+					min-height: 400px;
+					max-height: 400px;
+					min-width: 300px;
+					overflow-y: auto;
+
+					.loading-wheel {
+						margin-top: 20px;
+					}
+
+					.current-task-list-item,
+					.favorited-task-list-item,
+					.template-task-list-item {
+						height: 40px;
+						padding: 5px;
+						background: $blue-grey-800;
+						margin: 5px;
+						display: flex;
+						align-items: center;
+						justify-content: space-between;
+						overflow: hidden;
+
+						.task-list-item-description {
+							margin-left: 10px;
+							display: flex;
+							justify-content: start;
+							text-align: left;
+							color: $white;
+							font-size: 12px;
+							font-family: Roboto;
+							width: 165px;
+						}
+
+						i {
+							&:hover {
+								color: $cyan-700;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

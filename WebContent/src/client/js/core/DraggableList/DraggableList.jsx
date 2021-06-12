@@ -18,7 +18,11 @@ class DraggableList extends Component {
 	onItemClick = (e, index) => {
 		const { itemClick } = this.props;
 		if (itemClick !== undefined) {
-			itemClick(this.props.items[index]);
+			if (typeof this.props.items[index] === "object") {
+				itemClick(this.props.items[index].id);
+			} else {
+				itemClick(this.props.items[index]);
+			}
 		}
 	};
 
@@ -59,13 +63,18 @@ class DraggableList extends Component {
 
 	renderListElement = (item, index) => {
 		const { tooltipPlacement } = this.props;
+		let itemLabel = item;
 
 		let tooltip = isContentOverflowed(this.draggableItemRefs[item]) ? item : "";
+		if (typeof item === "object") {
+			itemLabel = typeof item.name !== "undefined" ? item.name : "item_name_placeholder";
+		}
+
 		return (
 			<ArrowTooltip title={tooltip} placement={tooltipPlacement}>
 				<li className="draggable-li" onClick={(e) => this.onItemClick(e, index)}>
 					<div ref={this.setDraggableItemRefs} className="li-text-div">
-						{item ? item : "item_name_placeholder"}
+						{itemLabel ? itemLabel : "item_name_placeholder"}
 					</div>
 				</li>
 			</ArrowTooltip>
@@ -76,8 +85,15 @@ class DraggableList extends Component {
 		const { items, selectedItem } = this.props;
 		return items.map((item, index) => {
 			let listClass = "draggable-li-wrapper";
-			if (selectedItem && selectedItem === item) {
-				listClass += " selected-list-item";
+
+			if (typeof selectedItem === "object") {
+				if (selectedItem.id && selectedItem.id === item.id) {
+					listClass += " selected-list-item";
+				}
+			} else {
+				if (selectedItem && selectedItem === item) {
+					listClass += " selected-list-item";
+				}
 			}
 
 			return (
@@ -117,7 +133,7 @@ DraggableList.propTypes = {
 	viewUpdate: PropTypes.func.isRequired,
 	backendUpdate: PropTypes.func.isRequired,
 	itemClick: PropTypes.func,
-	selectedItem: PropTypes.string
+	selectedItem: PropTypes.object
 };
 
 export default DraggableList;

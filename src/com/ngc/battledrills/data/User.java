@@ -19,15 +19,17 @@ import org.apache.commons.lang3.StringUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private String sessionId = "";
-    private String role = "";
+    private String name = "";
+    private int id = 0;
     private String username = "";
     
     // Needed for JSON deserialization
     private User(){}
     
-    public User(String sessionId, String role, String username) {
+    public User(String sessionId, int id, String name, String username) {
         this.sessionId = sessionId;
-        this.role = role;
+        this.id = id;
+        this.name = name;
         this.username = username;
     }
     
@@ -36,9 +38,9 @@ public class User {
         return sessionId;
     }
     
-    @JsonProperty("role")
-    public String getRole() {
-        return role;
+    @JsonProperty("name")
+    public String getName() {
+        return this.name;
     }
 
     @JsonProperty("username")
@@ -51,14 +53,23 @@ public class User {
         this.sessionId = sessionId;
     }
     
-    @JsonProperty("role")
-    public void setRole(String role) {
-        this.role = role;
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
     }
     
     @JsonProperty("username")
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    @JsonProperty("id")
+    public int getId() {
+        return this.id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
     
     /*
@@ -67,14 +78,15 @@ public class User {
     */
     @JsonIgnore
     public boolean isEmpty() {
-        return StringUtils.isBlank(sessionId) || StringUtils.isBlank(role);
+        return StringUtils.isBlank(sessionId) || id < 1 || name.equals("");
     }
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("SessionId: ").append(getSessionId()).append(System.lineSeparator());
-        sb.append("Role: ").append(getRole()).append(System.lineSeparator());
+        sb.append("ID: ").append(getId()).append(System.lineSeparator());
+        sb.append("Name: ").append(getName()).append(System.lineSeparator());
         sb.append("Username: ").append(getUsername()).append(System.lineSeparator());
 
         return sb.toString();

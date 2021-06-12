@@ -19,7 +19,7 @@ const ReportsContainer = () => {
 	const allDrills = useSelector(getAllDrills);
 	const dispatch = useDispatch();
 	const [charts, setCharts] = useState([]);
-	const [drillToGenerate, setDrillToGenerate] = useState(selectedDrill.name);
+	const [drillToGenerate, setDrillToGenerate] = useState(selectedDrill.id);
 	const [compareDrills, setCompareDrills] = useState([]);
 	const [render, setRender] = useState(false);
 
@@ -41,8 +41,8 @@ const ReportsContainer = () => {
 		}
 	};
 
-	const generateReportHandler = (drillName, drills) => {
-		setDrillToGenerate(drillName);
+	const generateReportHandler = (drillId, drills) => {
+		setDrillToGenerate(drillId);
 		setCompareDrills(drills);
 		setCharts([]); // clear array of charts on new generates
 		setRender(!render);
@@ -58,7 +58,7 @@ const ReportsContainer = () => {
 		<div className="reports-view">
 			<div className="reports-nav">
 				<ReportsSelect
-					selectedDrillName={drillToGenerate}
+					selectedDrillId={drillToGenerate}
 					allDrills={allDrills}
 					onGenerateReport={generateReportHandler}
 				></ReportsSelect>
@@ -75,15 +75,15 @@ const ReportsContainer = () => {
 						render={render}
 						createChart={createTimeToCompletion}
 						saveChart={saveChartsHandler}
-						drillName={drillToGenerate}
+						drillId={drillToGenerate}
 						reportType={ReportTypes.TimeToCompletion}
-						compareDrillNames={compareDrills}
+						compareDrillIds={compareDrills}
 					></Chart>
 					<Chart
 						render={render}
 						createChart={createTaskStatusSummary}
 						saveChart={saveChartsHandler}
-						drillName={drillToGenerate}
+						drillId={drillToGenerate}
 						reportType={ReportTypes.TaskStatusSummary}
 					></Chart>
 				</div>

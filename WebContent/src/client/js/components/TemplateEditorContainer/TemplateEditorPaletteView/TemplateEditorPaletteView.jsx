@@ -35,13 +35,13 @@ const TemplateEditorPaletteView = ({ onViewTemplates, onToggleGrid, isGridEnable
 	const openBlankTemplateHandler = () => {
 		dispatch(openBlankTemplate());
 		dispatch(
-			showModal(ModalContentTypes.NEW_OWNER, {
+			showModal(ModalContentTypes.NEW_ROLE, {
 				title: `Add Root Role`,
 				icon: MaterialIconNames.ACCOUNT,
 				fromTemplate: true,
 				fromPalette: true,
-				action: ({ role, parent }) => {
-					dispatch(addRoleToTemplate({ role, parent }));
+				action: ({ roleId, parentId, roleName }) => {
+					dispatch(addRoleToTemplate({ roleId, parentId, roleName }));
 					dispatch(closeModal());
 				}
 			})
@@ -62,13 +62,13 @@ const TemplateEditorPaletteView = ({ onViewTemplates, onToggleGrid, isGridEnable
 
 	const addRoleHandler = () => {
 		dispatch(
-			showModal(ModalContentTypes.NEW_OWNER, {
+			showModal(ModalContentTypes.NEW_ROLE, {
 				title: `Add New Role`,
 				icon: MaterialIconNames.ACCOUNT,
 				fromTemplate: true,
 				fromPalette: true,
-				action: ({ role, parent }) => {
-					dispatch(addRoleToTemplate({ role, parent }));
+				action: ({ roleId, parentId, roleName }) => {
+					dispatch(addRoleToTemplate({ roleId, parentId, roleName }));
 					dispatch(closeModal());
 				}
 			})
@@ -82,13 +82,13 @@ const TemplateEditorPaletteView = ({ onViewTemplates, onToggleGrid, isGridEnable
 				icon: MaterialIconNames.TASK,
 				fromTemplate: true,
 				fromPalette: true,
-				action: ({ description, role }) => {
+				action: ({ description, roleId }) => {
 					const obj = {
 						task: {
 							taskId: `task-${generateRandomId()}`,
 							description
 						},
-						owner: role
+						roleId
 					};
 					dispatch(addTaskToTemplate(obj));
 					dispatch(closeModal());

@@ -34,30 +34,31 @@ export const resetSelectedTaskTemplate = () => {
 	};
 };
 
-export const addRoleToTemplate = ({ role, parent }) => {
+export const addRoleToTemplate = ({ roleId, roleName, parentId }) => {
 	return {
 		type: DiagramEditorConstants.ADDED_ROLE_TO_TEMPLATE,
 		payload: {
-			role,
-			parent
+			roleId,
+			parentId,
+			roleName
 		}
 	};
 };
 
-export const addTaskToTemplate = ({ task, owner }) => {
+export const addTaskToTemplate = ({ task, roleId }) => {
 	return {
 		type: DiagramEditorConstants.ADDED_TASK_TO_TEMPLATE,
 		payload: {
 			task,
-			owner
+			roleId
 		}
 	};
 };
 
-export const deleteRoleFromTemplate = (role) => {
+export const deleteRoleFromTemplate = (roleId) => {
 	return {
 		type: DiagramEditorConstants.DELETED_ROLE_FROM_TEMPLATE,
-		payload: role
+		payload: roleId
 	};
 };
 
@@ -71,17 +72,17 @@ export const editTaskDescriptionTemplate = ({ id, description }) => {
 	};
 };
 
-export const editTaskCoordinatesTemplate = (role, coordinates) => {
+export const editTaskCoordinatesTemplate = (roleId, coordinates) => {
 	return {
 		type: DiagramEditorConstants.EDITED_TASK_COORDINATES_TEMPLATE,
-		payload: { role, coordinates }
+		payload: { roleId, coordinates }
 	};
 };
 
-export const editRoleCoordinatesTemplate = (role, coordinates) => {
+export const editRoleCoordinatesTemplate = (roleId, coordinates) => {
 	return {
 		type: DiagramEditorConstants.EDITED_ROLE_COORDINATES_TEMPLATE,
-		payload: { role, coordinates }
+		payload: { roleId, coordinates }
 	};
 };
 

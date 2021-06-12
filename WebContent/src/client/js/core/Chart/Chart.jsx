@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Chart.scss";
 
-export const Chart = ({ render, createChart, saveChart, drillName, reportType, compareDrillNames = [] }) => {
+export const Chart = ({ render, createChart, saveChart, drillId, reportType, compareDrillIds = [] }) => {
 	const chartCanvas = useRef(null);
 	const [chart, setChart] = useState(null);
 
@@ -14,9 +14,9 @@ export const Chart = ({ render, createChart, saveChart, drillName, reportType, c
 		// e.g. report 1 generated -> click to generate report 2 -> destroy report 1 -> report 2 generated
 		const getChart = async () => {
 			const reportParams = {
-				drillName,
+				drillId,
 				reportType,
-				compareDrillNames
+				compareDrillIds
 			};
 			setChart(await createChart(chartCanvas.current, reportParams));
 		};

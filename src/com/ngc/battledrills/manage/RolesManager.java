@@ -73,6 +73,10 @@ public class RolesManager {
         return roleNames;
     }
     
+    public String getRolenameById(int id) {
+        return roles.get(id).getName();
+    }
+    
     private void loadAllRoles() {
         // load all roles from json file
         try {

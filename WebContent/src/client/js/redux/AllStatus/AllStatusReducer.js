@@ -53,6 +53,3 @@ export default function (state = initialState, action) {
 			return state;
 	}
 }
-
-//deep update status
-const deepUpdateStatus = (statusToUpdate, newStatus) => {};

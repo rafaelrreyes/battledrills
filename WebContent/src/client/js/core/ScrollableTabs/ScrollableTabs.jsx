@@ -63,21 +63,31 @@ export const ScrollableTabs = ({ tabValues, tooltipPlacement = "top", onActiveTa
 	const handleChange = (event, newValue) => {
 		if (value !== newValue) {
 			setValue(newValue);
-			onActiveTabSelected({ selectedName: event.target.textContent });
+			onActiveTabSelected({ selected: newValue });
 		}
 	};
 
 	const renderTabs = () => {
-		return tabValues.map((tabText, index) => {
-			let tooltip = isContentOverflowed(tabRef[tabText]) ? tabText : "";
+		return tabValues.map((tabValue, index) => {
+			let tooltip;
+
+			if (typeof tabValue === "object") {
+				tooltip = isContentOverflowed(tabRef[tabValue.id]) ? tabValue.name : "";
+			} else {
+				tooltip = isContentOverflowed(tabRef[tabValue]) ? tabValue : "";
+			}
+
+			let key = typeof tabValue === "object" ? tabValue.id : tabValue;
+			let tabName = typeof tabValue === "object" ? tabValue.name : tabValue;
+
 			return (
 				<Tab
 					classes={{ wrapper: tabClasses.wrapper, selected: tabClasses.selected }}
-					key={tabText}
-					value={tabText}
+					key={key}
+					value={key}
 					label={
-						<ArrowTooltip title={tooltip} key={tabText} placement={tooltipPlacement}>
-							<div className={tabClasses.tabText}>{tabText}</div>
+						<ArrowTooltip title={tooltip} key={key} placement={tooltipPlacement}>
+							<div className={tabClasses.tabText}>{tabName}</div>
 						</ArrowTooltip>
 					}
 					ref={tabRefCallback}
@@ -86,10 +96,25 @@ export const ScrollableTabs = ({ tabValues, tooltipPlacement = "top", onActiveTa
 		});
 	};
 
+	const getTabValue = () => {
+		if (typeof tabValues[0] !== "object") {
+			return selectedItem && tabValues.includes(selectedItem) ? selectedItem : tabValues[0];
+		} else {
+			return selectedItem &&
+				tabValues
+					.map((tabValue) => {
+						return tabValue.id;
+					})
+					.includes(selectedItem)
+				? selectedItem
+				: tabValues[0].id;
+		}
+	};
+
 	return (
 		<Tabs
 			classes={{ root: tabsClasses.root, indicator: tabsClasses.indicator }}
-			value={selectedItem && tabValues.includes(selectedItem) ? selectedItem : tabValues[0]}
+			value={getTabValue()}
 			onChange={handleChange}
 			textColor="primary"
 			variant="scrollable"

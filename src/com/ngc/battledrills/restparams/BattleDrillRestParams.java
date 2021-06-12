@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ngc.battledrills.rest;
+package com.ngc.battledrills.restparams;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,13 +20,21 @@ import java.util.Map;
 @JsonInclude(Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BattleDrillRestParams {
+    private int creatorId = 0;
     private String type = ""; 
     private String name = "";
     private boolean start = false;
     private User user;
     private Map<String, String> location = new HashMap<>();
 
-    public BattleDrillRestParams() {
+    public BattleDrillRestParams() {}
+    
+    public int getCreatorId() {
+        return this.creatorId;
+    }
+    
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
     }
     
     public String getType()
