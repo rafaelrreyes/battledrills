@@ -49,7 +49,7 @@
 		"jquery": "^3.4.1",
 		"lodash": "^4.17.11",
 		"moment": "^2.24.0",
-		"moment-timezone": "^0.5.25",
+		"moment-timezone": "^0.5.35",
 		"prop-types": "^15.7.2",
 		"react": "^16.8.6",
 		"react-beautiful-dnd": "^13.1.0",
